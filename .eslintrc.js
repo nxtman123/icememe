@@ -13,8 +13,8 @@ module.exports = {
   extends: [
     // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
     // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
-    'plugin:vue/essential',
-    '@vue/standard'
+    'plugin:vue/recommended',
+    'airbnb-base'
   ],
 
   // required to lint *.vue files
@@ -31,11 +31,7 @@ module.exports = {
 
   // add your custom rules here
   rules: {
-    // allow async-await
-    'generator-star-spacing': 'off',
-    // allow paren-less arrow functions
-    'arrow-parens': 'off',
-    'one-var': 'off',
+    'no-param-reassign': 'off',
 
     'import/first': 'off',
     'import/named': 'error',
@@ -45,6 +41,7 @@ module.exports = {
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
     'import/no-extraneous-dependencies': 'off',
+    'import/prefer-default-export': 'off',
     'prefer-promise-reject-errors': 'off',
 
     // allow console.log during development only
