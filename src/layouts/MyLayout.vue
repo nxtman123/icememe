@@ -2,7 +2,6 @@
   <q-layout view="lHh Lpr lFf">
     <q-header
       elevated
-      class="glossy"
     >
       <q-toolbar>
         <q-btn

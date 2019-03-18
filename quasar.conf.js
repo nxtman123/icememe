@@ -37,7 +37,8 @@ module.exports = function (ctx) {
         'QList',
         'QItem',
         'QItemSection',
-        'QItemLabel'
+        'QItemLabel',
+        'QInput',
       ],
 
       directives: [
@@ -57,11 +58,9 @@ module.exports = function (ctx) {
 
     build: {
       scopeHoisting: true,
-      // vueRouterMode: 'history',
-      // vueCompiler: true,
-      // gzip: true,
-      // analyze: true,
-      // extractCSS: false,
+      vueRouterMode: 'history',
+      gzip: true,
+      analyze: true,
       extendWebpack (cfg) {
         cfg.module.rules.push({
           enforce: 'pre',
