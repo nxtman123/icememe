@@ -9,6 +9,7 @@
     <template v-if="serverMessage">
       <p
         class="text-bold"
+        style="white-space: pre-line;"
       >
         {{ serverMessage }}
       </p>
