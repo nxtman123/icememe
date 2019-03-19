@@ -84,7 +84,11 @@ There's two ways to run the app: in development mode or production mode.
 
 
 ## Deployment
-Our app will be deployed on Heroku. Kurtis has his GitHub Student Developer Pack connected to Heroku to provide the PostgreSQL add-on. Some things to note:
+Our app will be deployed on Heroku. Kurtis has his GitHub Student Developer Pack connected to Heroku to provide the PostgreSQL add-on.
+
+Visit it at https://infinite-river-96657.herokuapp.com/
+
+Some things to note:
 
 - Deployments to production must come from the `master` branch. This means we need to move changes through our Git Flow branching model to master before deploying.
 - This also means development and testing need to be done on our local machines. If you want to test on a phone, you can try connecting over a local network (e.g. `http://local.pc.ip.address:8080/`) or with a tool like [ngrok](https://ngrok.com/) (ngrok free will only work when running in production mode).
