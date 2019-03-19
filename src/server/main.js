@@ -5,7 +5,7 @@ const history = require('connect-history-api-fallback');
 const path = require('path');
 
 // setup app and server
-const port = process.env.PORT || 5000;
+const port = process.env.NODE_ENV === 'production'? process.env.PORT || 5000 : 5000;
 const app = express();
 const server = require('http').createServer(app);
 

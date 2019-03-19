@@ -9,8 +9,9 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
-    "server": "nodemon src/server/main.js",
-    "dev": "concurrently \"quasar dev\" \"yarn server\"",
+    "dev-client": "quasar dev",
+    "dev-server": "nodemon src/server/main.js",
+    "dev": "concurrently \"yarn dev-client\" \"yarn dev-server\"",
     "build": "quasar build",
     "start": "node src/server/main.js",
     "heroku-postbuild": "yarn && yarn build"
