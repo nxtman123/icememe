@@ -13,7 +13,7 @@
     "dev-server": "nodemon src/server/main.js",
     "dev": "concurrently \"yarn dev-client\" \"yarn dev-server\"",
     "build": "quasar build",
-    "start": "node src/server/main.js",
+    "start": "node src/server/main.js"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",

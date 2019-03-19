@@ -59,8 +59,8 @@ module.exports = function (ctx) {
     build: {
       scopeHoisting: true,
       vueRouterMode: 'history',
-      gzip: true,
-      analyze: true,
+      // gzip: true,
+      // analyze: true,
       extendWebpack (cfg) {
         cfg.module.rules.push({
           enforce: 'pre',
