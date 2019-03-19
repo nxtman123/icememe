@@ -40,7 +40,7 @@ io.on('connect', (socket) => {
 
 // start server
 app.use(history());
-app.use(serveStatic(path.join(__dirname, '/dist/spa')));
+app.use(serveStatic(path.join(__dirname, '../../dist/spa')));
 server.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
