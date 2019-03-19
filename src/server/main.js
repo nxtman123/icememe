@@ -19,10 +19,11 @@ const psql = require('knex')({
   debug: process.env.NODE_ENV !== 'production',
 });
 
+// socket event handlers
 io.on('connect', (socket) => {
   console.log('a user connected!');
 
-  // Demo Index page socket and database interaction
+  // Index page demo socket and database interaction
   socket.on('hello', (message) => {
     console.log('hello', message);
     psql.select('table_name').from('information_schema.tables').limit(8)
@@ -37,6 +38,7 @@ io.on('connect', (socket) => {
   });
 });
 
+// start server
 app.use(history());
 app.use(serveStatic(path.join(__dirname, '/dist/spa')));
 server.listen(port, () => {
