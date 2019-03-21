@@ -4,6 +4,9 @@ const serveStatic = require('serve-static');
 const history = require('connect-history-api-fallback');
 const path = require('path');
 
+// handlers
+const authentication = require('./authentication');
+
 // setup app and server
 const port = process.env.NODE_ENV === 'production'? process.env.PORT || 5000 : 5000;
 const app = express();
@@ -31,6 +34,15 @@ io.on('connect', (socket) => {
       .then((tableNames) => {
         socket.emit('hello', `wow, so ${message}, very message\n\n${tableNames.join('\n')}`);
       });
+  });
+
+  socket.on('register', (userInfo) => {
+    let registrationResult = authentication.register(psql, userInfo);
+    socket.emit('register', registrationResult);
+  });
+
+  socket.on('login', (userInfo) => {
+    socket.emit('login', 'hello');
   });
 
   socket.on('disconnect', () => {
