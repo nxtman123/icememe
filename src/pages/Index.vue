@@ -2,7 +2,7 @@
   <q-page class="column flex-center justify-center">
     <p style="background-color: lightblue; padding: 16px;">
       Links to pages for development
-      <br />
+      <br>
       <router-link :to="{ name: 'register' }">
         Sign Up
       </router-link> |
