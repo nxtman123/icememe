@@ -41,8 +41,10 @@ io.on('connect', (socket) => {
     socket.emit('register', registrationResult);
   });
 
-  socket.on('login', (userInfo) => {
-    socket.emit('login', 'hello');
+  socket.on('login', async (userInfo) => {
+    let isAuthenticated = await authentication.login(psql, userInfo);
+    console.log(isAuthenticated);
+    socket.emit('login', isAuthenticated);
   });
 
   socket.on('disconnect', () => {
