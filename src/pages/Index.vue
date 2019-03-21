@@ -1,7 +1,26 @@
 <template>
   <q-page class="column flex-center justify-center">
+    <p style="background-color: lightblue; padding: 16px;">
+      Links to pages for development
+      <br />
+      <router-link :to="{ name: 'register' }">
+        Sign Up
+      </router-link> |
+      <router-link :to="{ name: 'new' }">
+        New Meme
+      </router-link> |
+      <router-link :to="{ name: 'meme', params: { memeId: 123, slug: 'my-first-meme', }}">
+        Meme Page
+      </router-link> |
+      <router-link :to="{ name: 'user', params: { userId: 456, slug: 'john-cena' }}">
+        User Profile
+      </router-link> |
+      <router-link :to="{ name: 'settings' }">
+        Settings
+      </router-link>
+    </p>
     <img
-      alt="Quasar logo"
+      alt="Ice Doge"
       src="~assets/ice-doge.png"
       style="width:60vw;max-width:400px"
     >
@@ -30,9 +49,6 @@
   </q-page>
 </template>
 
-<style>
-</style>
-
 <script>
 export default {
   name: 'PageIndex',
@@ -54,3 +70,6 @@ export default {
   },
 };
 </script>
+
+<style>
+</style>

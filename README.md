@@ -92,3 +92,15 @@ Some things to note:
 
 - Deployments to production must come from the `master` branch. This means we need to move changes through our Git Flow branching model to master before deploying.
 - This also means development and testing need to be done on our local machines. If you want to test on a phone, you can try connecting over a local network (e.g. `http://local.pc.ip.address:8080/`) or with a tool like [ngrok](https://ngrok.com/) (ngrok free will only work when running in production mode).
+
+## Design
+
+### URL Design
+
+- Main Page `/`
+- Registration `sign-up/?next="/m/123id/title-slug"`
+- Upload `/new`
+- Meme with comments,votes `/m/123id/title-slug`
+- Personal page `/u/123userid/user-name-slug`
+- Settings `/settings`
+- Login (dialog?)
