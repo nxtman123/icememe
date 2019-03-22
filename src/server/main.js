@@ -17,7 +17,6 @@ const io = require('socket.io')(server);
 const psql = require('knex')({
   client: 'pg',
   connection: process.env.DATABASE_URL,
-  debug: process.env.NODE_ENV !== 'production',
 });
 
 // socket event handlers
