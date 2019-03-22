@@ -48,7 +48,23 @@ exports.login = async (psql, userInfo) => {
 }
 
 exports.verifyToken = (token) => {
-  
+  let i = 'IceMeme';
+  let s = 'icememe@icememe.com';
+  let a = 'https://icememe.com';
+
+  var verifyOptions = {
+    issuer: i,
+    subject: s,
+    audience: a,
+    expiresIn: '12h',
+    algorithm: 'RS256'
+  };
+
+   try{
+     return jwt.verify(token, publicKey, verifyOptions);
+   }catch (err){
+     return false;
+   }
 }
 
 createToken = (user) => {
