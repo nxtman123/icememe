@@ -82,8 +82,7 @@ In development, these environment variables will be available in the `process.en
         $ npm install knex -g
         $ knex init
 
-9. This should create a file called knexfile.js (in .gitignore) in the project root directory. Copy past the contents of knexfile.example into knexfile.js, and replace the user and password fields with your local database credentials.
-Finally, run the following to migrate the database to the latest version:
+9. This should create a file called knexfile.js (will be ignored by git) in the project root directory. Copy paste the contents of knexfile.example into knexfile.js, and replace the user and password fields with your local database credentials. Finally, run the following to migrate the database to the latest version:
         
         $ knex migrate:latest  
 
