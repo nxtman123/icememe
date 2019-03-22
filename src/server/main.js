@@ -3,7 +3,7 @@ const express = require('express');
 const serveStatic = require('serve-static');
 const history = require('connect-history-api-fallback');
 const path = require('path');
-//require('dotenv').config();
+require('dotenv').config();
 
 // handlers
 const authentication = require('./authentication');
@@ -50,12 +50,21 @@ io.on('connect', (socket) => {
 
   socket.on('protected', (data) => {
     let tokenToCheck = data.token;
-    console.log(tokenToCheck);
 
     if (authentication.verifyToken(tokenToCheck)) {
       socket.emit('protected', 'you\'re allowed in !');
     } else {
       socket.emit('protected', 'you\'re not allowed in !');
+    }
+  });
+
+  socket.on('decode', (data) => {
+    let tokenToDecode = data.token;
+
+    if (authentication.decodeToken(tokenToDecode)) {
+      socket.emit('decode', 'token decoded successfully');
+    } else {
+      socket.emit('decode', 'could not decode token');
     }
   });
 

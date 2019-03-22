@@ -88,3 +88,10 @@ createToken = (user) => {
 
   return jwt.sign(payload, privateKey, signOptions);
 }
+
+exports.decodeToken = (token) => {
+  let decoded = jwt.decode(token, { complete: true });
+  console.log(decoded);
+
+  return decoded;
+}
