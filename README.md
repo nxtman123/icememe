@@ -50,21 +50,36 @@ Follow these instructions to set up your development environment.
 #### Setting up PostgreSQL
 It's important for your local development environment to match that of our production environment on Heroku. It's also important for us to be able to modify data and schema in a local database rather than a shared one where we'd be causing problems for each other.
 
-5. Follow the Heroku PostgreSQL [local setup](https://devcenter.heroku.com/articles/heroku-postgresql#local-setup) instructions that apply for your system.
+5. Follow the Heroku PostgreSQL [local setup](https://devcenter.heroku.com/articles/heroku-postgresql#local-setup) instructions. Follow the instructions that apply to all systems and those that apply for your system. Make sure to try the test commands to make sure things are working as they should at every step.
 
-    The part where you export `DATABASE_URL` will need to be repeated at the start of every development session (lifetime of the terminal you run the app from). For reference (from the Heroku docs):
 
-        -- for Mac and Linux
-        export DATABASE_URL=postgres://$(whoami)
+#### Environment Variables
+Configuration is done via environment variables that can be different in different systems/deployments, but the code always get these values the same way: via the `process.env` object.
 
-        -- for Windows
-        set DATABASE_URL=postgres://$(whoami)
+6. Create a `.env` file at the project root by copying `.env.example`:
+
+        $ cp .env.example .env
+
+    It will be ignored by git (it's in `.gitignore`).
+
+7. Put the `DATABASE_URL` value (from setting up PostgreSQL locally) that works for you in it.
+
+In development, these environment variables will be available in the `process.env` object, in both the client and server.
+
+> Note!
+>
+> If you introduce a new environment variable necessary to run the app, make sure to add an entry to `.env.example`, either with an acceptable default, or an empty value.
+>
+> E.g.:
+>
+>       DATABASE_URL=postgres://$(whoami)
+>       MY_CRYPTO_SECRET=
 
 
 #### Running the App
 There's two ways to run the app: in development mode or production mode.
 
-6. Run the app in development mode:
+8. Run the app in development mode:
 
         $ yarn dev
 
@@ -75,7 +90,7 @@ There's two ways to run the app: in development mode or production mode.
     - The `nodemon` server that runs the back-end. It monitors the back-end server source files (like `src/server/main.js`) and restarts the server when they change.
 
 
-7. To run the app in production mode you need to build it first. Then run it in another step:
+9. To run the app in production mode you need to build it first. Then run it in another step:
 
         $ yarn build
         $ yarn start
@@ -90,5 +105,17 @@ Visit it at https://infinite-river-96657.herokuapp.com/
 
 Some things to note:
 
-- Deployments to production must come from the `master` branch. This means we need to move changes through our Git Flow branching model to master before deploying.
-- This also means development and testing need to be done on our local machines. If you want to test on a phone, you can try connecting over a local network (e.g. `http://local.pc.ip.address:8080/`) or with a tool like [ngrok](https://ngrok.com/) (ngrok free will only work when running in production mode).
+- Deployments to production must come from the `master` branch. This means we need to move changes through our Git Flow branching model to master (via a release) before deploying.
+- This also means development and testing need to be done on our local machines. If you want to test on a phone, you can try connecting over a local network (e.g. `http://local.pc.ip.address:8080/`) or with a tool like [ngrok](https://ngrok.com/) (ngrok free will only work when running in production mode, as it only allows reverse-proxy to one port number).
+
+## Design
+
+### URL Design
+
+- Main Page `/`
+- Registration `sign-up/?next="/m/123id/title-slug"`
+- Upload `/new`
+- Meme with comments,votes `/m/123id/title-slug`
+- Personal page `/u/123userid/user-name-slug`
+- Settings `/settings`
+- Login (dialog?)

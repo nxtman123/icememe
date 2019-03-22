@@ -3,12 +3,13 @@ const express = require('express');
 const serveStatic = require('serve-static');
 const history = require('connect-history-api-fallback');
 const path = require('path');
+require('dotenv').config();
 
 // handlers
 const authentication = require('./authentication');
 
 // setup app and server
-const port = process.env.NODE_ENV === 'production'? process.env.PORT || 5000 : 5000;
+const port = process.env.NODE_ENV === 'production' ? process.env.PORT || 5000 : 5000;
 const app = express();
 const server = require('http').createServer(app);
 
