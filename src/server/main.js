@@ -3,6 +3,7 @@ const express = require('express');
 const serveStatic = require('serve-static');
 const history = require('connect-history-api-fallback');
 const path = require('path');
+require('dotenv').config();
 
 // setup app and server
 const port = process.env.NODE_ENV === 'production' ? process.env.PORT || 5000 : 5000;
