@@ -76,10 +76,22 @@ In development, these environment variables will be available in the `process.en
 >       MY_CRYPTO_SECRET=
 
 
+#### Running Migrations
+8. We will use knex to add and run migrations to our database. In order to use the knex CLI, we will need to install knex globally, after which we will need to initialize knex. In the project root directory, run:
+
+        $ npm install knex -g
+        $ knex init
+
+9. This should create a file called knexfile.js (in .gitignore) in the project root directory. Copy past the contents of knexfile.example into knexfile.js, and replace the user and password fields with your local database credentials.
+Finally, run the following to migrate the database to the latest version:
+        
+        $ knex migrate:latest  
+
+
 #### Running the App
 There's two ways to run the app: in development mode or production mode.
 
-8. Run the app in development mode:
+10. Run the app in development mode:
 
         $ yarn dev
 
@@ -90,7 +102,7 @@ There's two ways to run the app: in development mode or production mode.
     - The `nodemon` server that runs the back-end. It monitors the back-end server source files (like `src/server/main.js`) and restarts the server when they change.
 
 
-9. To run the app in production mode you need to build it first. Then run it in another step:
+11. To run the app in production mode you need to build it first. Then run it in another step:
 
         $ yarn build
         $ yarn start
