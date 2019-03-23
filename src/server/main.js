@@ -48,6 +48,10 @@ io.on('connect', (socket) => {
     socket.emit('login', isAuthenticated);
   });
 
+  /*
+    example of a protected route
+    checking the token be the first thing to happen on secure routes
+  */
   socket.on('protected', (data) => {
     let tokenToCheck = data.token;
 
@@ -55,16 +59,6 @@ io.on('connect', (socket) => {
       socket.emit('protected', 'you\'re allowed in !');
     } else {
       socket.emit('protected', 'you\'re not allowed in !');
-    }
-  });
-
-  socket.on('decode', (data) => {
-    let tokenToDecode = data.token;
-
-    if (authentication.decodeToken(tokenToDecode)) {
-      socket.emit('decode', 'token decoded successfully');
-    } else {
-      socket.emit('decode', 'could not decode token');
     }
   });
 

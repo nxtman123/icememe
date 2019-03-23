@@ -108,6 +108,36 @@ Some things to note:
 - Deployments to production must come from the `master` branch. This means we need to move changes through our Git Flow branching model to master (via a release) before deploying.
 - This also means development and testing need to be done on our local machines. If you want to test on a phone, you can try connecting over a local network (e.g. `http://local.pc.ip.address:8080/`) or with a tool like [ngrok](https://ngrok.com/) (ngrok free will only work when running in production mode, as it only allows reverse-proxy to one port number).
 
+## Generating Public/Private Keys
+For securing the routes, we will be using public/private key pairs
+
+##### Private key
+Used to generate the JWT (jsonwebtoken)
+
+##### Public key
+Used to decode/verify the JWT
+
+##### Generating Your Own Public/Private Development Key Pair
+There are many different ways of doing this, I used a website to do this.
+1. Generating Keys
+    1. Go to: http://travistidwell.com/jsencrypt/demo/
+    2. Set **Key Size**: 512
+    3. Click **Generate New Keys**
+2. Adding Keys To Your Project
+    1. Open the **server** folder
+    2. Create a new folder called **config**; if one doesn't already exist
+    3. Create a file and name it **private.key**
+    4. Copy all of the contents from **Private Key** and paste it into the newly created **private.key** file
+    5. Create a file called **public.key**
+    6. Copy all of the contents from **Public Key** and paste it into the newly created **public.key** file
+3.  Now the server will use these keys to sign/verify the JWT
+
+##### Note
+Update the **.gitignore** file with the following:
+1. Open **.gitignore**
+2. Add: `/server/config/*.key` to the list of things to ignore
+
+
 ## Design
 
 ### URL Design
