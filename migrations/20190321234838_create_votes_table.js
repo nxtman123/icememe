@@ -1,6 +1,6 @@
 
 exports.up = function(knex, Promise) {
-  return knex.schema.withSchema('public').createTable('votes', function(table) {
+  return knex.schema.createTable('votes', function(table) {
     table.increments('vote_id');
     table.integer('user_id').notNullable();
     table.integer('meme_id').notNullable();

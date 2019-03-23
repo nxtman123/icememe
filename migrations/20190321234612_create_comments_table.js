@@ -1,6 +1,6 @@
 
 exports.up = function(knex, Promise) {
-  return knex.schema.withSchema('public').createTable('comments', function(table) {
+  return knex.schema.createTable('comments', function(table) {
     table.increments('comment_id');
     table.integer('user_id').notNullable();
     table.integer('meme_id').notNullable();
