@@ -135,7 +135,10 @@ There are many different ways of doing this, I used a website to do this.
 ##### Note
 Update the **.gitignore** file with the following:
 1. Open **.gitignore**
-2. Add: `/server/config/*.key` to the list of things to ignore
+2. Add: `/src/server/config/*.key` to the list of things to ignore
+
+Navigate to `/server/config` and create a new file called **.gitkeep**
+*This will make sure that even if this folder is empty, it will still be included in commits*
 
 
 ## Design
