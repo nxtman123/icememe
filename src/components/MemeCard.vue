@@ -17,26 +17,35 @@
             <div class="text-subtitle2">
               {{ username }}
             </div>
-            <div class="text-caption">
-              {{ displayDate }}
-            </div>
           </router-link>
-        </div>
-        <div class="row justify-center items-center">
-          <q-btn-group outline>
-            <q-btn
-              outline
-              icon="arrow_downward"
-            />
-            <q-btn
-              outline
-              icon="arrow_upward"
-            />
-          </q-btn-group>
-          <div class="vote-number text-body1">
-            {{ votesTotal }}
+          <div class="text-caption">
+            {{ displayDate }}
           </div>
         </div>
+        <q-btn-group outline>
+          <q-btn
+            outline
+            icon="arrow_downward"
+          />
+          <q-btn
+            outline
+            class="vote-number"
+            :ripple="false"
+          >
+            {{ votesTotal }}
+          </q-btn>
+          <q-btn
+            outline
+            icon="arrow_upward"
+          />
+        </q-btn-group>
+        <q-btn
+          outline
+          icon="mode_comment"
+          :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
+        >
+          {{ commentCount }}
+        </q-btn>
       </div>
     </q-card-section>
   </q-card>
@@ -44,6 +53,7 @@
 
 <script>
 import moment from 'moment';
+import slugify from 'slugify';
 
 export default {
   name: 'MemeCard',
@@ -76,6 +86,10 @@ export default {
       type: Number,
       default: 0,
     },
+    commentCount: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {};
@@ -83,6 +97,9 @@ export default {
   computed: {
     displayDate() {
       return moment.unix(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
+    },
+    slugTitle() {
+      return slugify(this.title);
     },
   },
 };
@@ -102,6 +119,6 @@ export default {
     text-decoration: underline
 
 .vote-number
-  padding: 6px
+  padding: 0
 
 </style>

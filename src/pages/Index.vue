@@ -68,6 +68,7 @@ export default {
         cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
         dateCreated: 1318781876,
         votesTotal: 543,
+        commentCount: 17,
       },
       inputMessage: '',
       serverMessage: '',
