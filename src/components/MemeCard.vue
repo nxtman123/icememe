@@ -1,54 +1,72 @@
 <template>
-  <q-card class="q-ma-xs meme-card">
-    <img
-      :src="cloudinaryUrl"
-      :alt="title"
-    >
-    <q-card-section>
-      <div class="text-h6">
-        {{ title }}
-      </div>
-      <div class="row justify-between">
-        <div>
+  <div class="col-12 col-sm-4">
+    <q-card>
+      <router-link
+        :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
+        style="box-sizing: inherhit;"
+      >
+        <q-img
+          :src="cloudinaryUrl"
+          :alt="title"
+        />
+      </router-link>
+      <q-card-section>
+        <router-link
+          class="text-h6 title"
+          :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
+        >
+          {{ title }}
+        </router-link>
+        <div class="row justify-between">
           <router-link
-            :to="{ name: 'user', params: { username: username } }"
+            :to="{ name: 'user', params: { username: authorUsername } }"
             class="author"
           >
-            <div class="text-subtitle2">
-              {{ username }}
+            <div class="text-subtitle2 q-py-sm">
+              {{ authorUsername }}
             </div>
           </router-link>
-          <div class="text-caption">
+          <div class="text-caption q-py-sm">
             {{ displayDate }}
           </div>
         </div>
-        <q-btn-group outline>
+        <div class="row justify-between">
+          <q-btn-group outline>
+            <q-btn
+              outline
+            >
+              <q-icon
+                name="arrow_downward"
+                :color="userVote === -1 ? 'primary' : 'grey'"
+              />
+            </q-btn>
+            <q-btn
+              outline
+              class="vote-number"
+              :ripple="false"
+            >
+              {{ votesTotal }}
+            </q-btn>
+            <q-btn
+              outline
+            >
+              <q-icon
+                name="arrow_upward"
+                :color="userVote === 1 ? 'primary' : 'grey'"
+              />
+            </q-btn>
+          </q-btn-group>
           <q-btn
             outline
-            icon="arrow_downward"
-          />
-          <q-btn
-            outline
-            class="vote-number"
-            :ripple="false"
+            icon-right="mode_comment"
+            :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
           >
-            {{ votesTotal }}
+            {{ commentCount }}
           </q-btn>
-          <q-btn
-            outline
-            icon="arrow_upward"
-          />
-        </q-btn-group>
-        <q-btn
-          outline
-          icon="mode_comment"
-          :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
-        >
-          {{ commentCount }}
-        </q-btn>
-      </div>
-    </q-card-section>
-  </q-card>
+        </div>
+      </q-card-section>
+    </q-card>
+  </div>
 </template>
 
 <script>
@@ -62,11 +80,7 @@ export default {
       type: Number,
       default: 0,
     },
-    userId: {
-      type: Number,
-      default: 0,
-    },
-    username: {
+    authorUsername: {
       type: String,
       default: '',
     },
@@ -86,6 +100,10 @@ export default {
       type: Number,
       default: 0,
     },
+    userVote: {
+      type: Number,
+      default: 0,
+    },
     commentCount: {
       type: Number,
       default: 0,
@@ -99,7 +117,7 @@ export default {
       return moment.unix(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
     },
     slugTitle() {
-      return slugify(this.title);
+      return slugify(this.title, { remove: /[*+~.()'"!:@]/g });
     },
   },
 };
@@ -108,9 +126,9 @@ export default {
 <style lang="stylus">
 @import '~quasar-variables'
 
-.meme-card
-  width: 100%
-  max-width: 375px
+.title
+  color: black
+  text-decoration: none
 
 .author
   color: black

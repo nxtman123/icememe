@@ -1,5 +1,5 @@
 <template>
-  <q-page class="column flex-center justify-center">
+  <q-page class="column justify-center list-page">
     <p style="background-color: lightblue; padding: 16px;">
       Links to pages for development
       <br>
@@ -19,12 +19,13 @@
         Settings
       </router-link>
     </p>
-    <img
-      alt="Ice Doge"
-      src="~assets/ice-doge.png"
-      style="width:60vw;max-width:400px"
-    >
-    <meme-card v-bind="demoMeme" />
+    <div class="row justify-center q-col-gutter-sm">
+      <meme-card v-bind="demoMeme" />
+      <meme-card v-bind="demoMeme" />
+      <meme-card v-bind="demoMeme" />
+      <meme-card v-bind="demoMeme" />
+      <meme-card v-bind="demoMeme" />
+    </div>
     <p>Send a message to the server. Choose an adjective.</p>
     <template v-if="serverMessage">
       <p
@@ -62,12 +63,12 @@ export default {
     return {
       demoMeme: {
         memeId: 0,
-        userId: 1,
-        username: 'icedoge',
+        authorUsername: 'icedoge',
         title: 'Sponge Bob: "I don\'t feel so good"',
         cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
         dateCreated: 1318781876,
         votesTotal: 543,
+        userVote: -1,
         commentCount: 17,
       },
       inputMessage: '',
