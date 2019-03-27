@@ -124,6 +124,6 @@ Some things to note:
 - Registration `sign-up/then/m/123id/title-slug`
 - Upload `/new`
 - Meme with comments,votes `/m/123id/title-slug`
-- Personal page `/u/123userid/user-name-slug`
+- Personal page `/u/username`
 - Settings `/settings`
 - Login (via a dialog)

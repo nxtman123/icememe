@@ -24,6 +24,7 @@
       src="~assets/ice-doge.png"
       style="width:60vw;max-width:400px"
     >
+    <meme-card v-bind="demoMeme" />
     <p>Send a message to the server. Choose an adjective.</p>
     <template v-if="serverMessage">
       <p
@@ -50,10 +51,24 @@
 </template>
 
 <script>
+import MemeCard from '../components/MemeCard';
+
 export default {
   name: 'PageIndex',
+  components: {
+    'meme-card': MemeCard,
+  },
   data() {
     return {
+      demoMeme: {
+        memeId: 0,
+        userId: 1,
+        username: 'icedoge',
+        title: 'Sponge Bob: "I don\'t feel so good"',
+        cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
+        dateCreated: 1318781876,
+        votesTotal: 543,
+      },
       inputMessage: '',
       serverMessage: '',
     };
