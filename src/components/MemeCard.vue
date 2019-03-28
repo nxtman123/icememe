@@ -44,7 +44,7 @@
             outline
             class="q-mb-sm"
             icon-right="mode_comment"
-            :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
+            :to="{ name: 'meme', params: { memeId, slug: slugTitle }, hash: '#comments' }"
           >
             {{ commentCount }}
           </q-btn>
@@ -106,7 +106,7 @@ export default {
       return moment.unix(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
     },
     slugTitle() {
-      return slugify(this.title, { remove: /[*+~.()'"!:@]/g });
+      return slugify(this.title, { remove: /[*+~,.()'"!:@]/g });
     },
   },
 };

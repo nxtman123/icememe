@@ -12,7 +12,7 @@
       <router-link :to="{ name: 'meme', params: { memeId: 123, slug: 'my-first-meme', }}">
         Meme Page
       </router-link> |
-      <router-link :to="{ name: 'user', params: { userId: 456, slug: 'john-cena' }}">
+      <router-link :to="{ name: 'user', params: { username: 'john-cena' }}">
         User Profile
       </router-link> |
       <router-link :to="{ name: 'settings' }">
