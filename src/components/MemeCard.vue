@@ -2,6 +2,8 @@
   <div class="col-12 col-sm-6 col-md-4">
     <q-card>
       <router-link
+        basic
+        spinner-color="primary"
         :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
         style="box-sizing: inherhit;"
       >
