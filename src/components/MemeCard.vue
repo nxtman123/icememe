@@ -10,7 +10,7 @@
           :alt="title"
         />
       </router-link>
-      <q-card-section>
+      <q-card-section class="q-pb-sm">
         <router-link
           class="text-h6 title"
           :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
@@ -31,33 +31,18 @@
           </div>
         </div>
         <div class="row justify-between">
-          <q-btn-group outline>
-            <q-btn
-              outline
-            >
-              <q-icon
-                name="arrow_downward"
-                :color="userVote === -1 ? 'primary' : 'grey'"
-              />
-            </q-btn>
-            <q-btn
-              outline
-              class="vote-number"
-              :ripple="false"
-            >
-              {{ votesTotal }}
-            </q-btn>
-            <q-btn
-              outline
-            >
-              <q-icon
-                name="arrow_upward"
-                :color="userVote === 1 ? 'primary' : 'grey'"
-              />
-            </q-btn>
-          </q-btn-group>
+          <q-btn-toggle
+            outline
+            class="q-mb-sm"
+            :value="userVote"
+            :options="[
+              { icon: 'arrow_downward', label: downVotes, value: 'down'},
+              { icon: 'arrow_upward', label: upVotes, value: 'up'},
+            ]"
+          />
           <q-btn
             outline
+            class="q-mb-sm"
             icon-right="mode_comment"
             :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
           >
@@ -96,13 +81,17 @@ export default {
       type: Number,
       default: 0,
     },
-    votesTotal: {
+    downVotes: {
+      type: Number,
+      default: 0,
+    },
+    upVotes: {
       type: Number,
       default: 0,
     },
     userVote: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: null,
     },
     commentCount: {
       type: Number,
@@ -135,8 +124,5 @@ export default {
   text-decoration: none
   &:hover
     text-decoration: underline
-
-.vote-number
-  padding: 0
 
 </style>
