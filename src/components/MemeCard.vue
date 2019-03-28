@@ -43,7 +43,7 @@
           <q-btn
             outline
             class="q-mb-sm"
-            icon-right="mode_comment"
+            icon-right="comment"
             :to="{ name: 'meme', params: { memeId, slug: slugTitle }, hash: '#comments' }"
           >
             {{ commentCount }}
