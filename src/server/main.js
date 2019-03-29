@@ -21,7 +21,7 @@ const psql = require('knex')({
 });
 
 // import authentication and pass psql
-const authentication = require(__dirname + '/authentication')(psql);
+const authentication = require('./authentication')(psql);
 
 // socket event handlers
 io.on('connect', (socket) => {
@@ -42,7 +42,7 @@ io.on('connect', (socket) => {
     returns JWT
    */
   socket.on('register', async (user) => {
-    let registration = await authentication.register(user);
+    const registration = await authentication.register(user);
     let loggedIn;
 
     // after registration, login
@@ -58,7 +58,7 @@ io.on('connect', (socket) => {
    returns JWT
    */
   socket.on('login', async (user) => {
-    let login = await authentication.login(user);
+    const login = await authentication.login(user);
 
     socket.emit('login', login);
   });
