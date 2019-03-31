@@ -88,8 +88,7 @@ Should be changed to
 
 
 ```
-PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQC\n+9FiJCtty4mOb\nqOMWT2f6eNf+Jl\n5M4sQ6
------END RSA PRIVATE KEY-----"
+PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQC\n+9FiJCtty4mOb\nqOMWT2f6eNf+Jl\n5M4sQ6\n-----END RSA PRIVATE KEY-----"
 ```
 
 *NOTICE*: the **\n** appended to where the newlines appeared above

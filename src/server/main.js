@@ -43,14 +43,13 @@ io.on('connect', (socket) => {
    */
   socket.on('register', async (user) => {
     const registration = await authentication.register(user);
-    let loggedIn;
 
-    // after registration, login
-    if (registration) {
-      loggedIn = await authentication.login(user);
+    if (registration === true) {
+      const loggedIn = await authentication.login(user);
+      socket.emit('register', loggedIn);
+    } else {
+      socket.emit('register', registration);
     }
-
-    socket.emit('register', loggedIn);
   });
 
   /*

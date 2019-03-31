@@ -39,6 +39,7 @@ module.exports = psql => ({
 
       return true;
     } catch (e) {
+      console.log(e);
       return 'failed to create user';
     }
   },
@@ -81,6 +82,7 @@ module.exports = psql => ({
       }
       return 'incorrect credentials';
     } catch (e) {
+      console.log(e);
       return 'failed to login';
     }
   },
@@ -100,6 +102,7 @@ module.exports = psql => ({
     try {
       return jwt.verify(token, process.env.PUBLIC_KEY, options);
     } catch (e) {
+      console.log(e);
       return false;
     }
   },
