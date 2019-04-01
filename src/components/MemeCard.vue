@@ -2,23 +2,21 @@
   <div class="col-12 col-sm-6 col-md-4">
     <q-card>
       <router-link
-        basic
-        spinner-color="primary"
+        class="title"
         :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
         style="box-sizing: inherhit;"
       >
+        <q-card-section class="text-h6">
+          {{ title }}
+        </q-card-section>
         <q-img
+          basic
+          spinner-color="primary"
           :src="cloudinaryUrl"
           :alt="title"
         />
       </router-link>
       <q-card-section class="q-pb-sm">
-        <router-link
-          class="text-h6 title"
-          :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
-        >
-          {{ title }}
-        </router-link>
         <div class="row justify-between">
           <router-link
             :to="{ name: 'user', params: { username: authorUsername } }"
@@ -120,11 +118,15 @@ export default {
 .title
   color: black
   text-decoration: none
+  outline: none
+  &:focus
+    text-decoration: underline
 
 .author
   color: black
   text-decoration: none
-  &:hover
+  outline: none
+  &:hover, &:focus
     text-decoration: underline
 
 </style>
