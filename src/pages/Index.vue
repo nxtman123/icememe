@@ -66,7 +66,7 @@ export default {
         authorUsername: 'icedoge',
         title: 'Mr. Fish, I don\'t feel so good',
         cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-        dateCreated: 1318781876,
+        dateCreated: 1554145159,
         downVotes: 73,
         upVotes: 543,
         userVote: 'up',
