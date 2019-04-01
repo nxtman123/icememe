@@ -38,8 +38,8 @@
             class="q-mb-sm"
             :value="userVote"
             :options="[
-              { icon: 'arrow_downward', label: downVotes, value: 'down'},
               { icon: 'arrow_upward', label: upVotes, value: 'up'},
+              { icon: 'arrow_downward', label: downVotes, value: 'down'},
             ]"
           />
           <q-btn
@@ -83,11 +83,11 @@ export default {
       type: Number,
       default: 0,
     },
-    downVotes: {
+    upVotes: {
       type: Number,
       default: 0,
     },
-    upVotes: {
+    downVotes: {
       type: Number,
       default: 0,
     },
