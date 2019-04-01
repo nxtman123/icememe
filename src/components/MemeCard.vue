@@ -42,11 +42,10 @@
           <q-btn
             outline
             class="q-mb-sm"
-            icon-right="comment"
+            icon="comment"
+            :label="commentCount"
             :to="{ name: 'meme', params: { memeId, slug: slugTitle }, hash: '#comments' }"
-          >
-            {{ commentCount }}
-          </q-btn>
+          />
         </div>
       </q-card-section>
     </q-card>
