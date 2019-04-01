@@ -10,7 +10,6 @@
           {{ title }}
         </q-card-section>
         <q-img
-          basic
           spinner-color="primary"
           :src="cloudinaryUrl"
           :alt="title"
