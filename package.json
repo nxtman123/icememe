@@ -2,7 +2,7 @@
   "name": "icememe",
   "version": "0.0.1",
   "description": "A meme sharing site",
-  "productName": "icememe",
+  "productName": "ICEMEME",
   "cordovaId": "org.cordova.quasar.app",
   "author": "SENG 513 W19 Group 11",
   "private": true,
