@@ -1,6 +1,7 @@
 // import modules
 const express = require('express');
 const serveStatic = require('serve-static');
+const enforce = require('express-sslify');
 const history = require('connect-history-api-fallback');
 const path = require('path');
 require('dotenv').config();
@@ -9,6 +10,11 @@ require('dotenv').config();
 const port = process.env.NODE_ENV === 'production' ? process.env.PORT || 5000 : 5000;
 const app = express();
 const server = require('http').createServer(app);
+
+// enforce HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(enforce.HTTPS({ trustProtoHeader: true }));
+}
 
 // connect socket.io
 const io = require('socket.io')(server);
