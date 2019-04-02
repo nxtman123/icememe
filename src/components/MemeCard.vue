@@ -19,7 +19,7 @@
         <div class="row justify-between">
           <router-link
             :to="{ name: 'user', params: { username: authorUsername } }"
-            class="author"
+            class="author-link"
           >
             <div class="text-subtitle2 q-py-sm">
               {{ authorUsername }}
@@ -96,9 +96,6 @@ export default {
       default: 0,
     },
   },
-  data() {
-    return {};
-  },
   computed: {
     displayDate() {
       return moment.unix(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
@@ -118,13 +115,6 @@ export default {
   text-decoration: none
   outline: none
   &:focus
-    text-decoration: underline
-
-.author
-  color: black
-  text-decoration: none
-  outline: none
-  &:hover, &:focus
     text-decoration: underline
 
 </style>
