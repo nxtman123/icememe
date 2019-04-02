@@ -1,7 +1,9 @@
 # ICEMEME
 A site for sharing the coldest memes
 
-## Development
+## Deployment
+
+### Development
 Follow these instructions to set up your development environment.
 
 #### Getting Started
@@ -77,7 +79,7 @@ In development, these environment variables will be available in the `process.en
 
 
 #### Running Migrations
-8. We will use knex to add and run migrations to our database. We will do this using the knex CLI, which can be used with yarn. The repository should already contain a knexfile.js, which uses your DATABASE_URL environment variable to connect to your database. In the project root directory, simply run the following to migrate the database to the latest version:
+8. We will use Knex to add and run migrations to our database. We will do this using the Knex CLI, which can be used with yarn. The repository should already contain a `knexfile.js`, which uses your `DATABASE_URL` environment variable to connect to your database. In the project root directory, simply run the following to migrate the database to the latest version:
 
         $ yarn run knex migrate:latest
 
@@ -104,8 +106,8 @@ There's two ways to run the app: in development mode or production mode.
     This mode builds the app into a set of static files at `dist/spa/`. Then the back-end server is used to serve these front-end static files *and* act normally as the back-end server.
 
 
-## Deployment
-Our app will be deployed on Heroku. Kurtis has his GitHub Student Developer Pack connected to Heroku to provide the PostgreSQL add-on.
+### Production
+Our app will have its production deploy on Heroku. Kurtis has his GitHub Student Developer Pack connected to Heroku to provide the PostgreSQL add-on.
 
 Visit it at https://infinite-river-96657.herokuapp.com/
 
@@ -119,9 +121,9 @@ Some things to note:
 ### URL Design
 
 - Main Page `/`
-- Registration `sign-up/?next="/m/123id/title-slug"`
+- Registration `sign-up/then/m/123id/title-slug`
 - Upload `/new`
 - Meme with comments,votes `/m/123id/title-slug`
-- Personal page `/u/123userid/user-name-slug`
+- Personal page `/u/username`
 - Settings `/settings`
-- Login (dialog?)
+- Login (via a dialog)

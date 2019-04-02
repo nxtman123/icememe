@@ -33,12 +33,16 @@ module.exports = function (ctx) {
         'QToolbar',
         'QToolbarTitle',
         'QBtn',
+        'QBtnToggle',
         'QIcon',
+        'QImg',
         'QList',
         'QItem',
         'QItemSection',
         'QItemLabel',
         'QInput',
+        'QCard',
+        'QCardSection',
       ],
 
       directives: [
