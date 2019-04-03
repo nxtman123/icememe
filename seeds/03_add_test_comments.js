@@ -23,6 +23,7 @@ exports.seed = function(knex, Promise) {
           meme_id: 3,
           text: 'such wow'
         },
+        {
           comment_id: 4, 
           user_id: 2,
           meme_id: 4,
