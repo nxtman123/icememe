@@ -57,7 +57,7 @@
           </q-input>
         </form>
         <comment-card
-          v-for="comment in comments"
+          v-for="comment in sortedComments"
           :key="comment.commentId"
           v-bind="comment"
         />
@@ -121,6 +121,9 @@ export default {
   computed: {
     slugTitle() {
       return slugify(this.title, { remove: /[*+~,.()'"!:@]/g });
+    },
+    sortedComments() {
+      return this.comments.slice().sort((a, b) => (a.commentId < b.commentId));
     },
   },
   methods: {
