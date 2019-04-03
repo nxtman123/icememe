@@ -28,7 +28,7 @@
               size="24px"
             />
             <div class="text-subtitle2">
-              {{ comments.length }}
+              {{ commentCount }}
             </div>
           </div>
         </div>
@@ -56,11 +56,25 @@
             </template>
           </q-input>
         </form>
-        <comment-card
-          v-for="comment in sortedComments"
-          :key="comment.commentId"
-          v-bind="comment"
-        />
+        <q-infinite-scroll
+          :offset="250"
+          @load="loadOlderComments"
+        >
+          <comment-card
+            v-for="comment in sortedComments"
+            :key="comment.commentId"
+            v-bind="comment"
+          />
+
+          <template v-slot:loading>
+            <div class="row justify-center q-my-md">
+              <q-spinner
+                color="primary"
+                size="40px"
+              />
+            </div>
+          </template>
+        </q-infinite-scroll>
       </div>
     </div>
   </q-page>
@@ -90,6 +104,7 @@ export default {
       dateCreated: 1554145159,
       voteTotal: 54323,
       userVote: 'up',
+      commentCount: 3123,
       comments: [
         {
           commentId: 0,
@@ -128,10 +143,51 @@ export default {
   },
   methods: {
     addComment() {
-      // eslint-disable-next-line no-alert
-      alert(`new comment: "${this.draftComment}"`);
-
-      this.draftComment = '';
+      if (this.draftComment) {
+        // TODO replace with call to server
+        this.comments.push({
+          commentId: this.comments.length,
+          username: 'demodave',
+          dateCreated: Math.round((new Date()).getTime() / 1000),
+          text: this.draftComment,
+        });
+        this.draftComment = '';
+        this.commentCount += 1;
+      }
+    },
+    loadOlderComments(index, done) {
+      setTimeout(() => {
+        if (this.comments) {
+          const nextId = this.comments.length;
+          this.comments.push(
+            {
+              commentId: nextId,
+              username: 'frostfox',
+              dateCreated: 1554145259,
+              text: 'first!',
+            },
+            {
+              commentId: nextId + 1,
+              username: 'johncena',
+              dateCreated: 1554145289,
+              text: 'I don\'t see it',
+            },
+            {
+              commentId: nextId + 2,
+              username: 'frostfox',
+              dateCreated: 1554145329,
+              text: 'bahaha',
+            },
+            {
+              commentId: nextId + 3,
+              username: 'harambe',
+              dateCreated: 1554145429,
+              text: 'never forget',
+            },
+          );
+        }
+        done();
+      }, 2000);
     },
   },
 };
