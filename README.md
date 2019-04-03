@@ -106,10 +106,11 @@ In development, these environment variables will be available in the `process.en
 >       MY_CRYPTO_SECRET=
 
 
-#### Running Migrations
-9. We will use knex to add and run migrations to our database. We will do this using the knex CLI, which can be used with yarn. The repository should already contain a knexfile.js, which uses your DATABASE_URL environment variable to connect to your database. In the project root directory, simply run the following to migrate the database to the latest version:
+#### Running Migrations and Seeding the Database
+9. We will use knex to add and run migrations to our database, as well as add test data (seeds). We will do this using the knex CLI, which can be used with yarn. The repository should already contain a knexfile.js, which uses your DATABASE_URL environment variable to connect to your database. In the project root directory, simply run the following commands to migrate the database to the latest version and seed it with test data:
 
         $ yarn run knex migrate:latest
+        $ yarn run knex seed:run
 
 
 #### Running the App
