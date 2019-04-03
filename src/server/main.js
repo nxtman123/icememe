@@ -69,9 +69,9 @@ io.on('connect', (socket) => {
     if (authResult === false) {
       return socket.emit('uploadMemeData', 'cannot verify user');
     } else {
-      const saved = await meme.saveMeme(data.meme, authResult);
-      if (saved) {
-        return socket.emit('uploadMemeData', saved);
+      const saveError = await meme.saveMeme(data.meme, authResult);
+      if (saveError) {
+        return socket.emit('uploadMemeData', saveError);
       }
       return socket.emit('uploadMemeData', 'successfully saved meme');
     }
