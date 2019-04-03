@@ -54,7 +54,7 @@ export default {
   props: {
     memeId: {
       type: Number,
-      default: 0,
+      default: -1,
     },
     authorUsername: {
       type: String,
@@ -94,7 +94,6 @@ export default {
 </script>
 
 <style lang="stylus">
-@import '~quasar-variables'
 
 .title
   color: black

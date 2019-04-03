@@ -1,10 +1,10 @@
 <template>
   <q-page class="list-page">
-    <div class="row justify-center q-col-gutter-sm">
+    <div class="text-h6 q-py-md">
+      {{ title }}
+    </div>
+    <div class="row justify-center q-col-gutter-md">
       <div class="col-12 col-sm-6 column justify-start">
-        <div class="text-h6 q-py-md">
-          {{ title }}
-        </div>
         <q-img
           spinner-color="primary"
           :src="cloudinaryUrl"
@@ -33,6 +33,35 @@
           </div>
         </div>
       </div>
+      <div class="col-12 col-sm-6 column justify-start">
+        <form
+          class="row q-mb-md"
+          @submit.prevent="addComment"
+        >
+          <q-input
+            v-model="draftComment"
+            class="col-grow"
+            outlined
+            placeholder="Write a comment..."
+          >
+            <template v-slot:append>
+              <q-btn
+                type="submit"
+                round
+                flat
+                icon="send"
+                :color="draftComment ? 'primary' : undefined"
+                :disable="!draftComment"
+              />
+            </template>
+          </q-input>
+        </form>
+        <comment-card
+          v-for="comment in comments"
+          :key="comment.commentId"
+          v-bind="comment"
+        />
+      </div>
     </div>
   </q-page>
 </template>
@@ -42,15 +71,18 @@ import slugify from 'slugify';
 
 import VoteButtons from '../components/VoteButtons';
 import MemeMetadata from '../components/MemeMetadata';
+import CommentCard from '../components/CommentCard';
 
 export default {
   name: 'PageMeme',
   components: {
     'vote-buttons': VoteButtons,
     'meme-metadata': MemeMetadata,
+    'comment-card': CommentCard,
   },
   data() {
     return {
+      draftComment: '',
       memeId: 0,
       authorUsername: 'icedoge',
       title: 'Mr. Fish, I don\'t feel so good',
@@ -59,11 +91,45 @@ export default {
       voteTotal: 543,
       userVote: 'up',
       commentCount: 17,
+      comments: [
+        {
+          commentId: 0,
+          username: 'frostfox',
+          dateCreated: 1554145259,
+          text: 'too soon!',
+        },
+        {
+          commentId: 1,
+          username: 'johncena',
+          dateCreated: 1554145289,
+          text: 'Spider Sponge',
+        },
+        {
+          commentId: 2,
+          username: 'homer',
+          dateCreated: 1554145329,
+          text: 'Spider Sponge, Spider Sponge, soaks whatever a spider pokes',
+        },
+        {
+          commentId: 3,
+          username: 'frostfox',
+          dateCreated: 1554145429,
+          text: 'cleans up radioactive stuff',
+        },
+      ],
     };
   },
   computed: {
     slugTitle() {
       return slugify(this.title, { remove: /[*+~,.()'"!:@]/g });
+    },
+  },
+  methods: {
+    addComment() {
+      // eslint-disable-next-line no-alert
+      alert(`new comment: "${this.draftComment}"`);
+
+      this.draftComment = '';
     },
   },
 };

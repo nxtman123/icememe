@@ -2,7 +2,7 @@
   <div class="row rounded-borders vote-buttons items-center">
     <q-btn
       icon="arrow_upward"
-      :color="userVote === 'up' ? 'primary' : none"
+      :color="userVote === 'up' ? 'primary' : undefined"
       flat
     />
     <div class="text-subtitle2 q-px-sm">
@@ -10,7 +10,7 @@
     </div>
     <q-btn
       icon="arrow_downward"
-      :color="userVote === 'down' ? 'primary' : none"
+      :color="userVote === 'down' ? 'primary' : undefined"
       flat
     />
   </div>

@@ -29,9 +29,6 @@ export default {
       default: 0,
     },
   },
-  data() {
-    return {};
-  },
   computed: {
     displayDate() {
       return moment.unix(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
@@ -40,5 +37,13 @@ export default {
 };
 </script>
 
-<style>
+<style lang="stylus">
+
+.author-link
+  color: inherit
+  text-decoration: none
+  outline: none
+  &:hover, &:focus
+    text-decoration: underline
+
 </style>
