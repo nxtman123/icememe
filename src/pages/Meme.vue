@@ -1,5 +1,5 @@
 <template>
-  <q-page class="list-page">
+  <q-page class="page-frame">
     <div class="text-h6 q-py-md">
       {{ title }}
     </div>

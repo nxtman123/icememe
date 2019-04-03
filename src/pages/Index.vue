@@ -1,5 +1,5 @@
 <template>
-  <q-page class="column justify-center list-page">
+  <q-page class="column justify-center page-frame">
     <p style="background-color: lightblue; padding: 16px;">
       Links to pages for development
       <br>
