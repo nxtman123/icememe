@@ -28,7 +28,7 @@
               size="24px"
             />
             <div class="text-subtitle2">
-              {{ commentCount }}
+              {{ comments.length }}
             </div>
           </div>
         </div>
@@ -85,36 +85,35 @@ export default {
       draftComment: '',
       memeId: 0,
       authorUsername: 'icedoge',
-      title: 'Mr. Fish, I don\'t feel so good',
-      cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
+      title: 'Quasar is important, I promise',
+      cloudinaryUrl: 'https://matthewstrom.com/images/ds-0.jpg',
       dateCreated: 1554145159,
-      voteTotal: 543,
+      voteTotal: 54323,
       userVote: 'up',
-      commentCount: 17,
       comments: [
         {
           commentId: 0,
           username: 'frostfox',
           dateCreated: 1554145259,
-          text: 'too soon!',
+          text: 'first!',
         },
         {
           commentId: 1,
           username: 'johncena',
           dateCreated: 1554145289,
-          text: 'Spider Sponge',
+          text: 'I don\'t see it',
         },
         {
           commentId: 2,
-          username: 'homer',
+          username: 'frostfox',
           dateCreated: 1554145329,
-          text: 'Spider Sponge, Spider Sponge, soaks whatever a spider pokes',
+          text: 'bahaha',
         },
         {
           commentId: 3,
-          username: 'frostfox',
+          username: 'harambe',
           dateCreated: 1554145429,
-          text: 'cleans up radioactive stuff',
+          text: 'never forget',
         },
       ],
     };
