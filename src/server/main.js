@@ -26,6 +26,9 @@ const psql = require('knex')({
   debug: process.env.NODE_ENV !== 'production',
 });
 
+// import authentication and pass psql
+const authentication = require('./authentication')(psql);
+
 // socket event handlers
 io.on('connect', (socket) => {
   console.log('a user connected!');
@@ -38,6 +41,31 @@ io.on('connect', (socket) => {
       .then((tableNames) => {
         socket.emit('hello', `wow, so ${message}, very message\n\n${tableNames.join('\n')}`);
       });
+  });
+
+  /*
+    registration requires: 'username', 'email', 'password'
+    returns JWT
+   */
+  socket.on('register', async (user) => {
+    const registration = await authentication.register(user);
+
+    if (registration === true) {
+      const loggedIn = await authentication.login(user);
+      socket.emit('register', loggedIn);
+    } else {
+      socket.emit('register', registration);
+    }
+  });
+
+  /*
+   login requires: 'username', 'password'
+   returns JWT
+   */
+  socket.on('login', async (user) => {
+    const login = await authentication.login(user);
+
+    socket.emit('login', login);
   });
 
   socket.on('disconnect', () => {
