@@ -22,6 +22,7 @@ const psql = require('knex')({
 
 // import authentication and pass psql
 const authentication = require('./authentication')(psql);
+const meme = require('./meme')(psql);
 
 // socket event handlers
 io.on('connect', (socket) => {
@@ -60,6 +61,20 @@ io.on('connect', (socket) => {
     const login = await authentication.login(user);
 
     socket.emit('login', login);
+  });
+
+  socket.on('uploadMemeData', async (data) => {
+    const authResult = await authentication.verifyToken(data.token);
+
+    if (authResult === false) {
+      return socket.emit('uploadMemeData', 'cannot verify user');
+    } else {
+      const saved = await meme.saveMeme(data.meme, authResult);
+      if (saved) {
+        return socket.emit('uploadMemeData', saved);
+      }
+      return socket.emit('uploadMemeData', 'successfully saved meme');
+    }
   });
 
   socket.on('disconnect', () => {
