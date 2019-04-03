@@ -16,28 +16,15 @@
         />
       </router-link>
       <q-card-section class="q-pb-sm">
+        <meme-metadata
+          :author-username="authorUsername"
+          :date-created="dateCreated"
+        />
         <div class="row justify-between">
-          <router-link
-            :to="{ name: 'user', params: { username: authorUsername } }"
-            class="author-link"
-          >
-            <div class="text-subtitle2 q-py-sm">
-              {{ authorUsername }}
-            </div>
-          </router-link>
-          <div class="text-caption q-py-sm">
-            {{ displayDate }}
-          </div>
-        </div>
-        <div class="row justify-between">
-          <q-btn-toggle
-            outline
-            class="q-mb-sm"
-            :value="userVote"
-            :options="[
-              { icon: 'arrow_upward', label: upVotes, value: 'up'},
-              { icon: 'arrow_downward', label: downVotes, value: 'down'},
-            ]"
+          <vote-buttons
+            class="q-mb-sm q-mr-sm"
+            :vote-total="voteTotal"
+            :user-vote="userVote"
           />
           <q-btn
             outline
@@ -53,11 +40,17 @@
 </template>
 
 <script>
-import moment from 'moment';
 import slugify from 'slugify';
+
+import VoteButtons from './VoteButtons';
+import MemeMetadata from './MemeMetadata';
 
 export default {
   name: 'MemeCard',
+  components: {
+    'vote-buttons': VoteButtons,
+    'meme-metadata': MemeMetadata,
+  },
   props: {
     memeId: {
       type: Number,
@@ -79,11 +72,7 @@ export default {
       type: Number,
       default: 0,
     },
-    upVotes: {
-      type: Number,
-      default: 0,
-    },
-    downVotes: {
+    voteTotal: {
       type: Number,
       default: 0,
     },
@@ -97,9 +86,6 @@ export default {
     },
   },
   computed: {
-    displayDate() {
-      return moment.unix(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
-    },
     slugTitle() {
       return slugify(this.title, { remove: /[*+~,.()'"!:@]/g });
     },
