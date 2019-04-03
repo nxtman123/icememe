@@ -66,6 +66,36 @@ Configuration is done via environment variables that can be different in differe
 
 7. Put the `DATABASE_URL` value (from setting up PostgreSQL locally) that works for you in it.
 
+8. Generating public/private key pairs for signing JWT
+	1. Go to: http://travistidwell.com/jsencrypt/demo/
+	2. Key Size: **512 bit**
+	3. Click on **Generate New Keys**
+	4. Open the `.env.example` file
+	5. Copy and paste the following lines from `.env.example` into your `.env` file: `PRIVATE_KEY` `PUBLIC_KEY` `ISSUER` `SUBJECT` `AUDIENCE` `EXPIRES_IN` `ALGORITHM`
+	6. Leave the values for `ISSUER` `SUBJECT` `AUDIENCE` `EXPIRES_IN` `ALGORITHM` as they are
+	7. Copy the private key from `iii` and paste it where the `PRIVATE_KEY=` in your `.env` file, do the same for the public key
+		a. When you paste in the keys, you will need to make adjustments to the strings, because they will be on separate lines
+
+
+```
+PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----
+MIICXAIBAAKBgQC
++9FiJCtty4mOb
+qOMWT2f6eNf+Jl
+5M4sQ6
+-----END RSA PRIVATE KEY-----"
+```
+
+Should be changed to
+
+
+```
+PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQC\n+9FiJCtty4mOb\nqOMWT2f6eNf+Jl\n5M4sQ6\n-----END RSA PRIVATE KEY-----"
+```
+
+*NOTICE*: the **\n** appended to where the newlines appeared above
+
+
 In development, these environment variables will be available in the `process.env` object, in both the client and server.
 
 > Note!
@@ -79,7 +109,7 @@ In development, these environment variables will be available in the `process.en
 
 
 #### Running Migrations
-8. We will use Knex to add and run migrations to our database. We will do this using the Knex CLI, which can be used with yarn. The repository should already contain a `knexfile.js`, which uses your `DATABASE_URL` environment variable to connect to your database. In the project root directory, simply run the following to migrate the database to the latest version:
+9. We will use Knex to add and run migrations to our database. We will do this using the Knex CLI, which can be used with yarn. The repository should already contain a `knexfile.js`, which uses your `DATABASE_URL` environment variable to connect to your database. In the project root directory, simply run the following to migrate the database to the latest version:
 
         $ yarn run knex migrate:latest
 
@@ -87,7 +117,7 @@ In development, these environment variables will be available in the `process.en
 #### Running the App
 There's two ways to run the app: in development mode or production mode.
 
-9. Run the app in development mode:
+10. Run the app in development mode:
 
         $ yarn dev
 
@@ -98,7 +128,7 @@ There's two ways to run the app: in development mode or production mode.
     - The `nodemon` server that runs the back-end. It monitors the back-end server source files (like `src/server/main.js`) and restarts the server when they change.
 
 
-10. To run the app in production mode you need to build it first. Then run it in another step:
+11. To run the app in production mode you need to build it first. Then run it in another step:
 
         $ yarn build
         $ yarn start
