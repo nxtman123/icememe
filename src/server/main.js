@@ -34,6 +34,12 @@ const meme = require('./meme')(psql);
 io.on('connect', (socket) => {
   console.log('a user connected!');
 
+  // check if token exists
+  let socketUser = false;
+  if (socket.handshake.query.token) {
+    socketUser = authentication.verifyToken(socket.handshake.query.token);
+  }
+
   // Index page demo socket and database interaction
   socket.on('hello', (message) => {
     console.log('hello', message);
@@ -64,23 +70,25 @@ io.on('connect', (socket) => {
    returns JWT
    */
   socket.on('login', async (user) => {
-    const login = await authentication.login(user);
+    const token = await authentication.login(user);
+    const tokenVerification = authentication.verifyToken(token);
 
-    socket.emit('login', login);
+    if (tokenVerification !== false) {
+      socketUser = authentication.verifyToken(socket.handshake.query.token);
+    }
+    socket.emit('login', token);
   });
 
   socket.on('uploadMemeData', async (data) => {
-    const authResult = await authentication.verifyToken(data.token);
-
-    if (authResult === false) {
+    if (socketUser === false) {
       return socket.emit('uploadMemeData', 'cannot verify user');
-    } else {
-      const saveError = await meme.saveMeme(data.meme, authResult);
-      if (saveError) {
-        return socket.emit('uploadMemeData', saveError);
-      }
-      return socket.emit('uploadMemeData', 'successfully saved meme');
     }
+    const saveResult = await meme.saveMeme(data, socketUser);
+
+    if (saveResult !== true) {
+      return socket.emit('uploadMemeData', saveResult);
+    }
+    return socket.emit('uploadMemeData', 'successfully saved meme');
   });
 
   socket.on('disconnect', () => {
