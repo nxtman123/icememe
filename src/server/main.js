@@ -71,9 +71,9 @@ io.on('connect', (socket) => {
    */
   socket.on('login', async (user) => {
     const token = await authentication.login(user);
-    const tokenVerification = authentication.verifyToken(token);
+    socketUser = authentication.verifyToken(token);
 
-    if (tokenVerification !== false) {
+    if (socketUser !== false) {
       socketUser = authentication.verifyToken(socket.handshake.query.token);
     }
     socket.emit('login', token);
@@ -85,10 +85,7 @@ io.on('connect', (socket) => {
     }
     const saveResult = await meme.saveMeme(data, socketUser);
 
-    if (saveResult !== true) {
-      return socket.emit('uploadMemeData', saveResult);
-    }
-    return socket.emit('uploadMemeData', 'successfully saved meme');
+    return socket.emit('uploadMemeData', saveResult);
   });
 
   socket.on('disconnect', () => {
