@@ -71,11 +71,11 @@ io.on('connect', (socket) => {
    */
   socket.on('login', async (user) => {
     const token = await authentication.login(user);
-    socketUser = authentication.verifyToken(token);
 
-    if (socketUser !== false) {
-      socketUser = authentication.verifyToken(socket.handshake.query.token);
+    if (token.token) {
+      socketUser = authentication.verifyToken(token);
     }
+
     socket.emit('login', token);
   });
 
