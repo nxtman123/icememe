@@ -5,16 +5,17 @@
     >
       <q-toolbar>
         <q-toolbar-title>
-          <font
-            face="impact"
-            size="6"
+          <router-link
+            id="title"
+            :to="{ name: 'main' }"
           >
             ICEMEME
-          </font>
+          </router-link>
         </q-toolbar-title>
 
         <q-btn
-          color="secondary"
+          flat
+          stretch
           :to="{ name: 'register' }"
         >
           Sign Up / Log In
@@ -45,13 +46,14 @@
         <q-item
           clickable
           tag="a"
-          :to="{ name: 'home' }"
+          exact
+          :to="{ name: 'main' }"
         >
           <q-item-section avatar>
-            <q-icon name="home" />
+            <q-icon name="whatshot" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Home</q-item-label>
+            <q-item-label>Latest</q-item-label>
             <q-item-label caption>
               Main Page
             </q-item-label>
@@ -105,7 +107,7 @@
         <q-item
           clickable
           tag="a"
-          :to="{ name: 'home' }"
+          @click="logout"
         >
           <q-item-section avatar>
             <q-icon name="exit_to_app" />
@@ -138,6 +140,9 @@ export default {
   },
   methods: {
     openURL,
+    logout() {
+      alert('TODO: LOGOUT');
+    },
   },
 };
 </script>
