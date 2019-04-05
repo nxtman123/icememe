@@ -71,11 +71,6 @@ io.on('connect', (socket) => {
    */
   socket.on('login', async (user) => {
     const token = await authentication.login(user);
-
-    if (token.token) {
-      socketUser = authentication.verifyToken(token);
-    }
-
     socket.emit('login', token);
   });
 
