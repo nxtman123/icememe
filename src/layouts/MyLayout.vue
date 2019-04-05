@@ -100,7 +100,7 @@
           <q-item-section>
             <q-item-label>Settings</q-item-label>
             <q-item-label caption>
-              Profile Settings
+              Account Settings
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -141,6 +141,7 @@ export default {
   methods: {
     openURL,
     logout() {
+      // eslint-disable-next-line no-alert
       alert('TODO: LOGOUT');
     },
   },
