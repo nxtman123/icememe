@@ -83,6 +83,22 @@ io.on('connect', (socket) => {
     return socket.emit('uploadMemeData', saveResult);
   });
 
+  socket.on('addComment', async (data) => {
+    if (socketUser === false) {
+      return socket.emit('addComment', 'cannot verify user');
+    }
+
+    const commentResult = await meme.addComment(data, socketUser);
+
+    return socket.emit('addComment', commentResult);
+  });
+
+  socket.on('getMemeComments', async (data) => {
+    const comments = await meme.getMemeComments(data.meme_id);
+
+    return socket.emit('getMemeComments', comments);
+  });
+
   socket.on('disconnect', () => {
     console.log('a user disconnected :(');
   });
