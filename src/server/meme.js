@@ -18,4 +18,20 @@ module.exports = psql => ({
       return 'unexpected error when trying to save meme data';
     }
   },
+
+  getMemes: async (username) => {
+    try {
+      // get all memes if username not provided
+      if (username === '' || username === undefined || username === null) {
+        return await psql('memes');
+      }
+      // else get memes belonging to the provided user
+      return await psql('memes')
+        .innerJoin('users', 'memes.user_id', 'users.user_id')
+        .where('users.username', username);
+    } catch (e) {
+      console.log(e);
+      return 'unexpected error when trying to retrieve memes';
+    }
+  },
 });

@@ -83,6 +83,12 @@ io.on('connect', (socket) => {
     return socket.emit('uploadMemeData', saveResult);
   });
 
+  socket.on('getMemes', async (username) => {
+    const memes = await meme.getMemes(username);
+
+    socket.emit('getMemes', memes);
+  });
+
   socket.on('disconnect', () => {
     console.log('a user disconnected :(');
   });
