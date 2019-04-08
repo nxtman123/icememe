@@ -51,7 +51,7 @@ module.exports = psql => ({
       const comments = await psql('comments')
         .where({ meme_id: data.meme_id })
         .orderBy('date_created')
-        .limit(data.limit)
+        .limit(20)
         .offset(data.offset);
 
       return comments;
