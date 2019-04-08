@@ -43,10 +43,13 @@ module.exports = psql => ({
     }
   },
 
-  getMemeComments: async (memeId) => {
+  getMemeComments: async (data) => {
     try {
       const comments = await psql('comments')
-        .where({ meme_id: memeId });
+        .where({ meme_id: data.meme_id })
+        .orderBy('date_created')
+        .limit(data.limit)
+        .offset(data.offset);
 
       return comments;
     } catch (e) {

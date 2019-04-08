@@ -94,7 +94,7 @@ io.on('connect', (socket) => {
   });
 
   socket.on('getMemeComments', async (data) => {
-    const comments = await meme.getMemeComments(data.meme_id);
+    const comments = await meme.getMemeComments(data);
 
     return socket.emit('getMemeComments', comments);
   });
