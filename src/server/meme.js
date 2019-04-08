@@ -38,7 +38,7 @@ module.exports = psql => ({
 
       return {
         status: true,
-        comment: newComment
+        comment: newComment,
       };
     } catch (e) {
       console.log(e);
@@ -64,7 +64,7 @@ module.exports = psql => ({
   getMeme: async (memeId) => {
     try {
       const meme = await psql('memes')
-        .where({ meme_id: parseInt(memeId) })
+        .where({ meme_id: parseInt(memeId, 10) })
         .first();
 
       return meme;
@@ -72,5 +72,5 @@ module.exports = psql => ({
       console.log(e);
       return 'unexpected error when trying to retrieve meme';
     }
-  }
+  },
 });
