@@ -28,15 +28,18 @@ module.exports = psql => ({
         return 'meme with that id does not exist';
       }
 
-      await psql('comments')
+      const newComment = await psql('comments')
         .insert({
           user_id: user.user_id,
           meme_id: comment.meme_id,
           text: comment.text,
           date_created: new Date(),
-        });
+        }).returning('*');
 
-      return true;
+      return {
+        status: true,
+        comment: newComment
+      };
     } catch (e) {
       console.log(e);
       return 'unexpected error when trying to add comment';
@@ -57,4 +60,17 @@ module.exports = psql => ({
       return 'unexpected error when trying to retrieve comments';
     }
   },
+
+  getMeme: async (memeId) => {
+    try {
+      const meme = await psql('memes')
+        .where({ meme_id: parseInt(memeId) })
+        .first();
+
+      return meme;
+    } catch (e) {
+      console.log(e);
+      return 'unexpected error when trying to retrieve meme';
+    }
+  }
 });

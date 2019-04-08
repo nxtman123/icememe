@@ -90,7 +90,29 @@ io.on('connect', (socket) => {
 
     const commentResult = await meme.addComment(data, socketUser);
 
+    /*
+      if result contains a status, then it is successful
+      emit new comment to all users viewing particular meme
+     */
+    if (commentResult.status) {
+      io.to(`meme_id: ${data.meme_id}`).emit('getLatestComment', commentResult);
+    }
+
     return socket.emit('addComment', commentResult);
+  });
+
+  socket.on('getMeme', async (data) => {
+    const memeResult = await meme.getMeme(data.meme_id);
+
+    /*
+      if result contains a meme_id, then it is successful
+      on retrieval of meme data, join user to meme's room
+     */
+    if (memeResult.meme_id) {
+      socket.join(`meme_id: ${data.meme_id}`);
+    }
+
+    return socket.emit('getMeme', memeResult);
   });
 
   socket.on('getMemeComments', async (data) => {
