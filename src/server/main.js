@@ -28,10 +28,17 @@ const psql = require('knex')({
 
 // import authentication and pass psql
 const authentication = require('./authentication')(psql);
+const meme = require('./meme')(psql);
 
 // socket event handlers
 io.on('connect', (socket) => {
   console.log('a user connected!');
+
+  // check if token exists
+  let socketUser = false;
+  if (socket.handshake.query.token) {
+    socketUser = authentication.verifyToken(socket.handshake.query.token);
+  }
 
   // Index page demo socket and database interaction
   socket.on('hello', (message) => {
@@ -63,9 +70,17 @@ io.on('connect', (socket) => {
    returns JWT
    */
   socket.on('login', async (user) => {
-    const login = await authentication.login(user);
+    const token = await authentication.login(user);
+    socket.emit('login', token);
+  });
 
-    socket.emit('login', login);
+  socket.on('uploadMemeData', async (data) => {
+    if (socketUser === false) {
+      return socket.emit('uploadMemeData', 'cannot verify user');
+    }
+    const saveResult = await meme.saveMeme(data, socketUser);
+
+    return socket.emit('uploadMemeData', saveResult);
   });
 
   socket.on('disconnect', () => {
