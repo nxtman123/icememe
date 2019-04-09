@@ -58,8 +58,13 @@ io.on('connect', (socket) => {
     const registration = await authentication.register(user);
 
     if (registration === true) {
-      const loggedIn = await authentication.login(user);
-      socket.emit('register', loggedIn);
+      const loginResult = await authentication.login(user);
+
+      if (loginResult.token) {
+        socketUser = authentication.verifyToken(loginResult.token);
+      }
+
+      socket.emit('register', loginResult);
     } else {
       socket.emit('register', registration);
     }
@@ -70,8 +75,13 @@ io.on('connect', (socket) => {
    returns JWT
    */
   socket.on('login', async (user) => {
-    const token = await authentication.login(user);
-    socket.emit('login', token);
+    const loginResult = await authentication.login(user);
+
+    if (loginResult.token) {
+      socketUser = authentication.verifyToken(loginResult.token);
+    }
+
+    socket.emit('login', loginResult);
   });
 
   socket.on('uploadMemeData', async (data) => {
