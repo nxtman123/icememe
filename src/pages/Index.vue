@@ -4,13 +4,18 @@
       :offset="250"
       @load="loadMoreMemes"
     >
-      <div class="row justify-center q-col-gutter-sm q-pt-md">
+      <masonry
+        class="q-pt-md"
+        :gutter="16"
+        :cols="{default: 3, 1024: 2, 600: 1}"
+      >
         <meme-card
           v-for="meme in memes"
           :key="meme.id"
+          class="q-pb-md"
           v-bind="meme"
         />
-      </div>
+      </masonry>
 
       <template v-slot:loading>
         <div class="row justify-center q-my-md">
@@ -61,7 +66,7 @@ export default {
           title: 'Mr. Fish, I don\'t feel so good',
           cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
           dateCreated: 1554145159,
-          voteTotal: -543,
+          voteTotal: -79,
           userVote: 'down',
           commentCount: 17,
         },
