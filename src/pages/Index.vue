@@ -1,5 +1,5 @@
 <template>
-  <q-page class="column flex-center justify-center">
+  <q-page class="column justify-center page-frame">
     <p style="background-color: lightblue; padding: 16px;">
       Links to pages for development
       <br>
@@ -12,18 +12,20 @@
       <router-link :to="{ name: 'meme', params: { memeId: 123, slug: 'my-first-meme', }}">
         Meme Page
       </router-link> |
-      <router-link :to="{ name: 'user', params: { userId: 456, slug: 'john-cena' }}">
+      <router-link :to="{ name: 'user', params: { username: 'john-cena' }}">
         User Profile
       </router-link> |
       <router-link :to="{ name: 'settings' }">
         Settings
       </router-link>
     </p>
-    <img
-      alt="Ice Doge"
-      src="~assets/ice-doge.png"
-      style="width:60vw;max-width:400px"
-    >
+    <div class="row justify-center q-col-gutter-sm">
+      <meme-card v-bind="demoMeme" />
+      <meme-card v-bind="demoMeme" />
+      <meme-card v-bind="demoMeme" />
+      <meme-card v-bind="demoMeme" />
+      <meme-card v-bind="demoMeme" />
+    </div>
     <p>Send a message to the server. Choose an adjective.</p>
     <template v-if="serverMessage">
       <p
@@ -50,10 +52,25 @@
 </template>
 
 <script>
+import MemeCard from '../components/MemeCard';
+
 export default {
   name: 'PageIndex',
+  components: {
+    'meme-card': MemeCard,
+  },
   data() {
     return {
+      demoMeme: {
+        memeId: 0,
+        authorUsername: 'icedoge',
+        title: 'Mr. Fish, I don\'t feel so good',
+        cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
+        dateCreated: 1554145159,
+        voteTotal: 543,
+        userVote: 'up',
+        commentCount: 17,
+      },
       inputMessage: '',
       serverMessage: '',
     };
