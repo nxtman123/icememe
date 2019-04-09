@@ -101,8 +101,8 @@ io.on('connect', (socket) => {
     return socket.emit('addComment', commentResult);
   });
 
-  socket.on('getMeme', async (data) => {
-    const memeResult = await meme.getMeme(data.meme_id);
+  socket.on('getMemeById', async (data) => {
+    const memeResult = await meme.getMemeById(data.meme_id);
 
     /*
       if result contains a meme_id, then it is successful
@@ -112,7 +112,7 @@ io.on('connect', (socket) => {
       socket.join(`meme_id: ${data.meme_id}`);
     }
 
-    return socket.emit('getMeme', memeResult);
+    return socket.emit('getMemeById', memeResult);
   });
 
   socket.on('getMemeComments', async (data) => {

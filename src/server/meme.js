@@ -61,7 +61,7 @@ module.exports = psql => ({
     }
   },
 
-  getMeme: async (memeId) => {
+  getMemeById: async (memeId) => {
     try {
       const meme = await psql('memes')
         .where({ meme_id: parseInt(memeId, 10) })
