@@ -1,7 +1,8 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh LpR fFf">
     <q-header
       elevated
+      :reveal="!this.$q.platform.is.desktop"
     >
       <q-toolbar>
         <q-toolbar-title>
@@ -62,7 +63,7 @@
         <q-item
           clickable
           tag="a"
-          :to="{ name: 'user', params: { userId: 456, slug: 'john-cena' }}"
+          :to="{ name: 'user', params: { username: 'johncena' }}"
         >
           <q-item-section avatar>
             <q-icon name="person" />

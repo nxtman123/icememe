@@ -27,6 +27,7 @@ export default {
     userVote: {
       type: String,
       default: null,
+      validator: v => ['up', 'down', null].includes(v),
     },
   },
   data() {
