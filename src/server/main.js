@@ -121,6 +121,12 @@ io.on('connect', (socket) => {
     return socket.emit('getMemeComments', comments);
   });
 
+  socket.on('leaveMeme', (data) => {
+    socket.leave(`meme_id: ${data.meme_id}`, () => {
+      console.log('user has left... oh no :(');
+    });
+  });
+
   socket.on('disconnect', () => {
     console.log('a user disconnected :(');
   });
