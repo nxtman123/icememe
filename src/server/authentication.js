@@ -71,14 +71,23 @@ module.exports = psql => ({
 
           const token = jwt.sign(payload, process.env.PRIVATE_KEY, options);
 
-          return { token };
+          return {
+            isSuccessful: true,
+            message: token
+          };
         }
       }
 
-      return 'incorrect credentials';
+      return {
+        isSuccessful: false,
+        message: 'incorrect credentials'
+      };
     } catch (e) {
       console.log(e);
-      return 'unexpected error during login attempt';
+      return {
+        isSuccessful: false,
+        message: 'unexpected error during login attempt'
+      }
     }
   },
 
