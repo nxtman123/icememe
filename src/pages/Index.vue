@@ -1,41 +1,19 @@
 <template>
   <q-page class="column justify-center page-frame">
-    <q-infinite-scroll
-      :offset="250"
+    <meme-collection
+      :memes="memes"
       @load="loadMoreMemes"
-    >
-      <masonry
-        class="q-pt-md"
-        :gutter="16"
-        :cols="{default: 3, 1024: 2, 600: 1}"
-      >
-        <meme-card
-          v-for="meme in memes"
-          :key="meme.id"
-          class="q-pb-md"
-          v-bind="meme"
-        />
-      </masonry>
-
-      <template v-slot:loading>
-        <div class="row justify-center q-my-md">
-          <q-spinner
-            color="primary"
-            size="40px"
-          />
-        </div>
-      </template>
-    </q-infinite-scroll>
+    />
   </q-page>
 </template>
 
 <script>
-import MemeCard from '../components/MemeCard';
+import MemeCollection from '../components/MemeCollection';
 
 export default {
   name: 'PageIndex',
   components: {
-    'meme-card': MemeCard,
+    'meme-collection': MemeCollection,
   },
   data() {
     return {
@@ -124,7 +102,7 @@ export default {
     };
   },
   methods: {
-    loadMoreMemes(index, done) {
+    loadMoreMemes(done) {
       setTimeout(() => {
         if (this.memes) {
           const nextId = this.memes.length;
@@ -152,7 +130,7 @@ export default {
           );
         }
         done();
-      }, 2000);
+      }, 1500);
     },
   },
 };
