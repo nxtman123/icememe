@@ -83,6 +83,44 @@ io.on('connect', (socket) => {
     return socket.emit('uploadMemeData', saveResult);
   });
 
+  socket.on('addComment', async (data) => {
+    if (socketUser === false) {
+      return socket.emit('addComment', 'cannot verify user');
+    }
+
+    const commentResult = await meme.addComment(data, socketUser);
+
+    /*
+      if result contains a status, then it is successful
+      emit new comment to all users viewing particular meme
+     */
+    if (commentResult.status) {
+      io.to(`meme_id: ${data.meme_id}`).emit('getLatestComment', commentResult);
+    }
+
+    return socket.emit('addComment', commentResult);
+  });
+
+  socket.on('getMemeById', async (data) => {
+    const memeResult = await meme.getMemeById(data.meme_id);
+
+    /*
+      if result contains a meme_id, then it is successful
+      on retrieval of meme data, join user to meme's room
+     */
+    if (memeResult.meme_id) {
+      socket.join(`meme_id: ${data.meme_id}`);
+    }
+
+    return socket.emit('getMemeById', memeResult);
+  });
+
+  socket.on('getMemeComments', async (data) => {
+    const comments = await meme.getMemeComments(data);
+
+    return socket.emit('getMemeComments', comments);
+  });
+
   socket.on('disconnect', () => {
     console.log('a user disconnected :(');
   });
