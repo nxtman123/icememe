@@ -46,6 +46,7 @@ module.exports = function (ctx) {
         'QSpinner',
         'QToolbar',
         'QToolbarTitle',
+        'QPageSticky',
       ],
 
       directives: [
