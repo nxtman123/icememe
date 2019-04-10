@@ -122,9 +122,7 @@ io.on('connect', (socket) => {
   });
 
   socket.on('leaveMeme', (data) => {
-    socket.leave(`meme_id: ${data.meme_id}`, () => {
-      console.log('user has left... oh no :(');
-    });
+    socket.leave(`meme_id: ${data.meme_id}`, () => {});
   });
 
   socket.on('disconnect', () => {
