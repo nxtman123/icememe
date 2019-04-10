@@ -1,3 +1,5 @@
+const COMMENT_LIMIT = 5;
+
 module.exports = psql => ({
   saveMeme: async (meme, user) => {
     try {
@@ -48,11 +50,27 @@ module.exports = psql => ({
 
   getMemeComments: async (data) => {
     try {
-      const comments = await psql('comments')
-        .where({ meme_id: data.meme_id })
-        .orderBy('date_created')
-        .limit(20)
-        .offset(data.offset);
+      let comments;
+
+      /*
+        for lazy loading, on initial load, it will retrieve the latest comments
+        after each subsequent call, expects the id of the earliest comment received
+         in order retrieve the next set of comments
+       */
+      if (data.earliest_id) {
+        comments = await psql('comments')
+          .where({ meme_id: data.meme_id })
+          .orderBy('comment_id', 'desc')
+          .limit(COMMENT_LIMIT)
+          .offset(data.offset)
+          .andWhere('comment_id', '<', data.earliest_id);
+      } else {
+        comments = await psql('comments')
+          .where({ meme_id: data.meme_id })
+          .orderBy('comment_id', 'desc')
+          .limit(COMMENT_LIMIT)
+          .offset(data.offset);
+      }
 
       return comments;
     } catch (e) {
