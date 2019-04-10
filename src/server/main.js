@@ -37,7 +37,7 @@ io.on('connect', (socket) => {
   // check if token exists
   let socketUser = false;
   if (socket.handshake.query.token) {
-    socketUser = authentication.verifyToken(socket.handshake.query.token);
+    socketUser = authentication.verifyToken(socket.handshake.query.token).value;
   }
 
   // Index page demo socket and database interaction
@@ -57,11 +57,11 @@ io.on('connect', (socket) => {
   socket.on('register', async (user) => {
     const registration = await authentication.register(user);
 
-    if (registration === true) {
+    if (registration.isSuccessful === true) {
       const loginResult = await authentication.login(user);
 
-      if (loginResult.token) {
-        socketUser = authentication.verifyToken(loginResult.token);
+      if (loginResult.value) {
+        socketUser = authentication.verifyToken(loginResult.value);
       }
 
       socket.emit('register', loginResult);
@@ -78,7 +78,7 @@ io.on('connect', (socket) => {
     const loginResult = await authentication.login(user);
 
     if (loginResult.isSuccessful) {
-      socketUser = authentication.verifyToken(loginResult.message);
+      socketUser = authentication.verifyToken(loginResult.value).value;
     }
 
     socket.emit('login', loginResult);
@@ -97,7 +97,6 @@ io.on('connect', (socket) => {
     if (socketUser === false) {
       return socket.emit('addComment', 'cannot verify user');
     }
-
     const commentResult = await meme.addComment(data, socketUser);
 
     /*

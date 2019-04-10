@@ -12,7 +12,10 @@ module.exports = psql => ({
     const { username, email, password } = user;
 
     if (!validator.isEmail(email)) {
-      return 'the email address used is invalid';
+      return {
+        isSuccessful: false,
+        value: 'the email address used is invalid'
+      };
     }
 
     try {
@@ -22,7 +25,10 @@ module.exports = psql => ({
         .returning('user_id');
 
       if (checkUsers.length > 0) {
-        return 'username or email already taken';
+        return {
+          isSuccessful: false,
+          value: 'username or email already taken'
+        };
       }
 
       const hash = await argon2.hash(password);
@@ -33,10 +39,16 @@ module.exports = psql => ({
         date_created: new Date(),
       }).returning('username');
 
-      return true;
+      return {
+        isSuccessful: true,
+        value: 'successfully registered'
+      };
     } catch (e) {
       console.log(e);
-      return 'unexpected error during registration';
+      return {
+        isSuccessful: false,
+        value: 'unexpected error during registration'
+      };
     }
   },
 
@@ -73,20 +85,20 @@ module.exports = psql => ({
 
           return {
             isSuccessful: true,
-            message: token
+            value: token
           };
         }
       }
 
       return {
         isSuccessful: false,
-        message: 'incorrect credentials'
+        value: 'incorrect credentials'
       };
     } catch (e) {
       console.log(e);
       return {
         isSuccessful: false,
-        message: 'unexpected error during login attempt'
+        value: 'unexpected error during login attempt'
       }
     }
   },
@@ -104,10 +116,17 @@ module.exports = psql => ({
     };
 
     try {
-      return jwt.verify(token, process.env.PUBLIC_KEY, options);
+      return {
+        isSuccessful: true,
+        value: jwt.verify(token, process.env.PUBLIC_KEY, options)
+      };
     } catch (e) {
       console.log(e);
-      return false;
+      return {
+        isSuccessful: false,
+        value: 'cannot verify token'
+      };
+
     }
   },
 
