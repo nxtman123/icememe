@@ -12,6 +12,10 @@ module.exports = function (ctx) {
       'app.styl'
     ],
 
+    plugins: [
+      'vuelidate'
+    ],
+
     extras: [
       'roboto-font',
       'material-icons' // optional, you are not bound to it

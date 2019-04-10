@@ -1,8 +1,10 @@
 import Vue from 'vue';
+import Vuelidate from 'vuelidate';
 import VueRouter from 'vue-router';
 
 import routes from './routes';
 
+Vue.use(Vuelidate);
 Vue.use(VueRouter);
 
 /*
