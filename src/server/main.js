@@ -1,6 +1,7 @@
 // import modules
 const express = require('express');
 const serveStatic = require('serve-static');
+const enforce = require('express-sslify');
 const history = require('connect-history-api-fallback');
 const path = require('path');
 require('dotenv').config();
@@ -9,6 +10,11 @@ require('dotenv').config();
 const port = process.env.NODE_ENV === 'production' ? process.env.PORT || 5000 : 5000;
 const app = express();
 const server = require('http').createServer(app);
+
+// enforce HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(enforce.HTTPS({ trustProtoHeader: true }));
+}
 
 // connect socket.io
 const io = require('socket.io')(server);
@@ -22,10 +28,17 @@ const psql = require('knex')({
 
 // import authentication and pass psql
 const authentication = require('./authentication')(psql);
+const meme = require('./meme')(psql);
 
 // socket event handlers
 io.on('connect', (socket) => {
   console.log('a user connected!');
+
+  // check if token exists
+  let socketUser = false;
+  if (socket.handshake.query.token) {
+    socketUser = authentication.verifyToken(socket.handshake.query.token);
+  }
 
   // Index page demo socket and database interaction
   socket.on('hello', (message) => {
@@ -57,9 +70,55 @@ io.on('connect', (socket) => {
    returns JWT
    */
   socket.on('login', async (user) => {
-    const login = await authentication.login(user);
+    const token = await authentication.login(user);
+    socket.emit('login', token);
+  });
 
-    socket.emit('login', login);
+  socket.on('uploadMemeData', async (data) => {
+    if (socketUser === false) {
+      return socket.emit('uploadMemeData', 'cannot verify user');
+    }
+    const saveResult = await meme.saveMeme(data, socketUser);
+
+    return socket.emit('uploadMemeData', saveResult);
+  });
+
+  socket.on('addComment', async (data) => {
+    if (socketUser === false) {
+      return socket.emit('addComment', 'cannot verify user');
+    }
+
+    const commentResult = await meme.addComment(data, socketUser);
+
+    /*
+      if result contains a status, then it is successful
+      emit new comment to all users viewing particular meme
+     */
+    if (commentResult.status) {
+      io.to(`meme_id: ${data.meme_id}`).emit('getLatestComment', commentResult);
+    }
+
+    return socket.emit('addComment', commentResult);
+  });
+
+  socket.on('getMemeById', async (data) => {
+    const memeResult = await meme.getMemeById(data.meme_id);
+
+    /*
+      if result contains a meme_id, then it is successful
+      on retrieval of meme data, join user to meme's room
+     */
+    if (memeResult.meme_id) {
+      socket.join(`meme_id: ${data.meme_id}`);
+    }
+
+    return socket.emit('getMemeById', memeResult);
+  });
+
+  socket.on('getMemeComments', async (data) => {
+    const comments = await meme.getMemeComments(data);
+
+    return socket.emit('getMemeComments', comments);
   });
 
   socket.on('disconnect', () => {

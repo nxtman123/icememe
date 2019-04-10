@@ -16,28 +16,15 @@
         />
       </router-link>
       <q-card-section class="q-pb-sm">
+        <meme-metadata
+          :author-username="authorUsername"
+          :date-created="dateCreated"
+        />
         <div class="row justify-between">
-          <router-link
-            :to="{ name: 'user', params: { username: authorUsername } }"
-            class="author"
-          >
-            <div class="text-subtitle2 q-py-sm">
-              {{ authorUsername }}
-            </div>
-          </router-link>
-          <div class="text-caption q-py-sm">
-            {{ displayDate }}
-          </div>
-        </div>
-        <div class="row justify-between">
-          <q-btn-toggle
-            outline
-            class="q-mb-sm"
-            :value="userVote"
-            :options="[
-              { icon: 'arrow_upward', label: upVotes, value: 'up'},
-              { icon: 'arrow_downward', label: downVotes, value: 'down'},
-            ]"
+          <vote-buttons
+            class="q-mb-sm q-mr-sm"
+            :vote-total="voteTotal"
+            :user-vote="userVote"
           />
           <q-btn
             outline
@@ -53,15 +40,21 @@
 </template>
 
 <script>
-import moment from 'moment';
 import slugify from 'slugify';
+
+import VoteButtons from './VoteButtons';
+import MemeMetadata from './MemeMetadata';
 
 export default {
   name: 'MemeCard',
+  components: {
+    'vote-buttons': VoteButtons,
+    'meme-metadata': MemeMetadata,
+  },
   props: {
     memeId: {
       type: Number,
-      default: 0,
+      default: -1,
     },
     authorUsername: {
       type: String,
@@ -79,30 +72,21 @@ export default {
       type: Number,
       default: 0,
     },
-    upVotes: {
-      type: Number,
-      default: 0,
-    },
-    downVotes: {
+    voteTotal: {
       type: Number,
       default: 0,
     },
     userVote: {
       type: String,
       default: null,
+      validator: v => ['up', 'down', null].includes(v),
     },
     commentCount: {
       type: Number,
       default: 0,
     },
   },
-  data() {
-    return {};
-  },
   computed: {
-    displayDate() {
-      return moment.unix(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
-    },
     slugTitle() {
       return slugify(this.title, { remove: /[*+~,.()'"!:@]/g });
     },
@@ -111,20 +95,12 @@ export default {
 </script>
 
 <style lang="stylus">
-@import '~quasar-variables'
 
 .title
   color: black
   text-decoration: none
   outline: none
   &:focus
-    text-decoration: underline
-
-.author
-  color: black
-  text-decoration: none
-  outline: none
-  &:hover, &:focus
     text-decoration: underline
 
 </style>
