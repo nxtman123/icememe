@@ -14,7 +14,7 @@ module.exports = psql => ({
     if (!validator.isEmail(email)) {
       return {
         isSuccessful: false,
-        value: 'the email address used is invalid'
+        value: 'the email address used is invalid',
       };
     }
 
@@ -27,7 +27,7 @@ module.exports = psql => ({
       if (checkUsers.length > 0) {
         return {
           isSuccessful: false,
-          value: 'username or email already taken'
+          value: 'username or email already taken',
         };
       }
 
@@ -41,13 +41,13 @@ module.exports = psql => ({
 
       return {
         isSuccessful: true,
-        value: 'successfully registered'
+        value: 'successfully registered',
       };
     } catch (e) {
       console.log(e);
       return {
         isSuccessful: false,
-        value: 'unexpected error during registration'
+        value: 'unexpected error during registration',
       };
     }
   },
@@ -85,21 +85,21 @@ module.exports = psql => ({
 
           return {
             isSuccessful: true,
-            value: token
+            value: token,
           };
         }
       }
 
       return {
         isSuccessful: false,
-        value: 'incorrect credentials'
+        value: 'incorrect credentials',
       };
     } catch (e) {
       console.log(e);
       return {
         isSuccessful: false,
-        value: 'unexpected error during login attempt'
-      }
+        value: 'unexpected error during login attempt',
+      };
     }
   },
 
@@ -118,15 +118,14 @@ module.exports = psql => ({
     try {
       return {
         isSuccessful: true,
-        value: jwt.verify(token, process.env.PUBLIC_KEY, options)
+        value: jwt.verify(token, process.env.PUBLIC_KEY, options),
       };
     } catch (e) {
       console.log(e);
       return {
         isSuccessful: false,
-        value: 'cannot verify token'
+        value: 'cannot verify token',
       };
-
     }
   },
 
