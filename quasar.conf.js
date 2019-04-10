@@ -39,6 +39,7 @@ module.exports = function (ctx) {
         'QItemSection',
         'QItemLabel',
         'QInput',
+        'QDialog',
       ],
 
       directives: [
