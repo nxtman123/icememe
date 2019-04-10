@@ -17,9 +17,22 @@
         <q-btn
           flat
           stretch
+          @click="prompt=true"
+        >
+          Log In
+        </q-btn>
+
+
+        <q-dialog v-model="prompt">
+          <login-dialog/>
+        </q-dialog>
+
+        <q-btn
+          flat
+          stretch
           :to="{ name: 'register' }"
         >
-          Sign Up / Log In
+          Sign Up
         </q-btn>
 
         <q-btn
@@ -131,12 +144,17 @@
 
 <script>
 import { openURL } from 'quasar';
+import LoginDialog from '../components/LoginDialog';
 
 export default {
   name: 'MyLayout',
+  components: {
+    'login-dialog': LoginDialog,
+  },
   data() {
     return {
       rightDrawerOpen: this.$q.platform.is.desktop,
+      prompt: false,
     };
   },
   methods: {
