@@ -7,7 +7,7 @@
   "author": "SENG 513 W19 Group 11",
   "private": true,
   "scripts": {
-    "lint": "eslint --ext .js,.vue src migrations",
+    "lint": "eslint --max-warnings 0 --ext .js,.vue src migrations",
     "test": "echo \"No test specified\" && exit 0",
     "dev-client": "quasar dev",
     "dev-server": "nodemon src/server/main.js",
