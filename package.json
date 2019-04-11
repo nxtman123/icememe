@@ -29,7 +29,7 @@
     "moment": "^2.24.0",
     "nodemon": "^1.18.10",
     "pg": "^7.9.0",
-    "quasar": "^1.0.0-beta.0",
+    "quasar": "1.0.0-beta.11",
     "serve-static": "^1.13.2",
     "slugify": "^1.3.4",
     "socket.io": "^2.2.0",
