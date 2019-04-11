@@ -37,7 +37,12 @@ io.on('connect', (socket) => {
   // check if token exists
   let socketUser = false;
   if (socket.handshake.query.token) {
-    socketUser = authentication.verifyToken(socket.handshake.query.token).value;
+    let verifyResult = authentication.verifyToken(socket.handshake.query.token);
+    if (verifyResult.isSuccessful) {
+      socketUser = verifyResult.value;
+    } else {
+      socketUser = verifyResult.isSuccessful;
+    }
   }
 
   // Index page demo socket and database interaction
@@ -60,8 +65,8 @@ io.on('connect', (socket) => {
     if (registration.isSuccessful === true) {
       const loginResult = await authentication.login(user);
 
-      if (loginResult.value) {
-        socketUser = authentication.verifyToken(loginResult.value);
+      if (loginResult.isSuccessful) {
+        socketUser = authentication.verifyToken(loginResult.value).value;
       }
 
       socket.emit('register', loginResult);
