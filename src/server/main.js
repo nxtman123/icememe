@@ -37,7 +37,12 @@ io.on('connect', (socket) => {
   // check if token exists
   let socketUser = false;
   if (socket.handshake.query.token) {
-    socketUser = authentication.verifyToken(socket.handshake.query.token);
+    const verifyResult = authentication.verifyToken(socket.handshake.query.token);
+    if (verifyResult.isSuccessful) {
+      socketUser = verifyResult.value;
+    } else {
+      socketUser = verifyResult.isSuccessful;
+    }
   }
 
   // Index page demo socket and database interaction
@@ -57,9 +62,14 @@ io.on('connect', (socket) => {
   socket.on('register', async (user) => {
     const registration = await authentication.register(user);
 
-    if (registration === true) {
-      const loggedIn = await authentication.login(user);
-      socket.emit('register', loggedIn);
+    if (registration.isSuccessful === true) {
+      const loginResult = await authentication.login(user);
+
+      if (loginResult.isSuccessful) {
+        socketUser = authentication.verifyToken(loginResult.value).value;
+      }
+
+      socket.emit('register', loginResult);
     } else {
       socket.emit('register', registration);
     }
@@ -70,8 +80,13 @@ io.on('connect', (socket) => {
    returns JWT
    */
   socket.on('login', async (user) => {
-    const token = await authentication.login(user);
-    socket.emit('login', token);
+    const loginResult = await authentication.login(user);
+
+    if (loginResult.isSuccessful) {
+      socketUser = authentication.verifyToken(loginResult.value).value;
+    }
+
+    socket.emit('login', loginResult);
   });
 
   socket.on('uploadMemeData', async (data) => {
@@ -87,7 +102,6 @@ io.on('connect', (socket) => {
     if (socketUser === false) {
       return socket.emit('addComment', 'cannot verify user');
     }
-
     const commentResult = await meme.addComment(data, socketUser);
 
     /*
