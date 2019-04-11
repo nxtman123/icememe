@@ -37,7 +37,7 @@ io.on('connect', (socket) => {
   // check if token exists
   let socketUser = false;
   if (socket.handshake.query.token) {
-    let verifyResult = authentication.verifyToken(socket.handshake.query.token);
+    const verifyResult = authentication.verifyToken(socket.handshake.query.token);
     if (verifyResult.isSuccessful) {
       socketUser = verifyResult.value;
     } else {
