@@ -67,10 +67,23 @@ module.exports = psql => ({
       const meme = await psql('memes')
         .select(['memes.meme_id', 'memes.user_id', 'memes.title', 'memes.cloudinary_url', 'memes.date_created'])
         .where({ 'memes.meme_id': memeId })
-        .innerJoin('comments', 'memes.meme_id', 'comments.meme_id')
         .groupBy('memes.meme_id')
-        .count('memes.meme_id as comment_count')
+        .leftJoin('comments', 'memes.meme_id', 'comments.meme_id')
+        .count('comments.meme_id as comment_count')
+        .leftJoin('votes as uvotes', function() {
+          this.on('memes.meme_id', '=', 'uvotes.meme_id').andOn('uvotes.type', '=', psql.raw('?', ['up']));
+        })
+        .count('uvotes.meme_id as up_votes')
+        .leftJoin('votes as dvotes', function() {
+          this.on('memes.meme_id', '=', 'dvotes.meme_id').andOn('dvotes.type', '=', psql.raw('?', ['down']));
+        })
+        .count('dvotes.meme_id as down_votes')
         .first();
+
+      meme.comment_count = parseInt(meme.comment_count);
+      meme.up_votes = parseInt(meme.up_votes);
+      meme.down_votes = parseInt(meme.down_votes);
+      meme.votes_total = meme.up_votes - meme.down_votes;
 
       return {
         isSuccessful: true,
