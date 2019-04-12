@@ -12,7 +12,7 @@
           @blur="passwordMatchCheck" :error="cPwdError" type="password"/>
     </form>
     <div class="row justify-center" style="margin: 30px">
-      <q-btn @click="submit" color="primary" label="Create Account"  />
+      <q-btn type="submit" color="primary" label="Create Account"  />
     </div>
   </q-page>
 </template>
