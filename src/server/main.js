@@ -83,7 +83,10 @@ io.on('connect', (socket) => {
   // returns { isSuccessful, value }
   socket.on('addMeme', async (memeData) => {
     if (socketUser === false) {
-      return socket.emit('addMeme', 'cannot verify user');
+      return socket.emit('addMeme', {
+        isSuccessful: false,
+        value: 'cannot verify user',
+      });
     }
     const saveResult = await meme.saveMeme(memeData, socketUser);
 
@@ -94,7 +97,10 @@ io.on('connect', (socket) => {
   // returns { isSuccessful, value }
   socket.on('addComment', async (commentData) => {
     if (socketUser === false) {
-      return socket.emit('addComment', 'cannot verify user');
+      return socket.emit('addComment', {
+        isSuccessful: false,
+        value: 'cannot verify user',
+      });
     }
     const commentResult = await meme.addComment(commentData, socketUser);
 
