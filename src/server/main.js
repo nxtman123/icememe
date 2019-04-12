@@ -63,9 +63,8 @@ io.on('connect', (socket) => {
       }
 
       return socket.emit('register', loginResult);
-    } else {
-      return socket.emit('register', registration);
     }
+    return socket.emit('register', registration);
   });
 
   // user = { username, password }
@@ -80,7 +79,7 @@ io.on('connect', (socket) => {
     return socket.emit('login', loginResult);
   });
 
-  socket.on('logout', async (user) => {
+  socket.on('logout', async () => {
     socketUser = false;
     return socket.emit('logout');
   });
