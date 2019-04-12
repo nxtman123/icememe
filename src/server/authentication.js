@@ -2,15 +2,18 @@ const argon2 = require('argon2');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 
+const JWT_OPTIONS = {
+  issuer: process.env.ISSUER,
+  subject: process.env.SUBJECT,
+  audience: process.env.AUDIENCE,
+  expiresIn: process.env.EXPIRES_IN,
+  algorithm: process.env.ALGORITHM,
+};
+
 module.exports = psql => ({
 
-  /*
-      first checks if username/email already exist
-      returns true if successful
-     */
-  register: async (user) => {
-    const { username, email, password } = user;
-
+  // returns { isSuccessful, value }
+  register: async ({ username, email, password }) => {
     if (!validator.isEmail(email)) {
       return {
         isSuccessful: false,
@@ -21,8 +24,7 @@ module.exports = psql => ({
     try {
       const checkUsers = await psql('users')
         .where('username', username)
-        .orWhere('email', email)
-        .returning('user_id');
+        .orWhere('email', email);
 
       if (checkUsers.length > 0) {
         return {
@@ -36,8 +38,7 @@ module.exports = psql => ({
         username,
         email,
         password: hash,
-        date_created: new Date(),
-      }).returning('username');
+      });
 
       return {
         isSuccessful: true,
@@ -52,40 +53,23 @@ module.exports = psql => ({
     }
   },
 
-  /*
-      returns JWT if successful
-     */
-  login: async (user) => {
-    const { username } = user;
-    const { password } = user;
-    let findUser;
-    let verification;
-
+  // returns { isSuccessful, value }
+  login: async ({ username, password }) => {
     try {
-      findUser = await psql('users')
+      const findUser = await psql('users')
         .where('username', username);
 
       if (findUser.length >= 1) {
-        verification = await argon2.verify(findUser[0].password, password);
+        const verification = await argon2.verify(findUser[0].password, password);
         if (verification) {
           const payload = {
             user_id: findUser[0].user_id,
             username: findUser[0].username,
           };
 
-          const options = {
-            issuer: process.env.ISSUER,
-            subject: process.env.SUBJECT,
-            audience: process.env.AUDIENCE,
-            expiresIn: process.env.EXPIRES_IN,
-            algorithm: process.env.ALGORITHM,
-          };
-
-          const token = jwt.sign(payload, process.env.PRIVATE_KEY, options);
-
           return {
             isSuccessful: true,
-            value: token,
+            value: jwt.sign(payload, process.env.PRIVATE_KEY, JWT_OPTIONS),
           };
         }
       }
@@ -103,22 +87,12 @@ module.exports = psql => ({
     }
   },
 
-  /*
-      returns contents of JWT if successful
-     */
+  // returns { isSuccessful, value }
   verifyToken: (token) => {
-    const options = {
-      issuer: process.env.ISSUER,
-      subject: process.env.SUBJECT,
-      audience: process.env.AUDIENCE,
-      expiresIn: process.env.EXPIRES_IN,
-      algorithm: [process.env.ALGORITHM],
-    };
-
     try {
       return {
         isSuccessful: true,
-        value: jwt.verify(token, process.env.PUBLIC_KEY, options),
+        value: jwt.verify(token, process.env.PUBLIC_KEY, JWT_OPTIONS),
       };
     } catch (e) {
       console.log(e);
@@ -129,8 +103,6 @@ module.exports = psql => ({
     }
   },
 
-  /*
-      decodes the JWT
-    */
+  // decodes the JWT
   decodeToken: token => jwt.decode(token, { complete: true }),
 });
