@@ -1,7 +1,7 @@
 const COMMENT_PAGE_SIZE = 10;
 
 const baseMemeQuery = (psql, user) => {
-  const query = psql('memes')
+  let query = psql('memes')
     .select(['memes.meme_id', 'memes.user_id', 'memes.title', 'memes.cloudinary_url', 'memes.date_created'])
     .groupBy('memes.meme_id')
     .leftJoin('comments', 'memes.meme_id', 'comments.meme_id')
@@ -14,14 +14,14 @@ const baseMemeQuery = (psql, user) => {
       this.on('memes.meme_id', '=', 'dvotes.meme_id').andOn('dvotes.type', '=', psql.raw('?', ['down']));
     })
     .count('dvotes.meme_id as down_votes')
-    .clone()
+    .clone();
   if (user) {
-    query.leftJoin('votes as ivote', function joinDownVotes() {
+    query = query.leftJoin('votes as ivote', function joinDownVotes() {
       this.on('memes.meme_id', '=', 'ivote.meme_id').andOn('ivote.user_id', '=', psql.raw('?', [user.user_id]));
     })
-    .groupBy('ivote.type')
-    .select('ivote.type as user_vote')
-    .clone()
+      .groupBy('ivote.type')
+      .select('ivote.type as user_vote')
+      .clone();
   }
   return query;
 };
