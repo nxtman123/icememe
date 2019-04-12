@@ -44,6 +44,8 @@ io.on('connect', (socket) => {
     if (verifyResult.isSuccessful) {
       socketUser = verifyResult.value;
       console.log(`welcome back, ${socketUser.username}`);
+    } else {
+      socket.emit('invalidToken');
     }
   }
 
