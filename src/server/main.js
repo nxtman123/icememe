@@ -20,6 +20,7 @@ if (process.env.NODE_ENV === 'production') {
 const io = require('socket.io')(server);
 
 // connect to database
+require('pg').types.setTypeParser(20, x => parseInt(x, 10)); // make SQL count() return Numbers
 const psql = require('knex')({
   client: 'pg',
   connection: process.env.DATABASE_URL,

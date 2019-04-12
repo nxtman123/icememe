@@ -85,11 +85,6 @@ module.exports = psql => ({
         .where({ 'memes.meme_id': memeId })
         .first();
 
-      meme.comment_count = parseInt(meme.comment_count, 10);
-      meme.up_votes = parseInt(meme.up_votes, 10);
-      meme.down_votes = parseInt(meme.down_votes, 10);
-      meme.votes_total = meme.up_votes - meme.down_votes;
-
       return {
         isSuccessful: true,
         value: meme,
