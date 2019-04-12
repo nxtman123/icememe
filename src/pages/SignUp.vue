@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <h1>Registration</h1>
-    <form>
+    <form @submit.prevent="submit">
         <q-input style="padding: 10px" v-model="email" outlined label="Email"
           @blur="emailCheck" :error="$v.email.$error"/>
         <q-input style="padding: 10px" v-model="username" outlined label="UserName"
