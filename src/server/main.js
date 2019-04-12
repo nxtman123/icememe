@@ -34,16 +34,18 @@ const meme = require('./meme')(psql);
 io.on('connect', (socket) => {
   console.log('a user connected!');
 
-  // check if token exists
+  // authentication events
+
   let socketUser = false;
+
+  // check if token exists
   if (socket.handshake.query.token) {
     const verifyResult = authentication.verifyToken(socket.handshake.query.token);
     if (verifyResult.isSuccessful) {
       socketUser = verifyResult.value;
+      console.log(`welcome back, ${socketUser.username}`);
     }
   }
-
-  // authentication events
 
   // user = { username, email, password }
   // returns { isSuccessful, value }
@@ -79,13 +81,13 @@ io.on('connect', (socket) => {
 
   // memeData = { title, cloudinary_url }
   // returns { isSuccessful, value }
-  socket.on('uploadMemeData', async (memeData) => {
+  socket.on('addMeme', async (memeData) => {
     if (socketUser === false) {
-      return socket.emit('uploadMemeData', 'cannot verify user');
+      return socket.emit('addMeme', 'cannot verify user');
     }
     const saveResult = await meme.saveMeme(memeData, socketUser);
 
-    return socket.emit('uploadMemeData', saveResult);
+    return socket.emit('addMeme', saveResult);
   });
 
   // commentData = { meme_id, text }
@@ -98,7 +100,7 @@ io.on('connect', (socket) => {
 
     if (commentResult.isSuccessful) {
       // emit new comment to all users viewing this meme
-      io.to(`meme_id: ${commentData.meme_id}`).emit('getLatestComment', commentResult.value);
+      io.to(`meme_id: ${commentData.meme_id}`).emit('newLatestComment', commentResult.value);
     }
 
     return socket.emit('addComment', commentResult);

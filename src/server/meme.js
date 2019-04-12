@@ -12,7 +12,7 @@ module.exports = psql => ({
           user_id: user.user_id,
           title: memeData.title,
           cloudinary_url: memeData.cloudinary_url,
-        }).returning('*');
+        }).returning(['meme_id', 'user_id', 'title', 'cloudinary_url', 'date_created']);
 
       return {
         isSuccessful: true,
@@ -36,7 +36,10 @@ module.exports = psql => ({
         .where({ meme_id: commentData.meme_id });
 
       if (meme.length <= 0) {
-        return 'meme with that id does not exist';
+        return {
+          isSuccessful: false,
+          value: 'meme with that id does not exist',
+        };
       }
 
       const newComment = await psql('comments')
@@ -44,7 +47,7 @@ module.exports = psql => ({
           user_id: user.user_id,
           meme_id: commentData.meme_id,
           text: commentData.text,
-        }).returning('*');
+        }).returning(['comment_id', 'meme_id', 'user_id', 'text', 'date_created']);
 
       return {
         isSuccessful: true,

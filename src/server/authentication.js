@@ -2,6 +2,14 @@ const argon2 = require('argon2');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 
+const JWT_OPTIONS = {
+  issuer: process.env.ISSUER,
+  subject: process.env.SUBJECT,
+  audience: process.env.AUDIENCE,
+  expiresIn: process.env.EXPIRES_IN,
+  algorithm: process.env.ALGORITHM,
+};
+
 module.exports = psql => ({
 
   // returns { isSuccessful, value }
@@ -16,8 +24,7 @@ module.exports = psql => ({
     try {
       const checkUsers = await psql('users')
         .where('username', username)
-        .orWhere('email', email)
-        .returning('user_id');
+        .orWhere('email', email);
 
       if (checkUsers.length > 0) {
         return {
@@ -60,19 +67,9 @@ module.exports = psql => ({
             username: findUser[0].username,
           };
 
-          const options = {
-            issuer: process.env.ISSUER,
-            subject: process.env.SUBJECT,
-            audience: process.env.AUDIENCE,
-            expiresIn: process.env.EXPIRES_IN,
-            algorithm: process.env.ALGORITHM,
-          };
-
-          const token = jwt.sign(payload, process.env.PRIVATE_KEY, options);
-
           return {
             isSuccessful: true,
-            value: token,
+            value: jwt.sign(payload, process.env.PRIVATE_KEY, JWT_OPTIONS),
           };
         }
       }
@@ -92,18 +89,10 @@ module.exports = psql => ({
 
   // returns { isSuccessful, value }
   verifyToken: (token) => {
-    const options = {
-      issuer: process.env.ISSUER,
-      subject: process.env.SUBJECT,
-      audience: process.env.AUDIENCE,
-      expiresIn: process.env.EXPIRES_IN,
-      algorithm: [process.env.ALGORITHM],
-    };
-
     try {
       return {
         isSuccessful: true,
-        value: jwt.verify(token, process.env.PUBLIC_KEY, options),
+        value: jwt.verify(token, process.env.PUBLIC_KEY, JWT_OPTIONS),
       };
     } catch (e) {
       console.log(e);
