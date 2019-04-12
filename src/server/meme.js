@@ -65,7 +65,11 @@ module.exports = psql => ({
   getMeme: async (memeId) => {
     try {
       const meme = await psql('memes')
-        .where({ meme_id: memeId })
+        .select(['memes.meme_id', 'memes.user_id', 'memes.title', 'memes.cloudinary_url', 'memes.date_created'])
+        .where({ 'memes.meme_id': memeId })
+        .innerJoin('comments', 'memes.meme_id', 'comments.meme_id')
+        .groupBy('memes.meme_id')
+        .count('memes.meme_id as comment_count')
         .first();
 
       return {
