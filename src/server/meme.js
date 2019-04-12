@@ -6,16 +6,16 @@ const baseMemeQuery = psql => (
     .groupBy('memes.meme_id')
     .leftJoin('comments', 'memes.meme_id', 'comments.meme_id')
     .count('comments.meme_id as comment_count')
-    .leftJoin('votes as uvotes', function() {
+    .leftJoin('votes as uvotes', function joinUpVotes() {
       this.on('memes.meme_id', '=', 'uvotes.meme_id').andOn('uvotes.type', '=', psql.raw('?', ['up']));
     })
     .count('uvotes.meme_id as up_votes')
-    .leftJoin('votes as dvotes', function() {
+    .leftJoin('votes as dvotes', function joinDownVotes() {
       this.on('memes.meme_id', '=', 'dvotes.meme_id').andOn('dvotes.type', '=', psql.raw('?', ['down']));
     })
     .count('dvotes.meme_id as down_votes')
     .clone()
-)
+);
 
 module.exports = psql => ({
 
@@ -85,9 +85,9 @@ module.exports = psql => ({
         .where({ 'memes.meme_id': memeId })
         .first();
 
-      meme.comment_count = parseInt(meme.comment_count);
-      meme.up_votes = parseInt(meme.up_votes);
-      meme.down_votes = parseInt(meme.down_votes);
+      meme.comment_count = parseInt(meme.comment_count, 10);
+      meme.up_votes = parseInt(meme.up_votes, 10);
+      meme.down_votes = parseInt(meme.down_votes, 10);
       meme.votes_total = meme.up_votes - meme.down_votes;
 
       return {
