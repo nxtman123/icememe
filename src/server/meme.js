@@ -2,8 +2,9 @@ const COMMENT_PAGE_SIZE = 10;
 
 const baseMemeQuery = (psql, user) => {
   let query = psql('memes')
-    .select(['memes.meme_id', 'memes.user_id', 'memes.title', 'memes.cloudinary_url', 'memes.date_created'])
-    .groupBy('memes.meme_id')
+    .select(['memes.meme_id', 'memes.user_id', 'users.username', 'memes.title', 'memes.cloudinary_url', 'memes.date_created'])
+    .groupBy('memes.meme_id', 'users.username')
+    .leftJoin('users', 'memes.user_id', 'users.user_id')
     .leftJoin('comments', 'memes.meme_id', 'comments.meme_id')
     .count('comments.meme_id as comment_count')
     .leftJoin('votes as uvotes', function joinUpVotes() {
