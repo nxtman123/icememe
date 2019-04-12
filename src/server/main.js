@@ -26,7 +26,7 @@ const psql = require('knex')({
   debug: process.env.NODE_ENV !== 'production',
 });
 
-// import authentication and pass psql
+// import libraries and pass psql
 const authentication = require('./authentication')(psql);
 const meme = require('./meme')(psql);
 
@@ -40,25 +40,13 @@ io.on('connect', (socket) => {
     const verifyResult = authentication.verifyToken(socket.handshake.query.token);
     if (verifyResult.isSuccessful) {
       socketUser = verifyResult.value;
-    } else {
-      socketUser = verifyResult.isSuccessful;
     }
   }
 
-  // Index page demo socket and database interaction
-  socket.on('hello', (message) => {
-    console.log('hello', message);
-    psql.select('table_name').from('information_schema.tables').limit(8)
-      .map(row => row.table_name)
-      .then((tableNames) => {
-        socket.emit('hello', `wow, so ${message}, very message\n\n${tableNames.join('\n')}`);
-      });
-  });
+  // authentication events
 
-  /*
-    registration requires: 'username', 'email', 'password'
-    returns JWT
-   */
+  // user = { username, email, password }
+  // returns { isSuccessful, value }
   socket.on('register', async (user) => {
     const registration = await authentication.register(user);
 
@@ -75,10 +63,8 @@ io.on('connect', (socket) => {
     }
   });
 
-  /*
-   login requires: 'username', 'password'
-   returns JWT
-   */
+  // user = { username, password }
+  // returns { isSuccessful, value }
   socket.on('login', async (user) => {
     const loginResult = await authentication.login(user);
 
@@ -89,55 +75,60 @@ io.on('connect', (socket) => {
     socket.emit('login', loginResult);
   });
 
-  socket.on('uploadMemeData', async (data) => {
+  // meme events
+
+  // memeData = { title, cloudinary_url }
+  // returns { isSuccessful, value }
+  socket.on('uploadMemeData', async (memeData) => {
     if (socketUser === false) {
       return socket.emit('uploadMemeData', 'cannot verify user');
     }
-    const saveResult = await meme.saveMeme(data, socketUser);
+    const saveResult = await meme.saveMeme(memeData, socketUser);
 
     return socket.emit('uploadMemeData', saveResult);
   });
 
-  socket.on('addComment', async (data) => {
+  // commentData = { meme_id, text }
+  // returns { isSuccessful, value }
+  socket.on('addComment', async (commentData) => {
     if (socketUser === false) {
       return socket.emit('addComment', 'cannot verify user');
     }
-    const commentResult = await meme.addComment(data, socketUser);
+    const commentResult = await meme.addComment(commentData, socketUser);
 
-    /*
-      if result contains a status, then it is successful
-      emit new comment to all users viewing particular meme
-     */
-    if (commentResult.status) {
-      io.to(`meme_id: ${data.meme_id}`).emit('getLatestComment', commentResult);
+    if (commentResult.isSuccessful) {
+      // emit new comment to all users viewing this meme
+      io.to(`meme_id: ${commentData.meme_id}`).emit('getLatestComment', commentResult.value);
     }
 
     return socket.emit('addComment', commentResult);
   });
 
-  socket.on('getMemeById', async (data) => {
-    const memeResult = await meme.getMemeById(data.meme_id);
+  // returns { isSuccessful, value }
+  socket.on('getMeme', async (memeId) => {
+    const memeResult = await meme.getMeme(memeId);
 
-    /*
-      if result contains a meme_id, then it is successful
-      on retrieval of meme data, join user to meme's room
-     */
-    if (memeResult.meme_id) {
-      socket.join(`meme_id: ${data.meme_id}`);
+    if (memeResult.isSuccessful) {
+      // subscribe to receive new comments live
+      socket.join(`meme_id: ${memeId}`);
     }
 
-    return socket.emit('getMemeById', memeResult);
+    return socket.emit('getMeme', memeResult);
   });
 
-  socket.on('getMemeComments', async (data) => {
-    const comments = await meme.getMemeComments(data);
+  // earliestId is optional
+  // returns { isSuccessful, value }
+  socket.on('getMemeComments', async (memeId, earliestId) => {
+    const commentsResult = await meme.getMemeComments(memeId, earliestId);
 
-    return socket.emit('getMemeComments', comments);
+    return socket.emit('getMemeComments', commentsResult);
   });
 
-  socket.on('leaveMeme', (data) => {
-    socket.leave(`meme_id: ${data.meme_id}`, () => {});
+  socket.on('leaveMeme', (memeId) => {
+    socket.leave(`meme_id: ${memeId}`, () => {});
   });
+
+  // disconnect
 
   socket.on('disconnect', () => {
     console.log('a user disconnected :(');

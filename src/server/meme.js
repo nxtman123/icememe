@@ -1,30 +1,39 @@
-const COMMENT_LIMIT = 5;
+const COMMENT_PAGE_SIZE = 10;
 
 module.exports = psql => ({
-  saveMeme: async (meme, user) => {
+
+  // memeData = { title, cloudinary_url }
+  // user = { user_id, username }
+  // returns { isSuccessful, value }
+  saveMeme: async (memeData, user) => {
     try {
-      await psql('memes')
+      const newMeme = await psql('memes')
         .insert({
           user_id: user.user_id,
-          title: meme.title,
-          cloudinary_url: meme.cloudinary_url,
-          date_created: new Date(),
-        })
-        .where({
-          user_id: user.user_id,
-        });
+          title: memeData.title,
+          cloudinary_url: memeData.cloudinary_url,
+        }).returning('*');
 
-      return true;
+      return {
+        isSuccessful: true,
+        value: newMeme,
+      };
     } catch (e) {
       console.log(e);
-      return 'unexpected error when trying to save meme data';
+      return {
+        isSuccessful: false,
+        value: 'unexpected error when trying to save meme data',
+      };
     }
   },
 
-  addComment: async (comment, user) => {
+  // commentData = { meme_id, text }
+  // user = { user_id, username }
+  // returns { isSuccessful, value }
+  addComment: async (commentData, user) => {
     try {
       const meme = await psql('memes')
-        .where({ meme_id: comment.meme_id });
+        .where({ meme_id: commentData.meme_id });
 
       if (meme.length <= 0) {
         return 'meme with that id does not exist';
@@ -33,62 +42,74 @@ module.exports = psql => ({
       const newComment = await psql('comments')
         .insert({
           user_id: user.user_id,
-          meme_id: comment.meme_id,
-          text: comment.text,
-          date_created: new Date(),
+          meme_id: commentData.meme_id,
+          text: commentData.text,
         }).returning('*');
 
       return {
-        status: true,
-        comment: newComment,
+        isSuccessful: true,
+        value: newComment,
       };
     } catch (e) {
       console.log(e);
-      return 'unexpected error when trying to add comment';
+      return {
+        isSuccessful: false,
+        value: 'unexpected error when trying to add comment',
+      };
     }
   },
 
-  getMemeComments: async (data) => {
+  getMeme: async (memeId) => {
+    try {
+      const meme = await psql('memes')
+        .where({ meme_id: memeId })
+        .first();
+
+      return {
+        isSuccessful: true,
+        value: meme,
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        isSuccessful: false,
+        value: 'unexpected error when trying to retrieve meme',
+      };
+    }
+  },
+
+  getMemeComments: async (memeId, earliestId) => {
     try {
       let comments;
 
       /*
-        for lazy loading, on initial load, it will retrieve the latest comments
-        after each subsequent call, expects the id of the earliest comment received
-         in order retrieve the next set of comments
+        For pagination, on initial load, it will retrieve the latest comments
+        after each subsequent call, expects the id of the earliest comment
+        received in order retrieve the next set of comments.
        */
-      if (data.earliest_id) {
+      if (earliestId) {
         comments = await psql('comments')
-          .where({ meme_id: data.meme_id })
+          .where({ meme_id: memeId })
+          .andWhere('comment_id', '<', earliestId)
           .orderBy('comment_id', 'desc')
-          .limit(COMMENT_LIMIT)
-          .offset(data.offset)
-          .andWhere('comment_id', '<', data.earliest_id);
+          .limit(COMMENT_PAGE_SIZE);
       } else {
         comments = await psql('comments')
-          .where({ meme_id: data.meme_id })
+          .where({ meme_id: memeId })
           .orderBy('comment_id', 'desc')
-          .limit(COMMENT_LIMIT)
-          .offset(data.offset);
+          .limit(COMMENT_PAGE_SIZE);
       }
 
-      return comments;
+      return {
+        isSuccessful: true,
+        value: comments,
+      };
     } catch (e) {
       console.log(e);
-      return 'unexpected error when trying to retrieve comments';
-    }
-  },
-
-  getMemeById: async (memeId) => {
-    try {
-      const meme = await psql('memes')
-        .where({ meme_id: parseInt(memeId, 10) })
-        .first();
-
-      return meme;
-    } catch (e) {
-      console.log(e);
-      return 'unexpected error when trying to retrieve meme';
+      return {
+        isSuccessful: false,
+        value: 'unexpected error when trying to retrieve comments',
+      };
     }
   },
 });

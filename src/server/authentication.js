@@ -4,13 +4,8 @@ const jwt = require('jsonwebtoken');
 
 module.exports = psql => ({
 
-  /*
-      first checks if username/email already exist
-      returns true if successful
-     */
-  register: async (user) => {
-    const { username, email, password } = user;
-
+  // returns { isSuccessful, value }
+  register: async ({ username, email, password }) => {
     if (!validator.isEmail(email)) {
       return {
         isSuccessful: false,
@@ -36,8 +31,7 @@ module.exports = psql => ({
         username,
         email,
         password: hash,
-        date_created: new Date(),
-      }).returning('username');
+      });
 
       return {
         isSuccessful: true,
@@ -52,21 +46,14 @@ module.exports = psql => ({
     }
   },
 
-  /*
-      returns JWT if successful
-     */
-  login: async (user) => {
-    const { username } = user;
-    const { password } = user;
-    let findUser;
-    let verification;
-
+  // returns { isSuccessful, value }
+  login: async ({ username, password }) => {
     try {
-      findUser = await psql('users')
+      const findUser = await psql('users')
         .where('username', username);
 
       if (findUser.length >= 1) {
-        verification = await argon2.verify(findUser[0].password, password);
+        const verification = await argon2.verify(findUser[0].password, password);
         if (verification) {
           const payload = {
             user_id: findUser[0].user_id,
@@ -103,9 +90,7 @@ module.exports = psql => ({
     }
   },
 
-  /*
-      returns contents of JWT if successful
-     */
+  // returns { isSuccessful, value }
   verifyToken: (token) => {
     const options = {
       issuer: process.env.ISSUER,
@@ -129,8 +114,6 @@ module.exports = psql => ({
     }
   },
 
-  /*
-      decodes the JWT
-    */
+  // decodes the JWT
   decodeToken: token => jwt.decode(token, { complete: true }),
 });
