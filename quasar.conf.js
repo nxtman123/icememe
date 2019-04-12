@@ -46,10 +46,12 @@ module.exports = function (ctx) {
         'QSpinner',
         'QToolbar',
         'QToolbarTitle',
+        'QDialog',
       ],
 
       directives: [
-        'Ripple'
+        'Ripple',
+        'ClosePopup',
       ],
 
       // Quasar plugins

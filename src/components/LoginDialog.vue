@@ -1,38 +1,52 @@
 <template>
-  <q-card style="min-width: 400px">
+  <q-card style="min-width: 25%">
     <q-card-section>
       <div class="text-h6">
-        Login
+        Log in
       </div>
     </q-card-section>
     <q-card-section>
       <q-input
-        dense
         v-model="username"
+        outlined
+        dense
         stack-label="Stack Label"
         placeholder="Username"
-        autofocus @keyup.enter="prompt=false"
+        @keyup.enter="prompt=false"
       />
     </q-card-section>
     <q-card-section>
       <q-input
-        dense
         v-model="password"
+        outlined
+        dense
         stack-label="Stack Label"
         placeholder="Password"
-        autofocus @keyup.enter="prompt=false"
+        @keyup.enter="prompt=false"
       />
     </q-card-section>
-    <q-card-actions align="right" class="text-primary row justify-around">
-      <q-btn v-close-popup flat label="Login"/>
-      <q-btn v-close-popup flat label="Cancel"/>
+    <q-card-actions
+      align="right"
+      class="text-primary row justify-around"
+    >
+      <q-btn
+        v-close-popup
+        flat
+        label="Log in"
+      />
+      <q-btn
+        v-close-popup
+        flat
+        label="Cancel"
+      />
     </q-card-actions>
     <q-card-section>
       <div>
         New to IceMeme?
         <router-link
-          :to="{ name: 'register' }">
-          Register an account.
+          :to="{ name: 'register' }"
+        >
+          Sign up.
         </router-link>
       </div>
     </q-card-section>
