@@ -117,7 +117,7 @@ io.on('connect', (socket) => {
 
   // returns { isSuccessful, value }
   socket.on('getMeme', async (memeId) => {
-    const memeResult = await meme.getMeme(memeId);
+    const memeResult = await meme.getMeme(memeId, socketUser);
 
     if (memeResult.isSuccessful) {
       // subscribe to receive new comments live

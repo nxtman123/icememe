@@ -1,7 +1,7 @@
 const COMMENT_PAGE_SIZE = 10;
 
-const baseMemeQuery = psql => (
-  psql('memes')
+const baseMemeQuery = (psql, user) => {
+  const query = psql('memes')
     .select(['memes.meme_id', 'memes.user_id', 'memes.title', 'memes.cloudinary_url', 'memes.date_created'])
     .groupBy('memes.meme_id')
     .leftJoin('comments', 'memes.meme_id', 'comments.meme_id')
@@ -15,7 +15,16 @@ const baseMemeQuery = psql => (
     })
     .count('dvotes.meme_id as down_votes')
     .clone()
-);
+  if (user) {
+    query.leftJoin('votes as ivote', function joinDownVotes() {
+      this.on('memes.meme_id', '=', 'ivote.meme_id').andOn('ivote.user_id', '=', psql.raw('?', [user.user_id]));
+    })
+    .groupBy('ivote.type')
+    .select('ivote.type as user_vote')
+    .clone()
+  }
+  return query;
+};
 
 module.exports = psql => ({
 
@@ -79,9 +88,9 @@ module.exports = psql => ({
     }
   },
 
-  getMeme: async (memeId) => {
+  getMeme: async (memeId, user) => {
     try {
-      const meme = await baseMemeQuery(psql)
+      const meme = await baseMemeQuery(psql, user)
         .where({ 'memes.meme_id': memeId })
         .first();
 
