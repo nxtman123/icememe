@@ -5,41 +5,43 @@
         Log in
       </div>
     </q-card-section>
-    <q-card-section>
-      <q-input
-        v-model="username"
-        outlined
-        dense
-        stack-label="Stack Label"
-        placeholder="Username"
-        @keyup.enter="prompt=false"
-      />
-    </q-card-section>
-    <q-card-section>
-      <q-input
-        v-model="password"
-        outlined
-        dense
-        stack-label="Stack Label"
-        placeholder="Password"
-        @keyup.enter="prompt=false"
-      />
-    </q-card-section>
-    <q-card-actions
-      align="right"
-      class="text-primary row justify-around"
-    >
-      <q-btn
-        v-close-popup
-        flat
-        label="Log in"
-      />
-      <q-btn
-        v-close-popup
-        flat
-        label="Cancel"
-      />
-    </q-card-actions>
+    <form @submit.prevent="onSubmit">
+      <q-card-section>
+        <q-input
+          v-model="username"
+          dense
+          outlined
+          placeholder="Username"
+          stack-label="Stack Label"
+        />
+      </q-card-section>
+      <q-card-section>
+        <q-input
+          v-model="password"
+          dense
+          outlined
+          placeholder="Password"
+          stack-label="Stack Label"
+        />
+      </q-card-section>
+      <q-card-section
+        align="right"
+        class="text-primary row justify-around"
+      >
+        <q-btn
+          v-close-popup
+          flat
+          label="Log in"
+          type="submit"
+          :disable="!(username && password)"
+        />
+        <q-btn
+          v-close-popup
+          flat
+          label="Cancel"
+        />
+      </q-card-section>
+    </form>
     <q-card-section>
       <div>
         New to IceMeme?
@@ -61,6 +63,15 @@ export default {
       username: '',
       password: '',
     };
+  },
+  methods: {
+    onSubmit() {
+      if (this.username && this.password) {
+        // TODO: replace alert with call to server to authenticate
+        // eslint-disable-next-line no-alert
+        alert(`TODO: call server to log in ${this.username}`);
+      }
+    },
   },
 };
 </script>

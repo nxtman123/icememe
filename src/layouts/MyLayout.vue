@@ -14,6 +14,7 @@
           </router-link>
         </q-toolbar-title>
 
+        <!-- TODO: change into a logout button when user logged in -->
         <q-btn
           flat
           stretch
@@ -24,7 +25,7 @@
 
 
         <q-dialog v-model="prompt">
-          <login-dialog/>
+          <login-dialog />
         </q-dialog>
 
         <q-btn
