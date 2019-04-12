@@ -62,9 +62,9 @@ io.on('connect', (socket) => {
         socketUser = authentication.verifyToken(loginResult.value).value;
       }
 
-      socket.emit('register', loginResult);
+      return socket.emit('register', loginResult);
     } else {
-      socket.emit('register', registration);
+      return socket.emit('register', registration);
     }
   });
 
@@ -77,7 +77,12 @@ io.on('connect', (socket) => {
       socketUser = authentication.verifyToken(loginResult.value).value;
     }
 
-    socket.emit('login', loginResult);
+    return socket.emit('login', loginResult);
+  });
+
+  socket.on('logout', async (user) => {
+    socketUser = false;
+    return socket.emit('logout');
   });
 
   // meme events
@@ -109,7 +114,7 @@ io.on('connect', (socket) => {
 
     if (commentResult.isSuccessful) {
       // emit new comment to all users viewing this meme
-      io.to(`meme_id: ${commentData.meme_id}`).emit('newLatestComment', commentResult.value);
+      io.to(`meme_id: ${commentData.meme_id}`).emit('newLiveComment', commentResult.value);
     }
 
     return socket.emit('addComment', commentResult);
@@ -137,6 +142,7 @@ io.on('connect', (socket) => {
 
   socket.on('leaveMeme', (memeId) => {
     socket.leave(`meme_id: ${memeId}`, () => {});
+    return socket.emit('leaveMeme', memeId);
   });
 
   // disconnect
