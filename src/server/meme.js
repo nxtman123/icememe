@@ -55,6 +55,41 @@ module.exports = psql => ({
     }
   },
 
+  // voteData = { meme_id, vote_type }
+  // user = { user_id, username }
+  // returns { isSuccessful, value }
+  addVote: async (voteData, user) => {
+    try {
+      const meme = await psql('memes')
+        .where({ meme_id: voteData.meme_id });
+
+      if (meme.length <= 0) {
+        return {
+          isSuccessful: false,
+          value: 'meme with that id does not exist',
+        };
+      }
+
+      const newVote = await psql('votes')
+        .insert({
+          user_id: user.user_id,
+          meme_id: voteData.meme_id,
+          type: voteData.vote_type,
+        }).returning(['vote_id', 'user_id', 'meme_id', 'type', 'date_created']);
+
+      return {
+        isSuccessful: true,
+        value: newVote,
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        isSuccessful: false,
+        value: 'unexpected error when trying to add vote',
+      };
+    }
+  },
+
   // commentData = { meme_id, text }
   // user = { user_id, username }
   // returns { isSuccessful, value }
