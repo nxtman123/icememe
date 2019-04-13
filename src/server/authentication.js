@@ -1,6 +1,10 @@
 const argon2 = require('argon2');
 const validator = require('validator');
+const _ = require('underscore');
 const jwt = require('jsonwebtoken');
+
+const USERNAME_MAX = 20;
+const EMAIL_MAX = 50;
 
 const JWT_OPTIONS = {
   issuer: process.env.ISSUER,
@@ -9,6 +13,7 @@ const JWT_OPTIONS = {
   expiresIn: process.env.EXPIRES_IN,
   algorithm: process.env.ALGORITHM,
 };
+
 
 module.exports = psql => ({
 
@@ -87,68 +92,104 @@ module.exports = psql => ({
     }
   },
 
-  // updateData = { (optional)email, (optional)username, (optional)password  }
+  /*
+    updateData = {
+      (optional)email, (optional) confirm_email,
+      (optional)username, (optional) confirm_username,
+      (optional)password,  (optional) confirm_password
+    }
+  */
   // user = { decoded token }
   updateUserData: async (updateData, user) => {
     try {
       const toUpdate = {};
-      if (updateData.confirm_email) {
-        if (updateData.email !== updateData.confirm_email) {
+      const userInDatabase = await psql('users')
+        .where('user_id', '=', user.user_id);
+
+      if (updateData.email) {
+        if (updateData.email.length > EMAIL_MAX) {
           return {
             isSuccessful: false,
-            value: 'email and confirmation email do not match',
+            value: 'email length exceeds maximum length',
           };
         }
 
-        const checkEmail = await psql('users')
-          .where('email', updateData.confirm_email);
+        // check if the email aleady in the database is not the same as the new one
+        // confirm confirmation email is correct
+        if (userInDatabase[0].email !== updateData.email) {
+          if (updateData.email !== updateData.confirm_email) {
+            return {
+              isSuccessful: false,
+              value: 'email and confirmation email do not match',
+            };
+          }
 
-        if (checkEmail.length > 0) {
-          return {
-            isSuccessful: false,
-            value: 'email already taken',
-          };
+          const checkEmail = await psql('users')
+            .where('email', updateData.email);
+
+          if (checkEmail.length > 0) {
+            return {
+              isSuccessful: false,
+              value: 'email already taken',
+            };
+          }
+
+          toUpdate.email = updateData.email;
         }
-
-        toUpdate.email = updateData.confirm_email;
       }
 
-      if (updateData.confirm_username) {
-        if (updateData.username !== updateData.confirm_username) {
+      if (updateData.username) {
+        if (updateData.username.length > USERNAME_MAX) {
           return {
             isSuccessful: false,
-            value: 'username and confirmation username do not match',
+            value: 'username length exceeds maximum length',
           };
         }
 
-        const checkUsername = await psql('users')
-          .where('username', updateData.confirm_username);
+        // check if the username already in the database is not the same as the new one
+        // confirm confirmation username is correct
+        if (userInDatabase[0].username !== updateData.username) {
+          if (updateData.username !== updateData.confirm_username) {
+            return {
+              isSuccessful: false,
+              value: 'username and confirmation username do not match',
+            };
+          }
+          const checkUsername = await psql('users')
+            .where('username', updateData.username);
 
-        if (checkUsername.length > 0) {
-          return {
-            isSuccessful: false,
-            value: 'username already taken',
-          };
+          if (checkUsername.length > 0) {
+            return {
+              isSuccessful: false,
+              value: 'username already taken',
+            };
+          }
+
+          toUpdate.username = updateData.username;
         }
-
-        toUpdate.username = updateData.confirm_username;
       }
 
-      if (updateData.confirm_password) {
-        if (updateData.password !== updateData.confirm_password) {
-          return {
-            isSuccessful: false,
-            value: 'password and confirmation password to not match',
-          };
-        }
+      // check if password already in the databse is not the same as the new one
+      if (updateData.password) {
+        const hash = await argon2.hash(updateData.password);
+        if (userInDatabase[0].password !== hash) {
+          if (updateData.password !== updateData.confirm_password) {
+            return {
+              isSuccessful: false,
+              value: 'password and confirmation password to not match',
+            };
+          }
 
-        const hash = await argon2.hash(updateData.confirm_password);
-        toUpdate.password = hash;
+          toUpdate.password = hash;
+        }
       }
 
-      await psql('users')
-        .where('user_id', '=', user.user_id)
-        .update(toUpdate);
+
+      if (!_.isEmpty(toUpdate)) {
+        await psql('users')
+          .where('user_id', '=', user.user_id)
+          .update(toUpdate);
+      }
 
       return {
         isSuccessful: true,
