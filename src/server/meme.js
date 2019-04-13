@@ -155,12 +155,12 @@ module.exports = psql => ({
       if (!username) {
         if (earliestId) {
           memes = await baseMemeQuery(psql, user)
-            .where('memes.meme_id', '<', earliestId)
-            .orderBy('meme_id', 'desc')
+            .andWhere('memes.meme_id', '<', earliestId)
+            .orderBy('memes.meme_id', 'desc')
             .limit(MEME_PAGE_SIZE);
         } else {
           memes = await baseMemeQuery(psql, user)
-            .orderBy('meme_id', 'desc')
+            .orderBy('memes.meme_id', 'desc')
             .limit(MEME_PAGE_SIZE);
         }
         return {
@@ -171,16 +171,14 @@ module.exports = psql => ({
       // else get memes belonging to the provided user
       if (earliestId) {
         memes = await baseMemeQuery(psql, user)
-          .innerJoin('users as users2', 'memes.user_id', 'users2.user_id')
-          .where('users2.username', username)
+          .andWhere('users.username', username)
           .andWhere('memes.meme_id', '<', earliestId)
-          .orderBy('meme_id', 'desc')
+          .orderBy('memes.meme_id', 'desc')
           .limit(MEME_PAGE_SIZE);
       } else {
         memes = await baseMemeQuery(psql, user)
-          .innerJoin('users as users2', 'memes.user_id', 'users2.user_id')
-          .where('users2.username', username)
-          .orderBy('meme_id', 'desc')
+          .andWhere('users.username', username)
+          .orderBy('memes.meme_id', 'desc')
           .limit(MEME_PAGE_SIZE);
       }
       return {
