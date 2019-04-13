@@ -67,6 +67,25 @@ io.on('connect', (socket) => {
     return socket.emit('register', registration);
   });
 
+  /*
+    updateData = {
+      (optional)email, (optional) confirm_email,
+      (optional)username, (optional) confirm_username,
+      (optional)password,  (optional) confirm_password
+    }
+  */
+  socket.on('updateUserData', async (updateData) => {
+    if (socketUser === false) {
+      return socket.emit('updateUserData', {
+        isSuccessful: false,
+        value: 'cannot verify user',
+      });
+    }
+
+    const updateResult = await authentication.updateUserData(updateData, socketUser);
+    return socket.emit('updateUserData', updateResult);
+  });
+
   // user = { username, password }
   // returns { isSuccessful, value }
   socket.on('login', async (user) => {
