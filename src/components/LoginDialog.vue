@@ -68,6 +68,11 @@ export default {
       password: '',
     };
   },
+  computed: {
+      readyToSubmit() {
+          return this.username && this.password && this.username <= 20 && this.password <= 20;
+      }
+  }
   methods: {
     onSubmit() {
       if (this.username && this.password) {
