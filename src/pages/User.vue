@@ -1,15 +1,20 @@
 <template>
   <q-layout>
     <q-page class="column justify-center page-frame">
-      <span style="height: 40px"/>
+      <span style="height: 40px" />
       <meme-collection
         :memes="memes"
         @load="loadMoreMemes"
       />
     </q-page>
-    <q-page-sticky position="top-left" :offset="[0, 50]">
+    <q-page-sticky
+      position="top-left"
+      :offset="[0, 50]"
+    >
       <div style="background-color: rgba(2, 123, 227, 0.42);">
-        <p style="padding: 10px; color: white;">Posted by: john-cena</p>
+        <p style="padding: 10px; color: white;">
+          Posted by: john-cena
+        </p>
       </div>
     </q-page-sticky>
   </q-layout>
