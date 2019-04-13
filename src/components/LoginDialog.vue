@@ -69,10 +69,10 @@ export default {
     };
   },
   computed: {
-      readyToSubmit() {
-          return this.username && this.password && this.username <= 20 && this.password <= 20;
-      }
-  }
+    readyToSubmit() {
+      return this.username && this.password && this.username <= 20 && this.password <= 20;
+    },
+  },
   methods: {
     onSubmit() {
       if (this.readyToSubmit()) {
