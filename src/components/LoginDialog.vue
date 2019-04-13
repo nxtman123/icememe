@@ -12,7 +12,7 @@
           dense
           outlined
           placeholder="Username"
-          stack-label="Stack Label"
+          :stack-label="true"
           :rules="[val => val.length<=20 || 'Usernames are limited to 20 characters']"
         />
       </q-card-section>
@@ -70,9 +70,8 @@ export default {
   },
   computed: {
     readyToSubmit() {
-      const isValid = this.username && this.password
+      return this.username && this.password
         && this.username.length <= 20 && this.password.length <= 20;
-      return isValid;
     },
   },
   methods: {
