@@ -19,6 +19,7 @@
       <q-card-section>
         <q-input
           v-model="password"
+          type="password"
           dense
           outlined
           placeholder="Password"
