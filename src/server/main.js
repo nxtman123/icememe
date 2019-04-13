@@ -120,8 +120,8 @@ io.on('connect', (socket) => {
   });
 
   // gets memes for home or personal page, returns {isSuccessful, value}
-  socket.on('getMemes', async (username) => {
-    const memes = await meme.getMemes(username);
+  socket.on('getMemes', async (username, earliestId) => {
+    const memes = await meme.getMemes(username, earliestId, socketUser);
 
     return socket.emit('getMemes', memes);
   });

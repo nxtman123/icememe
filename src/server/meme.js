@@ -1,4 +1,5 @@
 const COMMENT_PAGE_SIZE = 10;
+const MEME_PAGE_SIZE = 15;
 
 const baseMemeQuery = (psql, user) => {
   let query = psql('memes')
@@ -143,19 +144,57 @@ module.exports = psql => ({
     }
   },
 
-  getMemes: async (username) => {
+  getMemes: async (username, earliestId, user) => {
     try {
-      // get all memes if username not provided
-      if (username === '' || username === undefined || username === null) {
-        return await psql('memes');
+      let memes;
+
+      /* 
+        Get all memes if username not provided. Pagination of memes identical to 
+        meme comments above.
+      */
+      if (!username) {
+        if (earliestId) {
+          memes = await baseMemeQuery(psql, user)
+            .where('memes.meme_id', '<', earliestId)
+            .orderBy('meme_id', 'desc')
+            .limit(MEME_PAGE_SIZE);
+        }
+        else {
+          memes = await baseMemeQuery(psql, user)
+            .orderBy('meme_id', 'desc')
+            .limit(MEME_PAGE_SIZE);
+        }
+        return {
+          isSuccessful: true,
+          value: memes,
+        };
       }
       // else get memes belonging to the provided user
-      return await psql('memes')
-        .innerJoin('users', 'memes.user_id', 'users.user_id')
-        .where('users.username', username);
+      if (earliestId) {
+        memes = await baseMemeQuery(psql, user)
+          .innerJoin('users as users2', 'memes.user_id', 'users2.user_id')
+          .where('users2.username', username)
+          .andWhere('memes.meme_id', '<', earliestId)
+          .orderBy('meme_id', 'desc')
+          .limit(MEME_PAGE_SIZE);
+      }
+      else {
+        memes = await baseMemeQuery(psql, user)
+          .innerJoin('users as users2', 'memes.user_id', 'users2.user_id')
+          .where('users2.username', username)
+          .orderBy('meme_id', 'desc')
+          .limit(MEME_PAGE_SIZE);
+      }
+      return {
+        isSuccessful: true,
+        value: memes,
+      };
     } catch (e) {
       console.log(e);
-      return 'unexpected error when trying to retrieve memes';
+      return {
+        isSuccessful: false,
+        value: 'unexpected error when trying to retrieve memes',
+      };
     }
   },
 });
