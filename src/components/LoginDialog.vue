@@ -13,6 +13,7 @@
           outlined
           placeholder="Username"
           stack-label="Stack Label"
+          :rules="[val => val.length<=15 || 'Usernames should not be over 15 characters']"
         />
       </q-card-section>
       <q-card-section>
@@ -22,6 +23,7 @@
           outlined
           placeholder="Password"
           stack-label="Stack Label"
+          :rules="[val => val.length<=15 || 'Passwords should not be over 15 characters']"
         />
       </q-card-section>
       <q-card-section
