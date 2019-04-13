@@ -68,9 +68,14 @@ export default {
       password: '',
     };
   },
+  computed: {
+      readyToSubmit() {
+          return this.username && this.password && this.username <= 20 && this.password <= 20;
+      }
+  }
   methods: {
     onSubmit() {
-      if (this.username && this.password) {
+      if (this.readyToSubmit()) {
         // TODO: replace alert with call to server to authenticate
         // eslint-disable-next-line no-alert
         alert(`TODO: call server to log in ${this.username}`);
