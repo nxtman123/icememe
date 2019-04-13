@@ -68,18 +68,21 @@ export default {
       password: '',
     };
   },
-  computed: {
-    readyToSubmit() {
-      return this.username && this.password && this.username <= 20 && this.password <= 20;
-    },
-  },
   methods: {
     onSubmit() {
       if (this.readyToSubmit()) {
         // TODO: replace alert with call to server to authenticate
         // eslint-disable-next-line no-alert
         alert(`TODO: call server to log in ${this.username}`);
+      } else {
+        // eslint-disable-next-line no-alert
+        alert('Your username or password is invalid.');
       }
+    },
+    readyToSubmit() {
+      const isValid = this.username && this.password
+        && this.username.length <= 20 && this.password.length <= 20;
+      return isValid;
     },
   },
 };
