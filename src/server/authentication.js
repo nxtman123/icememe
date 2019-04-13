@@ -91,12 +91,12 @@ module.exports = psql => ({
   // user = { decoded token }
   updateUserData: async (updateData, user) => {
     try {
-      let toUpdate = {};
+      const toUpdate = {};
       if (updateData.confirm_email) {
         if (updateData.email !== updateData.confirm_email) {
           return {
             isSuccessful: false,
-            value: 'email and confirmation email do not match'
+            value: 'email and confirmation email do not match',
           };
         }
 
@@ -117,7 +117,7 @@ module.exports = psql => ({
         if (updateData.username !== updateData.confirm_username) {
           return {
             isSuccessful: false,
-            value: 'username and confirmation username do not match'
+            value: 'username and confirmation username do not match',
           };
         }
 
@@ -138,7 +138,7 @@ module.exports = psql => ({
         if (updateData.password !== updateData.confirm_password) {
           return {
             isSuccessful: false,
-            value: 'password and confirmation password to not match'
+            value: 'password and confirmation password to not match',
           };
         }
 
@@ -146,20 +146,19 @@ module.exports = psql => ({
         toUpdate.password = hash;
       }
 
-      const updateResult = await psql('users')
+      await psql('users')
         .where('user_id', '=', user.user_id)
         .update(toUpdate);
 
       return {
         isSuccessful: true,
-        value: 'successfully updated user data'
+        value: 'successfully updated user data',
       };
-
     } catch (e) {
       console.log(e);
       return {
         isSuccessful: false,
-        value: 'unexpected error when attempting to update user data'
+        value: 'unexpected error when attempting to update user data',
       };
     }
   },
