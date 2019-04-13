@@ -49,6 +49,7 @@
       <div>
         New to IceMeme?
         <router-link
+          v-close-popup
           :to="{ name: 'register' }"
         >
           Sign up.
