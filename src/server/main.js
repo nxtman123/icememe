@@ -120,6 +120,7 @@ io.on('connect', (socket) => {
   });
 
   // voteData = { meme_id, vote_type }
+  // vote_type is expected to be a string with a value of 'up' or 'down'
   // returns { isSuccessful, value }
   socket.on('addVote', async (voteData) => {
     if (socketUser === false) {
