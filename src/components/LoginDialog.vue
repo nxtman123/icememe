@@ -36,7 +36,7 @@
           flat
           label="Log in"
           type="submit"
-          :disable="!(username && password)"
+          :disable="!readyToSubmit"
         />
         <q-btn
           v-close-popup
@@ -68,21 +68,18 @@ export default {
       password: '',
     };
   },
-  methods: {
-    onSubmit() {
-      if (this.readyToSubmit()) {
-        // TODO: replace alert with call to server to authenticate
-        // eslint-disable-next-line no-alert
-        alert(`TODO: call server to log in ${this.username}`);
-      } else {
-        // eslint-disable-next-line no-alert
-        alert('Your username or password is invalid.');
-      }
-    },
+  computed: {
     readyToSubmit() {
       const isValid = this.username && this.password
         && this.username.length <= 20 && this.password.length <= 20;
       return isValid;
+    },
+  },
+  methods: {
+    onSubmit() {
+      // TODO: replace alert with call to server to authenticate
+      // eslint-disable-next-line no-alert
+      alert(`TODO: call server to log in ${this.username}`);
     },
   },
 };
