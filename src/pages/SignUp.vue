@@ -1,6 +1,8 @@
 <template>
   <q-page padding>
-    <h1>Registration</h1>
+    <div class="text-h6 q-py-md">
+      Sign Up
+    </div>
     <form @submit.prevent="submit">
         <q-input style="padding: 10px" v-model="email" outlined label="Email"
           @blur="emailCheck" :error="$v.email.$error"/>
