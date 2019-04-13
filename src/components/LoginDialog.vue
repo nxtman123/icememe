@@ -12,7 +12,7 @@
           dense
           outlined
           placeholder="Username"
-          stack-label="Stack Label"
+          :stack-label="true"
           :rules="[val => val.length<=15 || 'Usernames should not be over 15 characters']"
         />
       </q-card-section>
