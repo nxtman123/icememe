@@ -148,8 +148,8 @@ module.exports = psql => ({
     try {
       let memes;
 
-      /* 
-        Get all memes if username not provided. Pagination of memes identical to 
+      /*
+        Get all memes if username not provided. Pagination of memes identical to
         meme comments above.
       */
       if (!username) {
@@ -158,8 +158,7 @@ module.exports = psql => ({
             .where('memes.meme_id', '<', earliestId)
             .orderBy('meme_id', 'desc')
             .limit(MEME_PAGE_SIZE);
-        }
-        else {
+        } else {
           memes = await baseMemeQuery(psql, user)
             .orderBy('meme_id', 'desc')
             .limit(MEME_PAGE_SIZE);
@@ -177,8 +176,7 @@ module.exports = psql => ({
           .andWhere('memes.meme_id', '<', earliestId)
           .orderBy('meme_id', 'desc')
           .limit(MEME_PAGE_SIZE);
-      }
-      else {
+      } else {
         memes = await baseMemeQuery(psql, user)
           .innerJoin('users as users2', 'memes.user_id', 'users2.user_id')
           .where('users2.username', username)
