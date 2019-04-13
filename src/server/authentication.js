@@ -104,7 +104,7 @@ module.exports = psql => ({
     try {
       const toUpdate = {};
       const userInDatabase = await psql('users')
-        .where('user_id', '=', user.user_id);
+        .where('user_id', '=', user.user_id).first();
 
       if (updateData.email) {
         if (updateData.email.length > EMAIL_MAX) {
@@ -116,7 +116,7 @@ module.exports = psql => ({
 
         // check if the email aleady in the database is not the same as the new one
         // confirm confirmation email is correct
-        if (userInDatabase[0].email !== updateData.email) {
+        if (userInDatabase.email !== updateData.email) {
           if (updateData.email !== updateData.confirm_email) {
             return {
               isSuccessful: false,
@@ -148,7 +148,7 @@ module.exports = psql => ({
 
         // check if the username already in the database is not the same as the new one
         // confirm confirmation username is correct
-        if (userInDatabase[0].username !== updateData.username) {
+        if (userInDatabase.username !== updateData.username) {
           if (updateData.username !== updateData.confirm_username) {
             return {
               isSuccessful: false,
@@ -172,7 +172,7 @@ module.exports = psql => ({
       // check if password already in the databse is not the same as the new one
       if (updateData.password) {
         const hash = await argon2.hash(updateData.password);
-        if (userInDatabase[0].password !== hash) {
+        if (userInDatabase.password !== hash) {
           if (updateData.password !== updateData.confirm_password) {
             return {
               isSuccessful: false,
