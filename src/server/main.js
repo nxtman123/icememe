@@ -119,6 +119,13 @@ io.on('connect', (socket) => {
     return socket.emit('addComment', commentResult);
   });
 
+  // gets memes for home or personal page, returns {isSuccessful, value}
+  socket.on('getMemes', async (username, earliestId) => {
+    const memes = await meme.getMemes(username, earliestId, socketUser);
+
+    return socket.emit('getMemes', memes);
+  });
+
   // returns { isSuccessful, value }
   socket.on('getMeme', async (memeId) => {
     const memeResult = await meme.getMeme(memeId, socketUser);
