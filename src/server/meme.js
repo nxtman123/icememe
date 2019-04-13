@@ -1,4 +1,5 @@
 const COMMENT_PAGE_SIZE = 10;
+const MEME_PAGE_SIZE = 15;
 
 const baseMemeQuery = (psql, user) => {
   let query = psql('memes')
@@ -139,6 +140,56 @@ module.exports = psql => ({
       return {
         isSuccessful: false,
         value: 'unexpected error when trying to retrieve comments',
+      };
+    }
+  },
+
+  getMemes: async (username, earliestId, user) => {
+    try {
+      let memes;
+
+      /*
+        Get all memes if username not provided. Pagination of memes identical to
+        meme comments above.
+      */
+      if (!username) {
+        if (earliestId) {
+          memes = await baseMemeQuery(psql, user)
+            .andWhere('memes.meme_id', '<', earliestId)
+            .orderBy('memes.meme_id', 'desc')
+            .limit(MEME_PAGE_SIZE);
+        } else {
+          memes = await baseMemeQuery(psql, user)
+            .orderBy('memes.meme_id', 'desc')
+            .limit(MEME_PAGE_SIZE);
+        }
+        return {
+          isSuccessful: true,
+          value: memes,
+        };
+      }
+      // else get memes belonging to the provided user
+      if (earliestId) {
+        memes = await baseMemeQuery(psql, user)
+          .andWhere('users.username', username)
+          .andWhere('memes.meme_id', '<', earliestId)
+          .orderBy('memes.meme_id', 'desc')
+          .limit(MEME_PAGE_SIZE);
+      } else {
+        memes = await baseMemeQuery(psql, user)
+          .andWhere('users.username', username)
+          .orderBy('memes.meme_id', 'desc')
+          .limit(MEME_PAGE_SIZE);
+      }
+      return {
+        isSuccessful: true,
+        value: memes,
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        isSuccessful: false,
+        value: 'unexpected error when trying to retrieve memes',
       };
     }
   },

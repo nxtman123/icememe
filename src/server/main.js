@@ -67,6 +67,25 @@ io.on('connect', (socket) => {
     return socket.emit('register', registration);
   });
 
+  /*
+    updateData = {
+      (optional)email, (optional) confirm_email,
+      (optional)username, (optional) confirm_username,
+      (optional)password,  (optional) confirm_password
+    }
+  */
+  socket.on('updateUserData', async (updateData) => {
+    if (socketUser === false) {
+      return socket.emit('updateUserData', {
+        isSuccessful: false,
+        value: 'cannot verify user',
+      });
+    }
+
+    const updateResult = await authentication.updateUserData(updateData, socketUser);
+    return socket.emit('updateUserData', updateResult);
+  });
+
   // user = { username, password }
   // returns { isSuccessful, value }
   socket.on('login', async (user) => {
@@ -117,6 +136,13 @@ io.on('connect', (socket) => {
     }
 
     return socket.emit('addComment', commentResult);
+  });
+
+  // gets memes for home or personal page, returns {isSuccessful, value}
+  socket.on('getMemes', async (username, earliestId) => {
+    const memes = await meme.getMemes(username, earliestId, socketUser);
+
+    return socket.emit('getMemes', memes);
   });
 
   // returns { isSuccessful, value }
