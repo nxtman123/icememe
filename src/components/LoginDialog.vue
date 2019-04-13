@@ -12,7 +12,6 @@
           dense
           outlined
           placeholder="Username"
-          :stack-label="true"
           :rules="[val => val.length<=20 || 'Usernames are limited to 20 characters']"
         />
       </q-card-section>
@@ -23,7 +22,6 @@
           dense
           outlined
           placeholder="Password"
-          stack-label="Stack Label"
           :rules="[val => val.length<=20 || 'Passwords are limited to 20 characters']"
         />
       </q-card-section>
