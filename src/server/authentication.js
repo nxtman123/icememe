@@ -87,6 +87,83 @@ module.exports = psql => ({
     }
   },
 
+  // updateData = { (optional)email, (optional)username, (optional)password  }
+  // user = { decoded token }
+  updateUserData: async (updateData, user) => {
+    try {
+      let toUpdate = {};
+      if (updateData.confirm_email) {
+        if (updateData.email !== updateData.confirm_email) {
+          return {
+            isSuccessful: false,
+            value: 'email and confirmation email do not match'
+          };
+        }
+
+        const checkEmail = await psql('users')
+          .where('email', updateData.confirm_email);
+
+        if (checkEmail.length > 0) {
+          return {
+            isSuccessful: false,
+            value: 'email already taken',
+          };
+        }
+
+        toUpdate.email = updateData.confirm_email;
+      }
+
+      if (updateData.confirm_username) {
+        if (updateData.username !== updateData.confirm_username) {
+          return {
+            isSuccessful: false,
+            value: 'username and confirmation username do not match'
+          };
+        }
+
+        const checkUsername = await psql('users')
+          .where('username', updateData.confirm_username);
+
+        if (checkUsername.length > 0) {
+          return {
+            isSuccessful: false,
+            value: 'username already taken',
+          };
+        }
+
+        toUpdate.username = updateData.confirm_username;
+      }
+
+      if (updateData.confirm_password) {
+        if (updateData.password !== updateData.confirm_password) {
+          return {
+            isSuccessful: false,
+            value: 'password and confirmation password to not match'
+          };
+        }
+
+        const hash = await argon2.hash(updateData.confirm_password);
+        toUpdate.password = hash;
+      }
+
+      const updateResult = await psql('users')
+        .where('user_id', '=', user.user_id)
+        .update(toUpdate);
+
+      return {
+        isSuccessful: true,
+        value: 'successfully updated user data'
+      };
+
+    } catch (e) {
+      console.log(e);
+      return {
+        isSuccessful: false,
+        value: 'unexpected error when attempting to update user data'
+      };
+    }
+  },
+
   // returns { isSuccessful, value }
   verifyToken: (token) => {
     try {
