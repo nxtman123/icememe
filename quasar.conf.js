@@ -5,7 +5,8 @@ module.exports = function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     boot: [
-      'socketio'
+      'socketio',
+      'masonry'
     ],
 
     css: [
@@ -25,23 +26,27 @@ module.exports = function (ctx) {
       // all: true, // --- includes everything; for dev only!
 
       components: [
-        'QLayout',
-        'QHeader',
-        'QDrawer',
-        'QPageContainer',
-        'QPage',
-        'QToolbar',
-        'QToolbarTitle',
         'QBtn',
-        'QIcon',
-        'QList',
-        'QItem',
-        'QItemSection',
-        'QItemLabel',
-        'QInput',
-        'QDialog',
+        'QBtnToggle',
         'QCard',
         'QCardSection',
+        'QDrawer',
+        'QHeader',
+        'QIcon',
+        'QImg',
+        'QInfiniteScroll',
+        'QInput',
+        'QItem',
+        'QItemLabel',
+        'QItemSection',
+        'QLayout',
+        'QList',
+        'QPage',
+        'QPageContainer',
+        'QSpinner',
+        'QToolbar',
+        'QToolbarTitle',
+        'QDialog',
         'QCardActions'
       ],
 

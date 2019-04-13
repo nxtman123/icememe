@@ -1,7 +1,9 @@
 # ICEMEME
 A site for sharing the coldest memes
 
-## Development
+## Deployment
+
+### Development
 Follow these instructions to set up your development environment.
 
 #### Getting Started
@@ -91,12 +93,14 @@ Should be changed to
 PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQC\n+9FiJCtty4mOb\nqOMWT2f6eNf+Jl\n5M4sQ6\n-----END RSA PRIVATE KEY-----"
 ```
 
-*NOTICE*: the **\n** appended to where the newlines appeared above
+> **Note:**
+>
+> The `\n` appended to where the newlines appeared above.
 
 
 In development, these environment variables will be available in the `process.env` object, in both the client and server.
 
-> Note!
+> **Note:**
 >
 > If you introduce a new environment variable necessary to run the app, make sure to add an entry to `.env.example`, either with an acceptable default, or an empty value.
 >
@@ -106,8 +110,8 @@ In development, these environment variables will be available in the `process.en
 >       MY_CRYPTO_SECRET=
 
 
-#### Running Migrations and Seeding the Database
-9. We will use knex to add and run migrations to our database, as well as add test data (seeds). We will do this using the knex CLI, which can be used with yarn. The repository should already contain a knexfile.js, which uses your DATABASE_URL environment variable to connect to your database. In the project root directory, simply run the following commands to migrate the database to the latest version and seed it with test data:
+#### Running Migrations
+9. We will use Knex to add and run migrations to our database, as well as add test data (seeds). We will do this using the Knex CLI, which can be used with yarn. The repository should already contain a `knexfile.js`, which uses your `DATABASE_URL` environment variable to connect to your database. In the project root directory, simply run the following to migrate the database to the latest version:
 
         $ yarn run knex migrate:latest
         $ yarn run knex seed:run
@@ -135,14 +139,14 @@ There's two ways to run the app: in development mode or production mode.
     This mode builds the app into a set of static files at `dist/spa/`. Then the back-end server is used to serve these front-end static files *and* act normally as the back-end server.
 
 
-## Deployment
-Our app will be deployed on Heroku. Kurtis has his GitHub Student Developer Pack connected to Heroku to provide the PostgreSQL add-on.
+### Production
+Our app will have its production deploy on Heroku. Kurtis has his GitHub Student Developer Pack connected to Heroku to provide the PostgreSQL add-on.
 
-Visit it at https://infinite-river-96657.herokuapp.com/
+Visit it at https://icememe.fun
 
 Some things to note:
 
-- Deployments to production must come from the `master` branch. This means we need to move changes through our Git Flow branching model to master (via a release) before deploying.
+- Deployments to production come automatically from the `master` branch. This means we need to move changes through our Git Flow branching model to master (via a release) before deploying.
 - This also means development and testing need to be done on our local machines. If you want to test on a phone, you can try connecting over a local network (e.g. `http://local.pc.ip.address:8080/`) or with a tool like [ngrok](https://ngrok.com/) (ngrok free will only work when running in production mode, as it only allows reverse-proxy to one port number).
 
 ## Design
@@ -150,9 +154,9 @@ Some things to note:
 ### URL Design
 
 - Main Page `/`
-- Registration `sign-up/?next="/m/123id/title-slug"`
+- Registration `sign-up/then/m/123id/title-slug`
 - Upload `/new`
 - Meme with comments,votes `/m/123id/title-slug`
-- Personal page `/u/123userid/user-name-slug`
+- Personal page `/u/username`
 - Settings `/settings`
-- Login (dialog?)
+- Login (via a dialog)

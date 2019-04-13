@@ -1,8 +1,17 @@
 // app global css
+@import '~quasar-variables'
 
-#title {
-    text-decoration: none;
-    color: white;
-    font-family: Impact;
-    font-size: 150%;
-}
+.page-frame
+    max-width: 1024px
+    padding: 0 16px
+    margin: 0 auto
+
+#title
+    text-decoration: none
+    color: white
+    font-family: Impact
+    font-size: 150%
+    outline: none
+    transition: opacity $button-transition
+    &:hover, &:focus
+        opacity: .7

@@ -20,13 +20,14 @@ if (process.env.NODE_ENV === 'production') {
 const io = require('socket.io')(server);
 
 // connect to database
+require('pg').types.setTypeParser(20, x => parseInt(x, 10)); // make SQL count() return Numbers
 const psql = require('knex')({
   client: 'pg',
   connection: process.env.DATABASE_URL,
   debug: process.env.NODE_ENV !== 'production',
 });
 
-// import authentication and pass psql
+// import libraries and pass psql
 const authentication = require('./authentication')(psql);
 const meme = require('./meme')(psql);
 
@@ -34,54 +35,116 @@ const meme = require('./meme')(psql);
 io.on('connect', (socket) => {
   console.log('a user connected!');
 
-  // check if token exists
+  // authentication events
+
   let socketUser = false;
+
+  // check if token exists
   if (socket.handshake.query.token) {
-    socketUser = authentication.verifyToken(socket.handshake.query.token);
+    const verifyResult = authentication.verifyToken(socket.handshake.query.token);
+    if (verifyResult.isSuccessful) {
+      socketUser = verifyResult.value;
+      console.log(`welcome back, ${socketUser.username}`);
+    } else {
+      socket.emit('invalidToken');
+    }
   }
 
-  // Index page demo socket and database interaction
-  socket.on('hello', (message) => {
-    console.log('hello', message);
-    psql.select('table_name').from('information_schema.tables').limit(8)
-      .map(row => row.table_name)
-      .then((tableNames) => {
-        socket.emit('hello', `wow, so ${message}, very message\n\n${tableNames.join('\n')}`);
-      });
-  });
-
-  /*
-    registration requires: 'username', 'email', 'password'
-    returns JWT
-   */
+  // user = { username, email, password }
+  // returns { isSuccessful, value }
   socket.on('register', async (user) => {
     const registration = await authentication.register(user);
 
-    if (registration === true) {
-      const loggedIn = await authentication.login(user);
-      socket.emit('register', loggedIn);
-    } else {
-      socket.emit('register', registration);
+    if (registration.isSuccessful === true) {
+      const loginResult = await authentication.login(user);
+
+      if (loginResult.isSuccessful) {
+        socketUser = authentication.verifyToken(loginResult.value).value;
+      }
+
+      return socket.emit('register', loginResult);
     }
+    return socket.emit('register', registration);
   });
 
-  /*
-   login requires: 'username', 'password'
-   returns JWT
-   */
+  // user = { username, password }
+  // returns { isSuccessful, value }
   socket.on('login', async (user) => {
-    const token = await authentication.login(user);
-    socket.emit('login', token);
-  });
+    const loginResult = await authentication.login(user);
 
-  socket.on('uploadMemeData', async (data) => {
-    if (socketUser === false) {
-      return socket.emit('uploadMemeData', 'cannot verify user');
+    if (loginResult.isSuccessful) {
+      socketUser = authentication.verifyToken(loginResult.value).value;
     }
-    const saveResult = await meme.saveMeme(data, socketUser);
 
-    return socket.emit('uploadMemeData', saveResult);
+    return socket.emit('login', loginResult);
   });
+
+  socket.on('logout', async () => {
+    socketUser = false;
+    return socket.emit('logout');
+  });
+
+  // meme events
+
+  // memeData = { title, cloudinary_url }
+  // returns { isSuccessful, value }
+  socket.on('addMeme', async (memeData) => {
+    if (socketUser === false) {
+      return socket.emit('addMeme', {
+        isSuccessful: false,
+        value: 'cannot verify user',
+      });
+    }
+    const saveResult = await meme.saveMeme(memeData, socketUser);
+
+    return socket.emit('addMeme', saveResult);
+  });
+
+  // commentData = { meme_id, text }
+  // returns { isSuccessful, value }
+  socket.on('addComment', async (commentData) => {
+    if (socketUser === false) {
+      return socket.emit('addComment', {
+        isSuccessful: false,
+        value: 'cannot verify user',
+      });
+    }
+    const commentResult = await meme.addComment(commentData, socketUser);
+
+    if (commentResult.isSuccessful) {
+      // emit new comment to all users viewing this meme
+      io.to(`meme_id: ${commentData.meme_id}`).emit('newLiveComment', commentResult.value);
+    }
+
+    return socket.emit('addComment', commentResult);
+  });
+
+  // returns { isSuccessful, value }
+  socket.on('getMeme', async (memeId) => {
+    const memeResult = await meme.getMeme(memeId, socketUser);
+
+    if (memeResult.isSuccessful) {
+      // subscribe to receive new comments live
+      socket.join(`meme_id: ${memeId}`);
+    }
+
+    return socket.emit('getMeme', memeResult);
+  });
+
+  // earliestId is optional
+  // returns { isSuccessful, value }
+  socket.on('getMemeComments', async (memeId, earliestId) => {
+    const commentsResult = await meme.getMemeComments(memeId, earliestId);
+
+    return socket.emit('getMemeComments', commentsResult);
+  });
+
+  socket.on('leaveMeme', (memeId) => {
+    socket.leave(`meme_id: ${memeId}`, () => {});
+    return socket.emit('leaveMeme', memeId);
+  });
+
+  // disconnect
 
   socket.on('disconnect', () => {
     console.log('a user disconnected :(');
