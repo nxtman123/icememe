@@ -42,8 +42,10 @@ export default {
     socket_login(/* state */) {
       console.log('socket_login');
     },
-    socket_logout(/* state */) {
+    socket_logout(state) {
       console.log('socket_logout');
+      state.user = null;
+      LocalStorage.remove('token');
     },
   },
 };

@@ -173,8 +173,7 @@ export default {
   methods: {
     openURL,
     logout() {
-      // eslint-disable-next-line no-alert
-      alert('TODO: LOGOUT');
+      this.$socket.emit('logout');
     },
   },
 };
