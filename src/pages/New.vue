@@ -43,8 +43,8 @@
 
 <script>
 // eslint-disable-next-line
-const CLOUD_NAME = 'kingwizard'; // TODO: Channge to correct cloud
-const CLOUD_PRESET = 'h4c8kn5g'; // TODO: Add upload preset to correct cloud
+const CLOUD_NAME = process.env.CLOUDINARY_NAME;
+const CLOUD_PRESET = process.env.CLOUDINARY_PRESET;
 
 export default {
   name: 'PageNewMeme',
@@ -130,4 +130,32 @@ export default {
 </script>
 
 <style>
+  #new-meme-preview {
+    display: block;
+    margin: auto;
+    max-width: 100%;
+    max-height: 100vh;
+  }
+
+  #dropbox {
+      width: 100%;
+      position: relative;
+  }
+
+  #new-meme-input {
+      position: absolute;
+      width: inherit;
+  }
+
+  #new-meme-input input {
+      position: static;
+      height: inherit;
+      width: 200%;
+      opacity: 0;
+      z-index: 2;
+  }
+
+  #new-meme-facade {
+      position: relative;
+  }
 </style>
