@@ -28,7 +28,7 @@
         filled
         placeholder="Password"
         type="password"
-        :rules="[val => val.length<=20 || 'Please limit your password to 20 characters.']"
+        :rules="[val => val.length<=100 || 'Please limit your password to 100 characters.']"
       />
       <q-input
         ref="confirmedPassword"
@@ -77,7 +77,7 @@ export default {
     validEmail: {
       cache: false,
       get() {
-        return validator.isEmail(this.email);
+        return validator.isEmail(this.email) && this.email.length <= 50;
       },
     },
     matchingPasswords: {
@@ -90,7 +90,7 @@ export default {
       cache: false,
       get() {
         return this.email && this.username && this.password && this.confirmedPassword
-          && this.username.length <= 20 && this.password.length <= 20
+          && this.username.length <= 20 && this.password.length <= 100
           && this.validEmail && this.matchingPasswords;
       },
     },
