@@ -45,9 +45,8 @@ io.on('connect', (socket) => {
     if (verifyResult.isSuccessful) {
       socketUser = verifyResult.value;
       console.log(`welcome back, ${socketUser.username}`);
-    } else {
-      socket.emit('invalidToken');
     }
+    socket.emit('verify', verifyResult);
   }
 
   // user = { username, email, password }
@@ -99,6 +98,7 @@ io.on('connect', (socket) => {
   });
 
   socket.on('logout', async () => {
+    console.log(`so long, ${socketUser.username}`);
     socketUser = false;
     return socket.emit('logout');
   });
