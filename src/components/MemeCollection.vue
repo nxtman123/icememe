@@ -10,7 +10,7 @@
     >
       <meme-card
         v-for="meme in memes"
-        :key="meme.id"
+        :key="meme.meme_id"
         class="q-pb-md"
         v-bind="meme"
       />

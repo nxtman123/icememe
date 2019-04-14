@@ -69,8 +69,8 @@ export default {
       default: '',
     },
     date_created: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
     voteTotal: {
       type: Number,

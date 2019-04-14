@@ -18,39 +18,14 @@ export default {
   data() {
     return {
       memes: [],
+      earliestMeme: 0,
     };
-  },
-  mounted() {
-    this.$socket.emit('getMemes');
   },
   methods: {
     loadMoreMemes(done) {
       setTimeout(() => {
         if (this.memes) {
-          const nextId = this.memes.length;
-          this.memes.push(
-
-            {
-              memeId: nextId,
-              authorUsername: 'icedoge',
-              title: 'Mr. Fish, I don\'t feel so good',
-              cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-              dateCreated: 1554145159,
-              voteTotal: 543,
-              userVote: 'down',
-              commentCount: 17,
-            },
-            {
-              memeId: nextId + 1,
-              authorUsername: 'icedoge',
-              title: 'I can\'t do that while you\'re watching',
-              cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-              dateCreated: 1554145159,
-              voteTotal: 54323,
-              userVote: 'up',
-              commentCount: 3123,
-            },
-          );
+          this.$socket.emit('getMemes', '', this.earliestMeme);
         }
         done();
       }, 1500);
@@ -58,8 +33,10 @@ export default {
   },
   sockets: {
     getMemes(reply) {
-      this.memes = reply.value;
-      console.log(this.memes);
+      if (reply.value.length > 0) {
+        reply.value.forEach((item) => { this.memes.push(item); });
+        this.earliestMeme = reply.value[reply.value.length - 1].meme_id;
+      }
     },
   },
 };
