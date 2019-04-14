@@ -97,10 +97,14 @@ export default {
   },
   methods: {
     onSubmit() {
-      // TODO: replace alert with call to server to sign up new user
       if (this.readyToSubmit) {
-        // eslint-disable-next-line no-alert
-        alert(`TODO: call server to sign up ${this.username}, with email ${this.email}`);
+        const userData = {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        };
+
+        this.$socket.emit('register', userData);
       }
     },
     onReset() {
@@ -112,6 +116,14 @@ export default {
       this.$refs.username.resetValidation();
       this.$refs.password.resetValidation();
       this.$refs.confirmedPassword.resetValidation();
+    },
+  },
+  sockets: {
+    register(reply) {
+      if (reply.isSuccessful) {
+        this.$q.notify('Successfully created account');
+        this.$router.push({ name: 'main' });
+      }
     },
   },
 };
