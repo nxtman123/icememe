@@ -6,170 +6,186 @@
     >
       Settings
     </div>
+
     <q-btn
       color="primary"
       style="margin: 5px"
       class="full-width"
       label="Change Username"
-      @click="usernamePrompt = true"
+      @click="usernameDialog = true"
     />
     <q-btn
       color="primary"
       style="margin: 5px"
       class="full-width"
       label="Change Email"
-      @click="emailPrompt = true"
+      @click="emailDialog = true"
     />
     <q-btn
       color="primary"
       style="margin: 5px"
       class="full-width"
       label="Change Password"
-      @click="pwdPrompt = true"
+      @click="passwordDialog = true"
     />
+
+    <!-- Username change dialog -->
     <q-dialog
-      v-model="usernamePrompt"
+      v-model="usernameDialog"
       persistent
+      transition-show="scale"
+      transition-hide="scale"
     >
-      <q-card style="padding: 20px; margin: 20px; width: 100%; max-width: 500px;">
+      <q-card style="width: 400px">
         <q-card-section>
           <div class="text-h6">
             Change Username
           </div>
         </q-card-section>
+
         <q-card-section>
           <q-input
-            v-model="newUsername"
-            autofocus
-            hint="Enter a new username"
-            :error="newUsernameError"
-            @keyup.enter="prompt = false"
-          >
-            <template v-slot:error>
-              Username is in use!
-            </template>
-          </q-input>
+            v-model="username"
+            label="Username"
+            lazy-rules
+            maxlength="20"
+            :rules="[ val => val && val.length > 0 || 'Please type something']"
+          />
+          <q-input
+            v-model="confirmUsername"
+            label="Confirm Username"
+            lazy-rules
+            maxlength="20"
+            :rules="[ val => val && val.length > 0 && username === confirmUsername ||
+              'Confirmation does not match']"
+          />
+
+          <div>
+            <q-btn
+              :disable="username !== confirmUsername"
+              label="Submit"
+              type="button"
+              color="primary"
+              @click="usernameSubmit"
+            />
+            <q-btn
+              v-close-popup
+              label="Cancel"
+              type="button"
+              color="primary"
+              flat
+              class="q-ml-sm"
+            />
+          </div>
         </q-card-section>
-        <q-card-actions
-          align="right"
-          class="text-primary"
-        >
-          <q-btn
-            flat
-            label="Cancel"
-            @click="usernamePrompt = false, newUsername = '', newUsernameError = false"
-          />
-          <q-btn
-            flat
-            label="Confirm"
-            @click="changeUsername"
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
+
+
+    <!-- Email change dialog -->
     <q-dialog
-      v-model="emailPrompt"
+      v-model="emailDialog"
       persistent
+      transition-show="scale"
+      transition-hide="scale"
     >
-      <q-card style="padding: 20px; margin: 20px; width: 100%; max-width: 500px;">
+      <q-card style="width: 400px">
         <q-card-section>
           <div class="text-h6">
             Change Email
           </div>
         </q-card-section>
+
         <q-card-section>
           <q-input
-            v-model="newEmail"
-            autofocus
-            hint="Enter a new Email"
-            :error="newEmailError"
-            @blur="isValidEmail"
-          >
-            <template v-slot:error>
-              Not a valid email!
-            </template>
-          </q-input>
+            v-model="email"
+            label="Email"
+            type="email"
+            lazy-rules
+            maxlength="50"
+            :rules="[ val => val && val.length > 0 || 'Please type something']"
+          />
+          <q-input
+            v-model="confirmEmail"
+            label="Confirm Email"
+            type="email"
+            lazy-rules
+            maxlength="50"
+            :rules="[ val => val && val.length > 0 && email === confirmEmail ||
+              'Confirmation does not match']"
+          />
+
+          <div>
+            <q-btn
+              :disable="email !== confirmEmail"
+              label="Submit"
+              type="button"
+              color="primary"
+              @click="emailSubmit"
+            />
+            <q-btn
+              v-close-popup
+              label="Cancel"
+              type="button"
+              color="primary"
+              flat
+              class="q-ml-sm"
+            />
+          </div>
         </q-card-section>
-        <q-card-actions
-          align="right"
-          class="text-primary"
-        >
-          <q-btn
-            flat
-            label="Cancel"
-            @click="emailPrompt = false, newEmail = '', newEmailError = false"
-          />
-          <q-btn
-            flat
-            label="Confirm"
-            @click="changeEmail"
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
+
+
+    <!-- Password change dialog -->
     <q-dialog
-      v-model="pwdPrompt"
+      v-model="passwordDialog"
       persistent
+      transition-show="scale"
+      transition-hide="scale"
     >
-      <q-card style="padding: 20px; margin: 20px; width: 100%; max-width: 500px;">
+      <q-card style="width: 400px">
         <q-card-section>
           <div class="text-h6">
             Change Password
           </div>
         </q-card-section>
+
         <q-card-section>
           <q-input
-            v-model="oldPassword"
-            autofocus
-            hint="Enter your current Password."
-            error="oldPasswordError"
+            v-model="password"
+            label="New Password"
             type="password"
-            @blur="isCorrectPassword"
-          >
-            <template v-slot:error>
-              Incorrect Password!
-            </template>
-          </q-input>
-          <q-input
-            v-model="newPassword"
-            hint="Enter a new password of at least 8 characters."
-            :error="newPasswordError"
-            type="password"
-            @blur="isValidPassword"
-          >
-            <template v-slot:error>
-              Password must be at least 8 characters!
-            </template>
-          </q-input>
+            lazy-rules
+            :rules="[ val => val && val.length > 0 || 'Please type something']"
+          />
           <q-input
             v-model="confirmPassword"
-            hint="Confirm your new password"
-            :error="confirmPasswordError"
+            label="Confirm Password"
             type="password"
-            @blur="isPasswordMatch"
-          >
-            <template v-slot:error>
-              Password's do not match!
-            </template>
-          </q-input>
+            lazy-rules
+            :rules="[ val => val && val.length > 0 && password === confirmPassword ||
+              'Confirmation does not match']"
+          />
+
+          <div>
+            <q-btn
+              :disable="password !== confirmPassword"
+              label="Submit"
+              type="button"
+              color="primary"
+              @click="passwordSubmit"
+            />
+            <q-btn
+              v-close-popup
+              label="Cancel"
+              type="button"
+              color="primary"
+              flat
+              class="q-ml-sm"
+            />
+          </div>
         </q-card-section>
-        <q-card-actions
-          align="right"
-          class="text-primary"
-        >
-          <q-btn
-            flat
-            label="Cancel"
-            @click="pwdPrompt = false, oldPassword = '', oldPasswordError = false,
-              newPassword = '', newPasswordError = false,
-              confirmPassword = '', confirmPasswordError = false"
-          />
-          <q-btn
-            flat
-            label="Confirm"
-            @click="changePassword"
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
   </q-page>
@@ -182,89 +198,64 @@ export default {
   name: 'Settings',
   data() {
     return {
-      usernamePrompt: false,
-      newUsername: '',
-      newUsernameError: false,
-      emailPrompt: false,
-      newEmail: '',
-      newEmailError: false,
-      pwdPrompt: false,
-      oldPassword: '',
-      oldPasswordError: false,
-      newPassword: '',
-      newPasswordError: false,
+      usernameDialog: false,
+      username: '',
+      confirmUsername: '',
+
+      emailDialog: false,
+      email: '',
+      confirmEmail: '',
+
+      passwordDialog: false,
+      password: '',
       confirmPassword: '',
-      confirmPasswordError: false,
     };
   },
   computed: {
 
   },
   methods: {
-    isValidUsername() {
-      // TODO Check database if this.newUsername is in use
-      // If it is, set this.newUsernameError to true and return
-      this.newUsernameError = false;
+    usernameSubmit() {
+      const newUsername = {
+        username: this.username,
+        confirm_username: this.confirmUsername,
+      };
+
+      this.username = '';
+      this.confirmUsername = '';
+      this.usernameDialog = false;
+      this.$socket.emit('updateUserData', newUsername);
     },
-    changeUsername() {
-      if (!this.newUserNameError) {
-        // TODO update username with this.newUsername in database
-        this.newUsername = '';
-        this.usernamePrompt = false;
-      }
-    },
-    isValidEmail() {
-      if (!validator.isEmail(this.newEmail)) {
-        this.newEmailError = true;
+
+    emailSubmit() {
+      if (!validator.isEmail(this.email)
+          || !validator.isEmail(this.confirmEmail)) {
         return;
       }
-      // TODO Check database if this.newEmail is in use.
-      // If it is, set this.newEmailError to true and return
-      this.newEmailError = false;
+
+      const newEmail = {
+        email: this.email,
+        confirm_email: this.confirmEmail,
+      };
+
+      this.email = '';
+      this.confirmEmail = '';
+      this.emailDialog = false;
+      this.$socket.emit('updateUserData', newEmail);
     },
-    changeEmail() {
-      if (!this.newEmailError) {
-        // TODO update email with this.newEmail in database
-        this.newEmail = '';
-        this.emailPrompt = false;
-      }
-    },
-    isCorrectPassword() {
-      // TODO check database if this.oldPassword matches users current password.
-      // If it is, set oldPasswordError = false. Else oldPasswordError = true,
-      this.oldPasswordError = false;
-    },
-    isValidPassword() {
-      if (this.newPassword.length >= 8) {
-        this.newPasswordError = false;
-        return;
-      }
-      this.newPasswordError = true;
-    },
-    isPasswordMatch() {
-      if (this.newPassword === this.confirmPassword) {
-        this.confirmPasswordError = false;
-        return;
-      }
-      this.confirmPasswordError = true;
-    },
-    changePassword() {
-      if (this.oldPassword !== ''
-          && this.newPassword !== ''
-          && this.newPassword !== '') {
-        if (!this.oldPasswordError
-            && !this.newPasswordError
-            && !this.confirmPasswordError) {
-          // TODO update database with this.newPassword
-          this.oldPassword = '';
-          this.oldPasswordError = false;
-          this.newPassword = '';
-          this.newPasswordError = false;
-          this.confirmPassword = '';
-          this.confirmPasswordError = false;
-          this.pwdPrompt = false;
-        }
-      }
+
+    passwordSubmit() {
+      const newPassword = {
+        username: this.password,
+        confirmPassword: this.confirmPassword,
+      };
+
+      this.password = '';
+      this.confirmPassword = '';
+      this.passwordDialog = false;
+      this.$socket.emit('updateUserData', newPassword);
+
+      // TODO: remove user token and kick user back to home page
     },
   },
 };
