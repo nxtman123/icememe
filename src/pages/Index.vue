@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import _ from 'underscore';
 import MemeCollection from '../components/MemeCollection';
 
 export default {
@@ -34,7 +35,14 @@ export default {
   sockets: {
     getMemes(reply) {
       if (reply.value.length > 0) {
-        reply.value.forEach((item) => { this.memes.push(item); });
+        reply.value.forEach((item) => {
+          const upvotes = _.isUndefined(item.up_votes) ? 0 : item.up_votes;
+          const downvotes = _.isUndefined(item.down_votes) ? 0 : item.down_votes;
+
+          console.log(item);
+          item.total_vote = upvotes + downvotes;
+          this.memes.push(item);
+        });
         this.earliestMeme = reply.value[reply.value.length - 1].meme_id;
       }
     },

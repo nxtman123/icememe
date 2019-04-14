@@ -23,7 +23,7 @@
         <div class="row justify-between">
           <vote-buttons
             class="q-mb-sm q-mr-sm"
-            :vote-total="voteTotal"
+            :vote-total="total_vote"
             :user-vote="userVote"
           />
           <q-btn
@@ -72,7 +72,7 @@ export default {
       type: String,
       default: '',
     },
-    voteTotal: {
+    total_vote: {
       type: Number,
       default: 0,
     },
