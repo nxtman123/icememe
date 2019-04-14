@@ -170,6 +170,13 @@ export default {
       'loggedIn',
     ]),
   },
+  watch: {
+    loggedIn(value) {
+      if (value) {
+        this.$q.notify('Logged in successfully');
+      }
+    },
+  },
   methods: {
     openURL,
     logout() {

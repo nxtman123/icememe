@@ -75,9 +75,10 @@ export default {
   methods: {
     onSubmit() {
       if (this.readyToSubmit) {
-        // TODO: replace alert with call to server to authenticate
-        // eslint-disable-next-line no-alert
-        alert(`TODO: call server to log in ${this.username}`);
+        this.$socket.emit('login', {
+          username: this.username,
+          password: this.password,
+        });
       }
     },
   },
