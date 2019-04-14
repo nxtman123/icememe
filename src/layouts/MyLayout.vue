@@ -16,6 +16,7 @@
 
         <!-- TODO: change into a logout button when user logged in -->
         <q-btn
+          v-if="!loggedIn"
           flat
           stretch
           @click="prompt=true"
@@ -29,6 +30,7 @@
         </q-dialog>
 
         <q-btn
+          v-if="!loggedIn"
           flat
           stretch
           :to="{ name: 'register' }"
@@ -56,7 +58,7 @@
     >
       <q-list>
         <q-item-label header>
-          [USERNAME]
+          {{ username }}
         </q-item-label>
         <q-item
           clickable
@@ -74,81 +76,83 @@
             </q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
-          clickable
-          tag="a"
-          :to="{ name: 'user', params: { username: 'johncena' }}"
-        >
-          <q-item-section avatar>
-            <q-icon name="person" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>My Page</q-item-label>
-            <q-item-label caption>
-              User Profile
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          :to="{ name: 'new' }"
-        >
-          <q-item-section avatar>
-            <q-icon name="cloud_upload" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Upload</q-item-label>
-            <q-item-label caption>
-              New Meme
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          :to="{ name: 'settings' }"
-        >
-          <q-item-section avatar>
-            <q-icon name="settings" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Settings</q-item-label>
-            <q-item-label caption>
-              Account Settings
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          @click="logout"
-        >
-          <q-item-section avatar>
-            <q-icon name="exit_to_app" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Log out</q-item-label>
-            <q-item-label caption>
-              Sign out
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          onclick="location.href='mailto:icememe.moderator@gmail.com'"
-        >
-          <q-item-section avatar>
-            <q-icon name="mail" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Contact the administrator</q-item-label>
-            <q-item-label caption>
-              Email
-            </q-item-label>
-          </q-item-section>
-        </q-item>
+        <template v-if="loggedIn">
+          <q-item
+            clickable
+            tag="a"
+            :to="{ name: 'user', params: { username: username }}"
+          >
+            <q-item-section avatar>
+              <q-icon name="person" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>My Page</q-item-label>
+              <q-item-label caption>
+                User Profile
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            tag="a"
+            :to="{ name: 'new' }"
+          >
+            <q-item-section avatar>
+              <q-icon name="cloud_upload" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Upload</q-item-label>
+              <q-item-label caption>
+                New Meme
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            tag="a"
+            :to="{ name: 'settings' }"
+          >
+            <q-item-section avatar>
+              <q-icon name="settings" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Settings</q-item-label>
+              <q-item-label caption>
+                Account Settings
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            tag="a"
+            @click="logout"
+          >
+            <q-item-section avatar>
+              <q-icon name="exit_to_app" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Log out</q-item-label>
+              <q-item-label caption>
+                Sign out
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            tag="a"
+            onclick="location.href='mailto:icememe.moderator@gmail.com'"
+          >
+            <q-item-section avatar>
+              <q-icon name="mail" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Contact the administrator</q-item-label>
+              <q-item-label caption>
+                Email
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
       </q-list>
     </q-drawer>
 
@@ -160,6 +164,8 @@
 
 <script>
 import { openURL } from 'quasar';
+import { mapGetters } from 'vuex';
+
 import LoginDialog from '../components/LoginDialog';
 
 export default {
@@ -173,11 +179,16 @@ export default {
       prompt: false,
     };
   },
+  computed: {
+    ...mapGetters([
+      'username',
+      'loggedIn',
+    ]),
+  },
   methods: {
     openURL,
     logout() {
-      // eslint-disable-next-line no-alert
-      alert('TODO: LOGOUT');
+      this.$socket.emit('logout');
     },
   },
 };
