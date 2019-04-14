@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import moment from 'moment';
+// import moment from 'moment';
 
 export default {
   name: 'MemeMetadata',
@@ -25,25 +25,23 @@ export default {
       default: '',
     },
     dateCreated: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
   },
   computed: {
     displayDate() {
-      return moment.unix(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
+      return new Date(this.dateCreated).toLocaleDateString('en-US');
     },
   },
 };
 </script>
 
 <style lang="stylus">
-
 .author-link
   color: inherit
   text-decoration: none
   outline: none
   &:hover, &:focus
     text-decoration: underline
-
 </style>

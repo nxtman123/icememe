@@ -41,7 +41,6 @@
 
 <script>
 import slugify from 'slugify';
-
 import VoteButtons from './VoteButtons';
 import MemeMetadata from './MemeMetadata';
 
@@ -69,8 +68,8 @@ export default {
       default: '',
     },
     dateCreated: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
     voteTotal: {
       type: Number,
@@ -95,12 +94,10 @@ export default {
 </script>
 
 <style lang="stylus">
-
 .title
   color: black
   text-decoration: none
   outline: none
   &:focus
     text-decoration: underline
-
 </style>
