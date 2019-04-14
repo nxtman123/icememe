@@ -47,16 +47,18 @@ module.exports = function (ctx) {
         'QToolbar',
         'QToolbarTitle',
         'QDialog',
+        'QCardActions'
       ],
 
       directives: [
         'Ripple',
-        'ClosePopup',
+        'ClosePopup'
       ],
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'Dialog'
       ]
 
       // iconSet: 'ionicons-v4'
