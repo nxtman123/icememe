@@ -182,12 +182,16 @@ module.exports = psql => ({
        */
       if (earliestId) {
         comments = await psql('comments')
+          .innerJoin('users', 'users.user_id', 'comments.user_id')
+          .select(['comments.comment_id', 'users.username', 'comments.date_created', 'comments.text'])
           .where({ meme_id: memeId })
           .andWhere('comment_id', '<', earliestId)
           .orderBy('comment_id', 'desc')
           .limit(COMMENT_PAGE_SIZE);
       } else {
         comments = await psql('comments')
+          .innerJoin('users', 'users.user_id', 'comments.user_id')
+          .select(['comments.comment_id', 'users.username', 'comments.date_created', 'comments.text'])
           .where({ meme_id: memeId })
           .orderBy('comment_id', 'desc')
           .limit(COMMENT_PAGE_SIZE);

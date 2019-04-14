@@ -106,34 +106,7 @@ export default {
       userVote: 'up',
       commentCount: 0,
       comments: [],
-      /*
-      comments: [
-        {
-          commentId: 0,
-          username: 'frostfox',
-          dateCreated: 1554145259,
-          text: 'first!',
-        },
-        {
-          commentId: 1,
-          username: 'johncena',
-          dateCreated: 1554145289,
-          text: 'I don\'t see it',
-        },
-        {
-          commentId: 2,
-          username: 'frostfox',
-          dateCreated: 1554145329,
-          text: 'bahaha',
-        },
-        {
-          commentId: 3,
-          username: 'harambe',
-          dateCreated: 1554145429,
-          text: 'never forget',
-        },
-      ],
-      */
+      earliestComment: 0,
     };
   },
   computed: {
@@ -167,35 +140,7 @@ export default {
     loadOlderComments(index, done) {
       setTimeout(() => {
         if (this.comments) {
-          // const nextId = this.comments.length;
-          this.comments.push(
-            /*
-            {
-              commentId: nextId,
-              username: 'frostfox',
-              dateCreated: 1554145259,
-              text: 'first!',
-            },
-            {
-              commentId: nextId + 1,
-              username: 'johncena',
-              dateCreated: 1554145289,
-              text: 'I don\'t see it',
-            },
-            {
-              commentId: nextId + 2,
-              username: 'frostfox',
-              dateCreated: 1554145329,
-              text: 'bahaha',
-            },
-            {
-              commentId: nextId + 3,
-              username: 'harambe',
-              dateCreated: 1554145429,
-              text: 'never forget',
-            },
-            */
-          );
+          this.$socket.emit('getMemeComments', this.memeId, this.earliestComment);
         }
         done();
       }, 2000);
@@ -204,21 +149,6 @@ export default {
   sockets: {
     getMeme(reply) {
       if (reply.isSuccessful) {
-        /*
-        draftComment: '',
-        authorUsername: 'icedoge',
-        title: 'Quasar is important, I promise',
-        cloudinaryUrl: 'https://matthewstrom.com/images/ds-0.jpg',
-        dateCreated: 1554145159,
-        voteTotal: 54323,
-        userVote: 'up',
-        commentCount: 3123,
-        comments: [],
-
-        const upvotes = _.isUndefined(item.up_votes) ? 0 : item.up_votes;
-        const downvotes = _.isUndefined(item.down_votes) ? 0 : item.down_votes;
-        item.total_vote = upvotes + downvotes;
-        */
         const upvotes = _.isUndefined(reply.value.up_votes) ? 0 : reply.value.up_votes;
         const downvotes = _.isUndefined(reply.value.down_votes) ? 0 : reply.value.down_votes;
 
@@ -227,9 +157,21 @@ export default {
         this.cloudinaryUrl = reply.value.cloudinary_url;
         this.dateCreated = reply.value.date_created;
         this.voteTotal = upvotes + downvotes;
-        this.userVote = 'up';
         this.commentCount = reply.value.comment_count;
-        this.comments = [];
+      }
+    },
+    getMemeComments(reply) {
+      if (reply.value.length > 0) {
+        reply.value.forEach((item) => {
+          this.comments.push({
+            commentId: item.comment_id,
+            username: item.username,
+            dateCreated: item.date_created,
+            text: item.text,
+          });
+        });
+
+        this.earliestComment = reply.value[reply.value.length - 1].comment_id;
       }
     },
   },
