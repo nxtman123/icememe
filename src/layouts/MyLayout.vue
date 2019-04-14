@@ -171,9 +171,11 @@ export default {
     ]),
   },
   watch: {
-    loggedIn(value) {
-      if (value) {
+    loggedIn(newValue, oldValue) {
+      if (oldValue === false && newValue === true) {
         this.$q.notify('Logged in successfully');
+      } else if (oldValue === false && newValue === false) {
+        this.$q.notify('Failed to login');
       }
     },
   },
