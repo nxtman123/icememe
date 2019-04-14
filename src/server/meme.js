@@ -55,6 +55,68 @@ module.exports = psql => ({
     }
   },
 
+  // voteData = { meme_id, vote_type }
+  // user = { user_id, username }
+  // returns { isSuccessful, value }
+  addVote: async (voteData, user) => {
+    try {
+      let newVote;
+
+      const meme = await psql('memes')
+        .where({ meme_id: voteData.meme_id });
+
+      if (meme.length <= 0) {
+        return {
+          isSuccessful: false,
+          value: 'meme with that id does not exist',
+        };
+      }
+
+      const previousVote = await psql('votes')
+        .where('user_id', user.user_id)
+        .andWhere('meme_id', voteData.meme_id)
+        .first();
+
+      // if user voted same type on this meme before, do nothing
+      if (previousVote) {
+        if (previousVote.type === voteData.vote_type) {
+          return {
+            isSuccessful: false,
+            value: 'already voted '.concat(voteData.vote_type, ' on this meme.'),
+          };
+        }
+        // else change vote
+        newVote = await psql('votes')
+          .where('user_id', user.user_id)
+          .andWhere('meme_id', voteData.meme_id)
+          .update({
+            type: voteData.vote_type,
+            date_created: psql.fn.now(),
+          })
+          .returning(['vote_id', 'user_id', 'meme_id', 'type', 'date_created']);
+      } else {
+        newVote = await psql('votes')
+          .insert({
+            user_id: user.user_id,
+            meme_id: voteData.meme_id,
+            type: voteData.vote_type,
+          })
+          .returning(['vote_id', 'user_id', 'meme_id', 'type', 'date_created']);
+      }
+
+      return {
+        isSuccessful: true,
+        value: newVote,
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        isSuccessful: false,
+        value: 'unexpected error when trying to add vote',
+      };
+    }
+  },
+
   // commentData = { meme_id, text }
   // user = { user_id, username }
   // returns { isSuccessful, value }
