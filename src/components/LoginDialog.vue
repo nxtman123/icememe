@@ -10,9 +10,9 @@
         <q-input
           v-model="username"
           dense
-          outlined
+          filled
           placeholder="Username"
-          :rules="[val => val.length<=20 || 'Usernames are limited to 20 characters']"
+          :rules="[val => val.length<=20 || 'Usernames are no longer than 20 characters']"
         />
       </q-card-section>
       <q-card-section>
@@ -20,9 +20,9 @@
           v-model="password"
           type="password"
           dense
-          outlined
+          filled
           placeholder="Password"
-          :rules="[val => val.length<=20 || 'Passwords are limited to 20 characters']"
+          :rules="[val => val.length<=100 || 'Passwords are no longer than 100 characters']"
         />
       </q-card-section>
       <q-card-section
@@ -69,14 +69,16 @@ export default {
   computed: {
     readyToSubmit() {
       return this.username && this.password
-        && this.username.length <= 20 && this.password.length <= 20;
+        && this.username.length <= 20 && this.password.length <= 100;
     },
   },
   methods: {
     onSubmit() {
-      // TODO: replace alert with call to server to authenticate
-      // eslint-disable-next-line no-alert
-      alert(`TODO: call server to log in ${this.username}`);
+      if (this.readyToSubmit) {
+        // TODO: replace alert with call to server to authenticate
+        // eslint-disable-next-line no-alert
+        alert(`TODO: call server to log in ${this.username}`);
+      }
     },
   },
 };
