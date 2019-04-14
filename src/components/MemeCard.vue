@@ -3,7 +3,7 @@
     <q-card>
       <router-link
         class="title"
-        :to="{ name: 'meme', params: { meme_id, slug: slugTitle }}"
+        :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
         style="box-sizing: inherhit;"
       >
         <q-card-section class="text-h6">
@@ -11,27 +11,27 @@
         </q-card-section>
         <q-img
           spinner-color="primary"
-          :src="cloudinary_url"
+          :src="cloudinaryUrl"
           :alt="title"
         />
       </router-link>
       <q-card-section class="q-pb-sm">
         <meme-metadata
-          :author-username="username"
-          :date-created="date_created"
+          :author-username="authorUsername"
+          :date-created="dateCreated"
         />
         <div class="row justify-between">
           <vote-buttons
             class="q-mb-sm q-mr-sm"
-            :vote-total="total_vote"
+            :vote-total="voteTotal"
             :user-vote="userVote"
           />
           <q-btn
             outline
             class="q-mb-sm"
             icon="comment"
-            :label="comment_count"
-            :to="{ name: 'meme', params: { meme_id, slug: slugTitle }, hash: '#comments' }"
+            :label="commentCount"
+            :to="{ name: 'meme', params: { memeId, slug: slugTitle }, hash: '#comments' }"
           />
         </div>
       </q-card-section>
@@ -41,7 +41,6 @@
 
 <script>
 import slugify from 'slugify';
-
 import VoteButtons from './VoteButtons';
 import MemeMetadata from './MemeMetadata';
 
@@ -52,11 +51,11 @@ export default {
     'meme-metadata': MemeMetadata,
   },
   props: {
-    meme_id: {
+    memeId: {
       type: Number,
       default: -1,
     },
-    username: {
+    authorUsername: {
       type: String,
       default: '',
     },
@@ -64,15 +63,15 @@ export default {
       type: String,
       default: '',
     },
-    cloudinary_url: {
+    cloudinaryUrl: {
       type: String,
       default: '',
     },
-    date_created: {
+    dateCreated: {
       type: String,
       default: '',
     },
-    total_vote: {
+    voteTotal: {
       type: Number,
       default: 0,
     },
@@ -81,7 +80,7 @@ export default {
       default: null,
       validator: v => ['up', 'down', null].includes(v),
     },
-    comment_count: {
+    commentCount: {
       type: Number,
       default: 0,
     },
@@ -95,12 +94,10 @@ export default {
 </script>
 
 <style lang="stylus">
-
 .title
   color: black
   text-decoration: none
   outline: none
   &:focus
     text-decoration: underline
-
 </style>
