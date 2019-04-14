@@ -75,7 +75,6 @@ io.on('connect', (socket) => {
     }
   */
   socket.on('updateUserData', async (updateData) => {
-    console.log(updateData);
     if (socketUser === false) {
       return socket.emit('updateUserData', {
         isSuccessful: false,
