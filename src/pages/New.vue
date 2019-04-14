@@ -82,12 +82,22 @@ export default {
         this.formHasError = true;
       } else {
         this.uploadFile();
+        this.memeTitle = null;
+        this.file = null;
+        this.fileName = null;
+        this.fileInput = null;
+        document.getElementById('new-meme-preview').src = '';
         this.$q.notify({
           icon: 'done',
           color: 'positive',
           message: 'Submitted',
         });
+        window.setTimeout(this.reset, 100);
       }
+    },
+    reset() {
+      this.$refs.memeTitle.resetValidation();
+      this.$refs.fileName.resetValidation();
     },
     uploadFile() {
       const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
