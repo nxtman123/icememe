@@ -39,7 +39,6 @@ export default {
           const upvotes = _.isUndefined(item.up_votes) ? 0 : item.up_votes;
           const downvotes = _.isUndefined(item.down_votes) ? 0 : item.down_votes;
 
-          console.log(item);
           item.total_vote = upvotes + downvotes;
           this.memes.push(item);
         });
