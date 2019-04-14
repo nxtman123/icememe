@@ -15,6 +15,8 @@
 </template>
 
 <script>
+// import moment from 'moment';
+
 export default {
   name: 'MemeMetadata',
   props: {
@@ -36,12 +38,10 @@ export default {
 </script>
 
 <style lang="stylus">
-
 .author-link
   color: inherit
   text-decoration: none
   outline: none
   &:hover, &:focus
     text-decoration: underline
-
 </style>
