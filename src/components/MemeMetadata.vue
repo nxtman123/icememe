@@ -15,8 +15,6 @@
 </template>
 
 <script>
-import moment from 'moment';
-
 export default {
   name: 'MemeMetadata',
   props: {
@@ -25,13 +23,13 @@ export default {
       default: '',
     },
     dateCreated: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
   },
   computed: {
     displayDate() {
-      return moment.unix(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
+      return new Date(this.dateCreated).toLocaleDateString('en-US');
     },
   },
 };

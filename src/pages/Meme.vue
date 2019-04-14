@@ -81,6 +81,7 @@
 </template>
 
 <script>
+import _ from 'underscore';
 import slugify from 'slugify';
 
 import VoteButtons from '../components/VoteButtons';
@@ -97,14 +98,15 @@ export default {
   data() {
     return {
       draftComment: '',
-      memeId: 0,
-      authorUsername: 'icedoge',
-      title: 'Quasar is important, I promise',
-      cloudinaryUrl: 'https://matthewstrom.com/images/ds-0.jpg',
-      dateCreated: 1554145159,
-      voteTotal: 54323,
+      authorUsername: '',
+      title: '',
+      cloudinaryUrl: '',
+      dateCreated: '',
+      voteTotal: 0,
       userVote: 'up',
-      commentCount: 3123,
+      commentCount: 0,
+      comments: [],
+      /*
       comments: [
         {
           commentId: 0,
@@ -131,6 +133,7 @@ export default {
           text: 'never forget',
         },
       ],
+      */
     };
   },
   computed: {
@@ -140,6 +143,12 @@ export default {
     sortedComments() {
       return this.comments.slice().sort((a, b) => (a.commentId < b.commentId));
     },
+    memeId() {
+      return this.$route.params.memeId;
+    },
+  },
+  mounted() {
+    this.$socket.emit('getMeme', this.memeId);
   },
   methods: {
     addComment() {
@@ -158,8 +167,9 @@ export default {
     loadOlderComments(index, done) {
       setTimeout(() => {
         if (this.comments) {
-          const nextId = this.comments.length;
+          // const nextId = this.comments.length;
           this.comments.push(
+            /*
             {
               commentId: nextId,
               username: 'frostfox',
@@ -184,10 +194,43 @@ export default {
               dateCreated: 1554145429,
               text: 'never forget',
             },
+            */
           );
         }
         done();
       }, 2000);
+    },
+  },
+  sockets: {
+    getMeme(reply) {
+      if (reply.isSuccessful) {
+        /*
+        draftComment: '',
+        authorUsername: 'icedoge',
+        title: 'Quasar is important, I promise',
+        cloudinaryUrl: 'https://matthewstrom.com/images/ds-0.jpg',
+        dateCreated: 1554145159,
+        voteTotal: 54323,
+        userVote: 'up',
+        commentCount: 3123,
+        comments: [],
+
+        const upvotes = _.isUndefined(item.up_votes) ? 0 : item.up_votes;
+        const downvotes = _.isUndefined(item.down_votes) ? 0 : item.down_votes;
+        item.total_vote = upvotes + downvotes;
+        */
+        const upvotes = _.isUndefined(reply.value.up_votes) ? 0 : reply.value.up_votes;
+        const downvotes = _.isUndefined(reply.value.down_votes) ? 0 : reply.value.down_votes;
+
+        this.authorUsername = reply.value.username;
+        this.title = reply.value.title;
+        this.cloudinaryUrl = reply.value.cloudinary_url;
+        this.dateCreated = reply.value.date_created;
+        this.voteTotal = upvotes + downvotes;
+        this.userVote = 'up';
+        this.commentCount = reply.value.comment_count;
+        this.comments = [];
+      }
     },
   },
 };

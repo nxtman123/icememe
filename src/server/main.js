@@ -168,6 +168,7 @@ io.on('connect', (socket) => {
       // subscribe to receive new comments live
       socket.join(`meme_id: ${memeId}`);
     }
+    console.log(memeResult);
 
     return socket.emit('getMeme', memeResult);
   });
