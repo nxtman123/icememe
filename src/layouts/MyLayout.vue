@@ -137,22 +137,22 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item
-            clickable
-            tag="a"
-            onclick="location.href='mailto:icememe.moderator@gmail.com'"
-          >
-            <q-item-section avatar>
-              <q-icon name="mail" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Contact the administrator</q-item-label>
-              <q-item-label caption>
-                Email
-              </q-item-label>
-            </q-item-section>
-          </q-item>
         </template>
+        <q-item
+          clickable
+          tag="a"
+          onclick="location.href='mailto:icememe.moderator@gmail.com'"
+        >
+          <q-item-section avatar>
+            <q-icon name="mail" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Contact the administrator</q-item-label>
+            <q-item-label caption>
+              Email
+            </q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
