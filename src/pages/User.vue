@@ -8,14 +8,15 @@
       />
     </q-page>
     <q-page-sticky
-      position="top-left"
+      expand
+      position="top"
       :offset="[0, 50]"
     >
-      <div style="background-color: rgba(2, 123, 227, 0.42);">
-        <p style="padding: 10px; color: white;">
-          Posted by: john-cena
-        </p>
-      </div>
+      <q-toolbar class="bg-blue-grey-7 text-white">
+        <q-toolbar-title>
+          Posted by:
+        </q-toolbar-title>
+      </q-toolbar>
     </q-page-sticky>
   </q-layout>
 </template>

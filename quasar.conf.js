@@ -47,7 +47,7 @@ module.exports = function (ctx) {
         'QToolbar',
         'QToolbarTitle',
         'QDialog',
-        'QCardActions'
+        'QCardActions',
         'QPageSticky',
       ],
 
