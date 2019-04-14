@@ -119,6 +119,21 @@ io.on('connect', (socket) => {
     return socket.emit('addMeme', saveResult);
   });
 
+  // voteData = { meme_id, vote_type }
+  // vote_type is expected to be a string with a value of 'up' or 'down'
+  // returns { isSuccessful, value }
+  socket.on('addVote', async (voteData) => {
+    if (socketUser === false) {
+      return socket.emit('addVote', {
+        isSuccessful: false,
+        value: 'cannot verify user',
+      });
+    }
+    const voteResult = await meme.addVote(voteData, socketUser);
+
+    return socket.emit('addVote', voteResult);
+  });
+
   // commentData = { meme_id, text }
   // returns { isSuccessful, value }
   socket.on('addComment', async (commentData) => {
