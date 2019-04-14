@@ -7,7 +7,7 @@
   "author": "SENG 513 W19 Group 11",
   "private": true,
   "scripts": {
-    "lint": "eslint --ext .js,.vue src migrations",
+    "lint": "eslint --max-warnings 0 --ext .js,.vue src migrations",
     "test": "echo \"No test specified\" && exit 0",
     "dev-client": "quasar dev",
     "dev-server": "nodemon src/server/main.js",
@@ -29,11 +29,12 @@
     "moment": "^2.24.0",
     "nodemon": "^1.18.10",
     "pg": "^7.9.0",
-    "quasar": "^1.0.0-beta.0",
+    "quasar": "1.0.0-beta.11",
     "serve-static": "^1.13.2",
     "slugify": "^1.3.4",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
+    "underscore": "^1.9.1",
     "validator": "^10.11.0",
     "vue-masonry-css": "^1.0.3",
     "vue-socket.io": "^3.0.7"

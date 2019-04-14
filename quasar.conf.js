@@ -46,16 +46,20 @@ module.exports = function (ctx) {
         'QSpinner',
         'QToolbar',
         'QToolbarTitle',
+        'QDialog',
+        'QCardActions'
         'QPageSticky',
       ],
 
       directives: [
-        'Ripple'
+        'Ripple',
+        'ClosePopup'
       ],
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'Dialog'
       ]
 
       // iconSet: 'ionicons-v4'
