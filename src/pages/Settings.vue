@@ -260,9 +260,7 @@ export default {
   },
   sockets: {
     updateUserData(reply) {
-      if (reply.isSuccessful) {
-        this.$q.notify(reply.value);
-      }
+      this.$q.notify(reply.value);
     },
   },
 };
