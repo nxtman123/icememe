@@ -3,7 +3,7 @@
     <q-card>
       <router-link
         class="title"
-        :to="{ name: 'meme', params: { memeId, slug: slugTitle }}"
+        :to="{ name: 'meme', params: { meme_id, slug: slugTitle }}"
         style="box-sizing: inherhit;"
       >
         <q-card-section class="text-h6">
@@ -11,14 +11,14 @@
         </q-card-section>
         <q-img
           spinner-color="primary"
-          :src="cloudinaryUrl"
+          :src="cloudinary_url"
           :alt="title"
         />
       </router-link>
       <q-card-section class="q-pb-sm">
         <meme-metadata
-          :author-username="authorUsername"
-          :date-created="dateCreated"
+          :author-username="username"
+          :date-created="date_created"
         />
         <div class="row justify-between">
           <vote-buttons
@@ -30,8 +30,8 @@
             outline
             class="q-mb-sm"
             icon="comment"
-            :label="commentCount"
-            :to="{ name: 'meme', params: { memeId, slug: slugTitle }, hash: '#comments' }"
+            :label="comment_count"
+            :to="{ name: 'meme', params: { meme_id, slug: slugTitle }, hash: '#comments' }"
           />
         </div>
       </q-card-section>
@@ -52,11 +52,11 @@ export default {
     'meme-metadata': MemeMetadata,
   },
   props: {
-    memeId: {
+    meme_id: {
       type: Number,
       default: -1,
     },
-    authorUsername: {
+    username: {
       type: String,
       default: '',
     },
@@ -64,11 +64,11 @@ export default {
       type: String,
       default: '',
     },
-    cloudinaryUrl: {
+    cloudinary_url: {
       type: String,
       default: '',
     },
-    dateCreated: {
+    date_created: {
       type: Number,
       default: 0,
     },
@@ -81,7 +81,7 @@ export default {
       default: null,
       validator: v => ['up', 'down', null].includes(v),
     },
-    commentCount: {
+    comment_count: {
       type: Number,
       default: 0,
     },

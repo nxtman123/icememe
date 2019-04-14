@@ -17,89 +17,11 @@ export default {
   },
   data() {
     return {
-      memes: [
-        {
-          memeId: 0,
-          authorUsername: 'icedoge',
-          title: 'Mr. Fish, I don\'t feel so good',
-          cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-          dateCreated: 1554145159,
-          voteTotal: 543,
-          userVote: 'down',
-          commentCount: 17,
-        },
-        {
-          memeId: 1,
-          authorUsername: 'icedoge',
-          title: 'I can\'t do that while you\'re watching',
-          cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-          dateCreated: 1554145159,
-          voteTotal: 54323,
-          userVote: 'up',
-          commentCount: 3123,
-        },
-        {
-          memeId: 2,
-          authorUsername: 'icedoge',
-          title: 'Mr. Fish, I don\'t feel so good',
-          cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-          dateCreated: 1554145159,
-          voteTotal: -79,
-          userVote: 'down',
-          commentCount: 17,
-        },
-        {
-          memeId: 3,
-          authorUsername: 'icedoge',
-          title: 'I can\'t do that while you\'re watching',
-          cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-          dateCreated: 1554145159,
-          voteTotal: 54323,
-          userVote: 'up',
-          commentCount: 3123,
-        },
-        {
-          memeId: 4,
-          authorUsername: 'icedoge',
-          title: 'Mr. Fish, I don\'t feel so good',
-          cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-          dateCreated: 1554145159,
-          voteTotal: 543,
-          userVote: 'down',
-          commentCount: 17,
-        },
-        {
-          memeId: 5,
-          authorUsername: 'icedoge',
-          title: 'I can\'t do that while you\'re watching',
-          cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-          dateCreated: 1554145159,
-          voteTotal: 54323,
-          userVote: 'up',
-          commentCount: 3123,
-        },
-        {
-          memeId: 6,
-          authorUsername: 'icedoge',
-          title: 'Mr. Fish, I don\'t feel so good',
-          cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-          dateCreated: 1554145159,
-          voteTotal: 543,
-          userVote: 'down',
-          commentCount: 17,
-        },
-        {
-          memeId: 7,
-          authorUsername: 'icedoge',
-          title: 'I can\'t do that while you\'re watching',
-          cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-          dateCreated: 1554145159,
-          voteTotal: 54323,
-          userVote: 'up',
-          commentCount: 3123,
-        },
-      ],
+      memes: [],
     };
+  },
+  mounted() {
+    this.$socket.emit('getMemes');
   },
   methods: {
     loadMoreMemes(done) {
@@ -107,6 +29,7 @@ export default {
         if (this.memes) {
           const nextId = this.memes.length;
           this.memes.push(
+
             {
               memeId: nextId,
               authorUsername: 'icedoge',
@@ -131,6 +54,12 @@ export default {
         }
         done();
       }, 1500);
+    },
+  },
+  sockets: {
+    getMemes(reply) {
+      this.memes = reply.value;
+      console.log(this.memes);
     },
   },
 };
