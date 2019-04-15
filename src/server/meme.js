@@ -266,13 +266,13 @@ module.exports = psql => ({
       // else get memes belonging to the provided user
       if (earliestId) {
         memes = await baseMemeQuery(psql, user)
-          .andWhere('users.username', username)
+          .andWhere('author.username', username)
           .andWhere('memes.meme_id', '<', earliestId)
           .orderBy('memes.meme_id', 'desc')
           .limit(MEME_PAGE_SIZE);
       } else {
         memes = await baseMemeQuery(psql, user)
-          .andWhere('users.username', username)
+          .andWhere('author.username', username)
           .orderBy('memes.meme_id', 'desc')
           .limit(MEME_PAGE_SIZE);
       }
