@@ -3,28 +3,61 @@ const MEME_PAGE_SIZE = 15;
 
 const baseMemeQuery = (psql, user) => {
   let query = psql('memes')
-    .select(['memes.meme_id', 'memes.user_id', 'users.username', 'memes.title', 'memes.cloudinary_url', 'memes.date_created'])
-    .groupBy('memes.meme_id', 'users.username')
-    .leftJoin('users', 'memes.user_id', 'users.user_id')
-    .leftJoin('comments', 'memes.meme_id', 'comments.meme_id')
-    .count('comments.meme_id as comment_count')
-    .leftJoin('votes as uvotes', function joinUpVotes() {
-      this.on('memes.meme_id', '=', 'uvotes.meme_id').andOn('uvotes.type', '=', psql.raw('?', ['up']));
-    })
-    .count('uvotes.meme_id as up_votes')
-    .leftJoin('votes as dvotes', function joinDownVotes() {
-      this.on('memes.meme_id', '=', 'dvotes.meme_id').andOn('dvotes.type', '=', psql.raw('?', ['down']));
-    })
-    .count('dvotes.meme_id as down_votes')
+    .select([
+      'memes.meme_id',
+      'memes.user_id as user_id',
+      'memes.title as title',
+      'memes.cloudinary_url as cloudinary_url',
+      'memes.date_created as date_created',
+      'author.username as username',
+      'counted_comments.comment_count as comment_count',
+      'counted_up_votes.up_votes as up_votes',
+      'counted_down_votes.down_votes as down_votes',
+    ])
+    .leftJoin(
+      psql('users')
+        .select(['user_id', 'username'])
+        .as('author'),
+      'memes.user_id', '=', 'author.user_id',
+    ).leftJoin(
+      psql('comments')
+        .select(['meme_id'])
+        .groupBy('meme_id')
+        .count('meme_id as comment_count')
+        .as('counted_comments'),
+      'memes.meme_id', '=', 'counted_comments.meme_id',
+    )
+    .leftJoin(
+      psql('votes')
+        .select(['meme_id'])
+        .where({ type: 'up' })
+        .groupBy('meme_id')
+        .count('meme_id as up_votes')
+        .as('counted_up_votes'),
+      'memes.meme_id', '=', 'counted_up_votes.meme_id',
+    )
+    .leftJoin(
+      psql('votes')
+        .select(['meme_id'])
+        .where({ type: 'down' })
+        .groupBy('meme_id')
+        .count('meme_id as down_votes')
+        .as('counted_down_votes'),
+      'memes.meme_id', '=', 'counted_down_votes.meme_id',
+    )
     .clone();
+
   if (user) {
-    query = query.leftJoin('votes as ivote', function joinDownVotes() {
-      this.on('memes.meme_id', '=', 'ivote.meme_id').andOn('ivote.user_id', '=', psql.raw('?', [user.user_id]));
-    })
-      .groupBy('ivote.type')
-      .select('ivote.type as user_vote')
-      .clone();
+    query = query.select(['viewer_vote.user_vote'])
+      .leftJoin(
+        psql('votes')
+          .select(['meme_id', 'type as user_vote'])
+          .where({ user_id: user.user_id })
+          .as('viewer_vote'),
+        'memes.meme_id', '=', 'viewer_vote.meme_id',
+      ).clone();
   }
+
   return query;
 };
 
@@ -237,13 +270,13 @@ module.exports = psql => ({
       // else get memes belonging to the provided user
       if (earliestId) {
         memes = await baseMemeQuery(psql, user)
-          .andWhere('users.username', username)
+          .andWhere('username', username)
           .andWhere('memes.meme_id', '<', earliestId)
           .orderBy('memes.meme_id', 'desc')
           .limit(MEME_PAGE_SIZE);
       } else {
         memes = await baseMemeQuery(psql, user)
-          .andWhere('users.username', username)
+          .andWhere('username', username)
           .orderBy('memes.meme_id', 'desc')
           .limit(MEME_PAGE_SIZE);
       }
