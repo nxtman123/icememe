@@ -3,7 +3,17 @@ const MEME_PAGE_SIZE = 15;
 
 const baseMemeQuery = (psql, user) => {
   let query = psql('memes')
-    .select()
+    .select([
+      'memes.meme_id',
+      'memes.user_id',
+      'memes.title',
+      'memes.cloudinary_url',
+      'memes.date_created',
+      'author.username',
+      'counted_comments.comment_count',
+      'counted_up_votes.up_votes',
+      'counted_down_votes.down_votes',
+    ])
     .leftJoin(
       psql('users')
         .select(['user_id', 'username'])
@@ -38,13 +48,14 @@ const baseMemeQuery = (psql, user) => {
     .clone();
 
   if (user) {
-    query = query.leftJoin(
-      psql('votes')
-        .select(['meme_id', 'type as user_vote'])
-        .where({ user_id: user.user_id })
-        .as('viewer_vote'),
-      'memes.meme_id', '=', 'viewer_vote.meme_id',
-    ).clone();
+    query = query.select(['viewer_vote.user_vote'])
+      .leftJoin(
+        psql('votes')
+          .select(['meme_id', 'type as user_vote'])
+          .where({ user_id: user.user_id })
+          .as('viewer_vote'),
+        'memes.meme_id', '=', 'viewer_vote.meme_id',
+      ).clone();
   }
 
   return query;
