@@ -170,6 +170,13 @@ export default {
       'loggedIn',
     ]),
   },
+  watch: {
+    loggedIn(newValue, oldValue) {
+      if (oldValue === false && newValue === true) {
+        this.prompt = false;
+      }
+    },
+  },
   methods: {
     openURL,
     logout() {

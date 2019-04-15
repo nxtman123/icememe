@@ -1,4 +1,6 @@
-import { LocalStorage } from 'quasar';
+import { LocalStorage, Notify } from 'quasar';
+
+const jwt = require('jsonwebtoken');
 
 export default {
   state: {
@@ -39,8 +41,20 @@ export default {
     socket_updateUserData(/* state */) {
       console.log('socket_updateUserData');
     },
-    socket_login(/* state */) {
-      console.log('socket_login');
+    socket_login(state, loginResult) {
+      try {
+        if (loginResult.isSuccessful) {
+          LocalStorage.set('token', loginResult.value);
+          state.user = jwt.decode(loginResult.value, { complete: true }).payload;
+          Notify.create('Logged in successfully');
+        } else {
+          Notify.create(loginResult.value);
+          state.user = null;
+        }
+      } catch (e) {
+        Notify.create(loginResult.value);
+        state.user = null;
+      }
     },
     socket_logout(state) {
       console.log('socket_logout');
