@@ -97,10 +97,12 @@ export default {
   },
   methods: {
     onSubmit() {
-      // TODO: replace alert with call to server to sign up new user
       if (this.readyToSubmit) {
-        // eslint-disable-next-line no-alert
-        alert(`TODO: call server to sign up ${this.username}, with email ${this.email}`);
+        this.$socket.emit('register', {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        });
       }
     },
     onReset() {
