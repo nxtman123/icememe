@@ -191,12 +191,12 @@ module.exports = psql => ({
           .update(toUpdate)
           .returning(['username', 'email']);
 
-          return {
-            isSuccessful: true,
-            value: 'successfully updated user data',
-            username: update[0].username,
-            email: update[0].email
-          };
+        return {
+          isSuccessful: true,
+          value: 'successfully updated user data',
+          username: update[0].username,
+          email: update[0].email,
+        };
       }
 
       return {
