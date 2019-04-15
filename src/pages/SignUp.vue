@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 const validator = require('validator');
 
 export default {
@@ -94,13 +96,25 @@ export default {
           && this.validEmail && this.matchingPasswords;
       },
     },
+    ...mapGetters([
+      'loggedIn',
+    ]),
+  },
+  watch: {
+    loggedIn(value) {
+      if (value) {
+        this.$router.push({ name: 'main' });
+      }
+    },
   },
   methods: {
     onSubmit() {
-      // TODO: replace alert with call to server to sign up new user
       if (this.readyToSubmit) {
-        // eslint-disable-next-line no-alert
-        alert(`TODO: call server to sign up ${this.username}, with email ${this.email}`);
+        this.$socket.emit('register', {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        });
       }
     },
     onReset() {
