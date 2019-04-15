@@ -174,7 +174,6 @@ export default {
     loggedIn(newValue, oldValue) {
       if (oldValue === false && newValue === true) {
         this.prompt = false;
-        this.$q.notify('Logged in successfully');
       }
     },
   },
@@ -182,13 +181,6 @@ export default {
     openURL,
     logout() {
       this.$socket.emit('logout');
-    },
-  },
-  sockets: {
-    login(reply) {
-      if (!reply.isSuccessful) {
-        this.$q.notify('Failed to login');
-      }
     },
   },
 };
