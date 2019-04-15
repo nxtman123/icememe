@@ -35,17 +35,18 @@ export default {
         LocalStorage.remove('token');
       }
     },
-    socket_register(state, registration) {
-      console.log('socket_register');
+    socket_register(state, registrationResult) {
       try {
-        if (registration.isSuccessful) {
-          Notify.create('Signed up successfully');
+        if (registrationResult.isSuccessful) {
+          LocalStorage.set('token', registrationResult.value);
+          state.user = jwt.decode(registrationResult.value, { complete: true }).payload;
+          Notify.create('Registration is successful');
         } else {
-          Notify.create(registration.value);
+          Notify.create(registrationResult.value);
           state.user = null;
         }
       } catch (e) {
-        Notify.create(registration.value);
+        Notify.create(registrationResult.value);
         state.user = null;
       }
     },

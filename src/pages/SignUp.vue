@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 const validator = require('validator');
 
 export default {
@@ -93,6 +95,16 @@ export default {
           && this.username.length <= 20 && this.password.length <= 100
           && this.validEmail && this.matchingPasswords;
       },
+    },
+    ...mapGetters([
+      'loggedIn',
+    ]),
+  },
+  watch: {
+    loggedIn(value) {
+      if (value) {
+        this.$router.push({ name: 'main' });
+      }
     },
   },
   methods: {
