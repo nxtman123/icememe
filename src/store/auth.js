@@ -28,7 +28,6 @@ export default {
   },
   mutations: {
     socket_verify(state, verifyResult) {
-      console.log('socket_verify', verifyResult.isSuccessful);
       if (verifyResult.isSuccessful) {
         state.user = verifyResult.value;
       } else {
