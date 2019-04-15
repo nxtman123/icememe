@@ -38,8 +38,13 @@ export default {
     socket_register(/* state */) {
       console.log('socket_register');
     },
-    socket_updateUserData(/* state */) {
-      console.log('socket_updateUserData');
+    socket_updateUserData(state, updateResult) {
+      if (updateResult.isSuccessful) {
+        state.user.username = updateResult.username;
+        Notify.create(updateResult.value);
+      } else {
+        Notify.create(updateResult.value);
+      }
     },
     socket_login(state, loginResult) {
       try {

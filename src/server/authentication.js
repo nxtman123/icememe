@@ -186,9 +186,17 @@ module.exports = psql => ({
 
 
       if (!_.isEmpty(toUpdate)) {
-        await psql('users')
+        const update = await psql('users')
           .where('user_id', '=', user.user_id)
-          .update(toUpdate);
+          .update(toUpdate)
+          .returning(['username', 'email']);
+
+        return {
+          isSuccessful: true,
+          value: 'successfully updated user data',
+          username: update[0].username,
+          email: update[0].email,
+        };
       }
 
       return {

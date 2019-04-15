@@ -82,6 +82,10 @@ io.on('connect', (socket) => {
     }
 
     const updateResult = await authentication.updateUserData(updateData, socketUser);
+    if (updateResult.isSuccessful) {
+      socketUser.username = updateResult.username;
+    }
+
     return socket.emit('updateUserData', updateResult);
   });
 

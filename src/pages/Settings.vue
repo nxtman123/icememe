@@ -258,11 +258,6 @@ export default {
       // TODO: remove user token and kick user back to home page
     },
   },
-  sockets: {
-    updateUserData(reply) {
-      this.$q.notify(reply.value);
-    },
-  },
 };
 </script>
 
