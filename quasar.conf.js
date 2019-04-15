@@ -48,7 +48,6 @@ module.exports = function (ctx) {
         'QToolbarTitle',
         'QDialog',
         'QCardActions'
-        'QPageSticky',
       ],
 
       directives: [
