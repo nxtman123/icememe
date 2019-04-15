@@ -3,28 +3,50 @@ const MEME_PAGE_SIZE = 15;
 
 const baseMemeQuery = (psql, user) => {
   let query = psql('memes')
-    .select(['memes.meme_id', 'memes.user_id', 'users.username', 'memes.title', 'memes.cloudinary_url', 'memes.date_created'])
-    .groupBy('memes.meme_id', 'users.username')
-    .leftJoin('users', 'memes.user_id', 'users.user_id')
-    .leftJoin('comments', 'memes.meme_id', 'comments.meme_id')
-    .count('comments.meme_id as comment_count')
-    .leftJoin('votes as uvotes', function joinUpVotes() {
-      this.on('memes.meme_id', '=', 'uvotes.meme_id').andOn('uvotes.type', '=', psql.raw('?', ['up']));
-    })
-    .count('uvotes.meme_id as up_votes')
-    .leftJoin('votes as dvotes', function joinDownVotes() {
-      this.on('memes.meme_id', '=', 'dvotes.meme_id').andOn('dvotes.type', '=', psql.raw('?', ['down']));
-    })
-    .count('dvotes.meme_id as down_votes')
+    .select()
+    .leftJoin(
+      psql('users')
+        .select(['user_id', 'username'])
+        .as('author'),
+      'memes.user_id', '=', 'author.user_id',
+    ).leftJoin(
+      psql('comments')
+        .select(['meme_id'])
+        .groupBy('meme_id')
+        .count('meme_id as comment_count')
+        .as('counted_comments'),
+      'memes.meme_id', '=', 'counted_comments.meme_id',
+    )
+    .leftJoin(
+      psql('votes')
+        .select(['meme_id'])
+        .where({ type: 'up' })
+        .groupBy('meme_id')
+        .count('meme_id as up_votes')
+        .as('counted_up_votes'),
+      'memes.meme_id', '=', 'counted_up_votes.meme_id',
+    )
+    .leftJoin(
+      psql('votes')
+        .select(['meme_id'])
+        .where({ type: 'down' })
+        .groupBy('meme_id')
+        .count('meme_id as down_votes')
+        .as('counted_down_votes'),
+      'memes.meme_id', '=', 'counted_down_votes.meme_id',
+    )
     .clone();
+
   if (user) {
-    query = query.leftJoin('votes as ivote', function joinDownVotes() {
-      this.on('memes.meme_id', '=', 'ivote.meme_id').andOn('ivote.user_id', '=', psql.raw('?', [user.user_id]));
-    })
-      .groupBy('ivote.type')
-      .select('ivote.type as user_vote')
-      .clone();
+    query = query.leftJoin(
+      psql('votes')
+        .select(['meme_id', 'type as user_vote'])
+        .where({'user_id': user.user_id })
+        .as('viewer_vote'),
+      'memes.meme_id', '=', 'viewer_vote.meme_id'
+    ).clone();
   }
+
   return query;
 };
 
