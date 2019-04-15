@@ -47,7 +47,7 @@ export default {
             dateCreated: item.date_created,
             voteTotal: upvotes + downvotes,
             userVote: 'up',
-            commentCount: item.commentCount,
+            commentCount: item.comment_count,
           });
         });
         this.earliestMeme = reply.value[reply.value.length - 1].meme_id;
