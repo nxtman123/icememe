@@ -14,7 +14,7 @@
     >
       <q-toolbar class="bg-blue-grey-7 text-white">
         <q-toolbar-title>
-          Posted by:
+          Posted by: {{ user }}
         </q-toolbar-title>
       </q-toolbar>
     </q-page-sticky>
@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import _ from 'underscore';
 import MemeCollection from '../components/MemeCollection';
 
 export default {
@@ -31,120 +32,41 @@ export default {
   },
   data() {
     return {
-      memes: [
-        {
-          memeId: 0,
-          authorUsername: 'john-cena',
-          title: 'Mr. Fish, I don\'t feel so good',
-          cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-          dateCreated: 1554145159,
-          voteTotal: 543,
-          userVote: 'down',
-          commentCount: 17,
-        },
-        {
-          memeId: 1,
-          authorUsername: 'john-cena',
-          title: 'I can\'t do that while you\'re watching',
-          cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-          dateCreated: 1554145159,
-          voteTotal: 54323,
-          userVote: 'up',
-          commentCount: 3123,
-        },
-        {
-          memeId: 2,
-          authorUsername: 'john-cena',
-          title: 'Mr. Fish, I don\'t feel so good',
-          cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-          dateCreated: 1554145159,
-          voteTotal: -79,
-          userVote: 'down',
-          commentCount: 17,
-        },
-        {
-          memeId: 3,
-          authorUsername: 'john-cena',
-          title: 'I can\'t do that while you\'re watching',
-          cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-          dateCreated: 1554145159,
-          voteTotal: 54323,
-          userVote: 'up',
-          commentCount: 3123,
-        },
-        {
-          memeId: 4,
-          authorUsername: 'john-cena',
-          title: 'Mr. Fish, I don\'t feel so good',
-          cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-          dateCreated: 1554145159,
-          voteTotal: 543,
-          userVote: 'down',
-          commentCount: 17,
-        },
-        {
-          memeId: 5,
-          authorUsername: 'john-cena',
-          title: 'I can\'t do that while you\'re watching',
-          cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-          dateCreated: 1554145159,
-          voteTotal: 54323,
-          userVote: 'up',
-          commentCount: 3123,
-        },
-        {
-          memeId: 6,
-          authorUsername: 'john-cena',
-          title: 'Mr. Fish, I don\'t feel so good',
-          cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-          dateCreated: 1554145159,
-          voteTotal: 543,
-          userVote: 'down',
-          commentCount: 17,
-        },
-        {
-          memeId: 7,
-          authorUsername: 'john-cena',
-          title: 'I can\'t do that while you\'re watching',
-          cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-          dateCreated: 1554145159,
-          voteTotal: 54323,
-          userVote: 'up',
-          commentCount: 3123,
-        },
-      ],
+      user: this.$route.params.username,
+      memes: [],
+      earliestMeme: 0,
     };
   },
   methods: {
     loadMoreMemes(done) {
       setTimeout(() => {
         if (this.memes) {
-          const nextId = this.memes.length;
-          this.memes.push(
-            {
-              memeId: nextId,
-              authorUsername: 'john-cena',
-              title: 'Mr. Fish, I don\'t feel so good',
-              cloudinaryUrl: 'https://i.kym-cdn.com/photos/images/original/001/367/501/600.jpg',
-              dateCreated: 1554145159,
-              voteTotal: 543,
-              userVote: 'down',
-              commentCount: 17,
-            },
-            {
-              memeId: nextId + 1,
-              authorUsername: 'john-cena',
-              title: 'I can\'t do that while you\'re watching',
-              cloudinaryUrl: 'https://i.redd.it/0snws7y219b11.png',
-              dateCreated: 1554145159,
-              voteTotal: 54323,
-              userVote: 'up',
-              commentCount: 3123,
-            },
-          );
+          this.$socket.emit('getMemes', this.user, this.earliestMeme);
         }
         done();
       }, 1500);
+    },
+  },
+  sockets: {
+    getMemes(reply) {
+      if (reply.value.length > 0) {
+        reply.value.forEach((item) => {
+          const upvotes = _.isUndefined(item.up_votes) ? 0 : item.up_votes;
+          const downvotes = _.isUndefined(item.down_votes) ? 0 : item.down_votes;
+
+          this.memes.push({
+            memeId: item.meme_id,
+            authorUsername: item.username,
+            title: item.title,
+            cloudinaryUrl: item.cloudinary_url,
+            dateCreated: item.date_created,
+            voteTotal: upvotes + downvotes,
+            userVote: 'up',
+            commentCount: item.commentCount,
+          });
+        });
+        this.earliestMeme = reply.value[reply.value.length - 1].meme_id;
+      }
     },
   },
 };
