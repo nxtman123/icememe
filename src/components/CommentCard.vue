@@ -33,8 +33,8 @@ export default {
       default: '',
     },
     dateCreated: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
     text: {
       type: String,
