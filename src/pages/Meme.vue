@@ -127,14 +127,11 @@ export default {
     addComment() {
       if (this.draftComment) {
         // TODO replace with call to server
-        this.comments.push({
-          commentId: this.comments.length,
-          username: 'demodave',
-          dateCreated: Math.round((new Date()).getTime() / 1000),
+        this.$socket.emit('addComment', {
+          meme_id: this.memeId,
           text: this.draftComment,
         });
         this.draftComment = '';
-        this.commentCount += 1;
       }
     },
     loadOlderComments(index, done) {
@@ -172,6 +169,18 @@ export default {
         });
 
         this.earliestComment = reply.value[reply.value.length - 1].comment_id;
+      }
+    },
+    newLiveComment(reply) {
+      if (reply.length > 0) {
+        reply.forEach((item) => {
+          this.comments.unshift({
+            commentId: item.comment_id,
+            username: item.username,
+            dateCreated: item.date_created,
+            text: item.text,
+          });
+        });
       }
     },
   },

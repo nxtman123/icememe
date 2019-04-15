@@ -143,8 +143,8 @@ io.on('connect', (socket) => {
         value: 'cannot verify user',
       });
     }
-    const commentResult = await meme.addComment(commentData, socketUser);
 
+    const commentResult = await meme.addComment(commentData, socketUser);
     if (commentResult.isSuccessful) {
       // emit new comment to all users viewing this meme
       io.to(`meme_id: ${commentData.meme_id}`).emit('newLiveComment', commentResult.value);
