@@ -14,7 +14,6 @@
           </router-link>
         </q-toolbar-title>
 
-        <!-- TODO: change into a logout button when user logged in -->
         <q-btn
           v-if="!loggedIn"
           flat
@@ -23,7 +22,6 @@
         >
           Log In
         </q-btn>
-
 
         <q-dialog v-model="prompt">
           <login-dialog />
@@ -36,6 +34,24 @@
           :to="{ name: 'register' }"
         >
           Sign Up
+        </q-btn>
+
+        <q-btn
+          v-if="loggedIn"
+          flat
+          stretch
+          no-caps
+          :to="{ name: 'user', params: { username: username }}"
+        >
+          {{ username }}
+        </q-btn>
+        <q-btn
+          v-if="loggedIn"
+          flat
+          stretch
+          @click="logout"
+        >
+          Log Out
         </q-btn>
 
         <q-btn
@@ -196,6 +212,7 @@ export default {
     openURL,
     logout() {
       this.$socket.emit('logout');
+      this.$router.push({ name: 'main' });
     },
   },
 };
