@@ -35,8 +35,19 @@ export default {
         LocalStorage.remove('token');
       }
     },
-    socket_register(/* state */) {
+    socket_register(state, registration) {
       console.log('socket_register');
+      try {
+        if (registration.isSuccessful) {
+          Notify.create('Signed up successfully');
+        } else {
+          Notify.create(registration.value);
+          state.user = null;
+        }
+      } catch (e) {
+        Notify.create(registration.value);
+        state.user = null;
+      }
     },
     socket_updateUserData(/* state */) {
       console.log('socket_updateUserData');
