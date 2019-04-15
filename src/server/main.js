@@ -68,9 +68,9 @@ io.on('connect', (socket) => {
 
   /*
     updateData = {
-      (optional)email, (optional) confirm_email,
-      (optional)username, (optional) confirm_username,
-      (optional)password,  (optional) confirm_password
+      (optional)email, (optional) confirmEmail,
+      (optional)username, (optional) confirmUsername,
+      (optional)password,  (optional) confirmPassword
     }
   */
   socket.on('updateUserData', async (updateData) => {
@@ -109,7 +109,7 @@ io.on('connect', (socket) => {
 
   // meme events
 
-  // memeData = { title, cloudinary_url }
+  // memeData = { title, cloudinaryUrl }
   // returns { isSuccessful, value }
   socket.on('addMeme', async (memeData) => {
     if (socketUser === false) {
@@ -123,8 +123,8 @@ io.on('connect', (socket) => {
     return socket.emit('addMeme', saveResult);
   });
 
-  // voteData = { meme_id, vote_type }
-  // vote_type is expected to be a string with a value of 'up' or 'down'
+  // voteData = { memeId, voteType }
+  // voteType is expected to be a string with a value of 'up' or 'down'
   // returns { isSuccessful, value }
   socket.on('addVote', async (voteData) => {
     if (socketUser === false) {
@@ -138,7 +138,7 @@ io.on('connect', (socket) => {
     return socket.emit('addVote', voteResult);
   });
 
-  // commentData = { meme_id, text }
+  // commentData = { memeId, text }
   // returns { isSuccessful, value }
   socket.on('addComment', async (commentData) => {
     if (socketUser === false) {
@@ -151,17 +151,16 @@ io.on('connect', (socket) => {
     const commentResult = await meme.addComment(commentData, socketUser);
     if (commentResult.isSuccessful) {
       // emit new comment to all users viewing this meme
-      io.to(`meme_id: ${commentData.meme_id}`).emit('newLiveComment', commentResult.value);
+      io.to(`meme${commentData.memeId}`).emit('newLiveComment', commentResult.value);
     }
 
     return socket.emit('addComment', commentResult);
   });
 
   // gets memes for home or personal page, returns {isSuccessful, value}
-  socket.on('getMemes', async (username, earliestId) => {
+  socket.on('getMemes', async (username, earliestId, ack) => {
     const memesResult = await meme.getMemes(username, earliestId, socketUser);
-
-    return socket.emit('getMemes', memesResult);
+    ack(memesResult);
   });
 
   // returns { isSuccessful, value }
@@ -170,23 +169,21 @@ io.on('connect', (socket) => {
 
     if (memeResult.isSuccessful) {
       // subscribe to receive new comments live
-      socket.join(`meme_id: ${memeId}`);
+      socket.join(`meme${memeId}`);
     }
-    console.log(memeResult);
 
     return socket.emit('getMeme', memeResult);
   });
 
   // earliestId is optional
   // returns { isSuccessful, value }
-  socket.on('getMemeComments', async (memeId, earliestId) => {
+  socket.on('getMemeComments', async (memeId, earliestId, ack) => {
     const commentsResult = await meme.getMemeComments(memeId, earliestId);
-
-    return socket.emit('getMemeComments', commentsResult);
+    ack(commentsResult);
   });
 
   socket.on('leaveMeme', (memeId) => {
-    socket.leave(`meme_id: ${memeId}`, () => {});
+    socket.leave(`meme${memeId}`);
     return socket.emit('leaveMeme', memeId);
   });
 

@@ -62,13 +62,14 @@ module.exports = psql => ({
   login: async ({ username, password }) => {
     try {
       const findUser = await psql('users')
+        .select(['user_id as userId', 'username', 'password'])
         .where('username', username);
 
       if (findUser.length >= 1) {
         const verification = await argon2.verify(findUser[0].password, password);
         if (verification) {
           const payload = {
-            user_id: findUser[0].user_id,
+            userId: findUser[0].userId,
             username: findUser[0].username,
           };
 
@@ -94,9 +95,9 @@ module.exports = psql => ({
 
   /*
     updateData = {
-      (optional)email, (optional) confirm_email,
-      (optional)username, (optional) confirm_username,
-      (optional)password,  (optional) confirm_password
+      (optional)email, (optional) confirmEmail,
+      (optional)username, (optional) confirmUsername,
+      (optional)password,  (optional) confirmPassword
     }
   */
   // user = { decoded token }
@@ -104,7 +105,8 @@ module.exports = psql => ({
     try {
       const toUpdate = {};
       const userInDatabase = await psql('users')
-        .where('user_id', '=', user.user_id).first();
+        .select(['user_id as userId', 'username', 'email', 'password'])
+        .where('user_id', '=', user.userId).first();
 
       if (updateData.email) {
         if (updateData.email.length > EMAIL_MAX) {
@@ -117,7 +119,7 @@ module.exports = psql => ({
         // check if the email aleady in the database is not the same as the new one
         // confirm confirmation email is correct
         if (userInDatabase.email !== updateData.email) {
-          if (updateData.email !== updateData.confirm_email) {
+          if (updateData.email !== updateData.confirmEmail) {
             return {
               isSuccessful: false,
               value: 'email and confirmation email do not match',
@@ -149,7 +151,7 @@ module.exports = psql => ({
         // check if the username already in the database is not the same as the new one
         // confirm confirmation username is correct
         if (userInDatabase.username !== updateData.username) {
-          if (updateData.username !== updateData.confirm_username) {
+          if (updateData.username !== updateData.confirmUsername) {
             return {
               isSuccessful: false,
               value: 'username and confirmation username do not match',
@@ -173,7 +175,7 @@ module.exports = psql => ({
       if (updateData.password) {
         const hash = await argon2.hash(updateData.password);
         if (userInDatabase.password !== hash) {
-          if (updateData.password !== updateData.confirm_password) {
+          if (updateData.password !== updateData.confirmPassword) {
             return {
               isSuccessful: false,
               value: 'password and confirmation password to not match',
@@ -184,10 +186,9 @@ module.exports = psql => ({
         }
       }
 
-
       if (!_.isEmpty(toUpdate)) {
         const update = await psql('users')
-          .where('user_id', '=', user.user_id)
+          .where('user_id', '=', user.userId)
           .update(toUpdate)
           .returning(['username', 'email']);
 

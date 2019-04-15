@@ -1,25 +1,26 @@
 <template>
   <q-page class="page-frame">
     <div class="text-h6 q-py-md">
-      {{ title }}
+      {{ meme.title }}
     </div>
     <div class="row justify-center q-col-gutter-md">
       <div class="col-12 col-sm-6 column justify-start">
         <q-img
           spinner-color="primary"
-          :src="cloudinaryUrl"
-          :alt="title"
+          :src="meme.cloudinaryUrl"
+          :alt="meme.title"
           class="q-mb-sm"
         />
         <meme-metadata
-          :author-username="authorUsername"
-          :date-created="dateCreated"
+          :username="meme.username"
+          :date-created="meme.dateCreated"
         />
         <div class="row justify-between">
           <vote-buttons
             class="q-mb-sm q-mr-sm"
-            :vote-total="voteTotal"
-            :user-vote="userVote"
+            :up-votes="meme.upVotes"
+            :down-votes="meme.downVotes"
+            :user-vote="meme.userVote"
           />
           <div class="row items-center self-stretch q-mb-sm">
             <q-icon
@@ -28,13 +29,14 @@
               size="24px"
             />
             <div class="text-subtitle2">
-              {{ commentCount || 0 }}
+              {{ meme.commentCount || 0 }}
             </div>
           </div>
         </div>
       </div>
       <div class="col-12 col-sm-6 column justify-start">
         <form
+          v-if="loggedIn"
           class="row q-mb-md"
           @submit.prevent="addComment"
         >
@@ -58,6 +60,7 @@
         </form>
         <q-infinite-scroll
           :offset="250"
+          :disable="!earlierComments"
           @load="loadOlderComments"
         >
           <comment-card
@@ -81,7 +84,8 @@
 </template>
 
 <script>
-import _ from 'underscore';
+import { mapGetters } from 'vuex';
+
 import slugify from 'slugify';
 
 import VoteButtons from '../components/VoteButtons';
@@ -97,24 +101,35 @@ export default {
   },
   data() {
     return {
+      meme: {
+        title: '',
+        cloudinaryUrl: '',
+        username: '',
+        dateCreated: '',
+        upVotes: 0,
+        downVotes: 0,
+        userVote: null,
+        commentCount: 0,
+      },
       draftComment: '',
-      authorUsername: '',
-      title: '',
-      cloudinaryUrl: '',
-      dateCreated: '',
-      voteTotal: 0,
-      userVote: 'up',
-      commentCount: 0,
       comments: [],
-      earliestComment: 0,
+      earlierComments: true,
     };
   },
   computed: {
+    ...mapGetters([
+      'loggedIn',
+    ]),
     slugTitle() {
       return slugify(this.title, { remove: /[*+~,.()'"!:@]/g });
     },
     sortedComments() {
       return this.comments.slice().sort((a, b) => (a.commentId < b.commentId));
+    },
+    earliestComment() {
+      return this.comments.length
+        ? this.comments.reduce((eId, c) => Math.min(eId, c.commentId), Infinity)
+        : 0;
     },
     memeId() {
       return this.$route.params.memeId;
@@ -123,64 +138,54 @@ export default {
   mounted() {
     this.$socket.emit('getMeme', this.memeId);
   },
+  beforeDestroy() {
+    this.$socket.emit('leaveMeme', this.meme.memeId);
+  },
   methods: {
     addComment() {
       if (this.draftComment) {
-        // TODO replace with call to server
         this.$socket.emit('addComment', {
-          meme_id: this.memeId,
+          memeId: this.memeId,
           text: this.draftComment,
         });
-        this.draftComment = '';
       }
     },
     loadOlderComments(index, done) {
-      setTimeout(() => {
-        if (this.comments) {
-          this.$socket.emit('getMemeComments', this.memeId, this.earliestComment);
+      this.$socket.emit('getMemeComments', this.memeId, this.earliestComment, (commentsResult) => {
+        if (commentsResult.isSuccessful) {
+          if (commentsResult.value.length) {
+            this.comments = this.comments.concat(commentsResult.value);
+          } else {
+            this.earlierComments = false;
+          }
+        } else {
+          this.$q.notify(commentsResult.value);
         }
         done();
-      }, 2000);
+      });
     },
   },
   sockets: {
-    getMeme(reply) {
-      if (reply.isSuccessful) {
-        const upvotes = _.isUndefined(reply.value.up_votes) ? 0 : reply.value.up_votes;
-        const downvotes = _.isUndefined(reply.value.down_votes) ? 0 : reply.value.down_votes;
-
-        this.authorUsername = reply.value.username;
-        this.title = reply.value.title;
-        this.cloudinaryUrl = reply.value.cloudinary_url;
-        this.dateCreated = reply.value.date_created;
-        this.voteTotal = upvotes + downvotes;
-        this.commentCount = reply.value.comment_count;
+    getMeme(memeResult) {
+      if (memeResult.isSuccessful) {
+        this.meme = {
+          ...this.meme,
+          ...memeResult.value,
+        };
+      } else {
+        this.$q.notify(memeResult.value);
       }
     },
-    getMemeComments(reply) {
-      if (reply.value.length > 0) {
-        reply.value.forEach((item) => {
-          this.comments.push({
-            commentId: item.comment_id,
-            username: item.username,
-            dateCreated: item.date_created,
-            text: item.text,
-          });
-        });
-
-        this.earliestComment = reply.value[reply.value.length - 1].comment_id;
+    addComment(commentResult) {
+      if (commentResult.isSuccessful) {
+        this.draftComment = '';
+      } else {
+        this.$q.notify(commentResult.value);
       }
     },
-    newLiveComment(reply) {
-      if (reply.length > 0) {
-        reply.forEach((item) => {
-          this.comments.unshift({
-            commentId: item.comment_id,
-            username: item.username,
-            dateCreated: item.date_created,
-            text: item.text,
-          });
-        });
+    newLiveComment(newComment) {
+      if (newComment.memeId === this.meme.memeId) {
+        this.comments = [newComment, ...this.comments];
       }
     },
   },

@@ -4,7 +4,7 @@
       <q-card-section>
         <meme-metadata
           class="comment-metadata"
-          :author-username="username"
+          :username="username"
           :date-created="dateCreated"
         />
         <div class="text-body1">

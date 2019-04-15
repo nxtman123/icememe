@@ -1,7 +1,7 @@
 <template>
   <q-page class="column justify-center page-frame">
     <meme-collection
-      :memes="memes"
+      :memes="sortedMemes"
       :disable-load="!earlierMemes"
       @load="loadMoreMemes"
     />
@@ -20,34 +20,32 @@ export default {
     return {
       memes: [],
       earlierMemes: true,
-      doneFunc: () => null,
     };
   },
   computed: {
+    sortedMemes() {
+      return this.memes.slice().sort((a, b) => (a.memeId < b.memeId));
+    },
     earliestMeme() {
-      return this.memes[this.memes.length - 1] ? this.memes[this.memes.length - 1].memeId : 0;
+      return this.memes.length
+        ? this.memes.reduce((eId, m) => Math.min(eId, m.memeId), Infinity)
+        : 0;
     },
   },
   methods: {
     loadMoreMemes(done) {
-      this.doneFunc = done;
-      if (this.earlierMemes) {
-        this.$socket.emit('getMemes', '', this.earliestMeme);
-      }
-    },
-  },
-  sockets: {
-    getMemes(memesResult) {
-      if (memesResult.isSuccessful) {
-        if (memesResult.value.length) {
-          this.memes = this.memes.concat(memesResult.value);
+      this.$socket.emit('getMemes', '', this.earliestMeme, (memesResult) => {
+        if (memesResult.isSuccessful) {
+          if (memesResult.value.length) {
+            this.memes = this.memes.concat(memesResult.value);
+          } else {
+            this.earlierMemes = false;
+          }
         } else {
-          this.earlierMemes = false;
+          this.$q.notify(memesResult.value);
         }
-      } else {
-        this.$q.notify(memesResult.value);
-      }
-      this.doneFunc();
+        done();
+      });
     },
   },
 };

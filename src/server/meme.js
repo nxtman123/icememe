@@ -1,6 +1,7 @@
 const COMMENT_PAGE_SIZE = 10;
 const MEME_PAGE_SIZE = 15;
 
+// user = { userId, username }
 const baseMemeQuery = (psql, user) => {
   let query = psql('memes')
     .select([
@@ -52,7 +53,7 @@ const baseMemeQuery = (psql, user) => {
       .leftJoin(
         psql('votes')
           .select(['meme_id', 'type as userVote'])
-          .where({ user_id: user.user_id })
+          .where({ user_id: user.userId })
           .as('viewer_vote'),
         'memes.meme_id', '=', 'viewer_vote.meme_id',
       ).clone();
@@ -63,17 +64,23 @@ const baseMemeQuery = (psql, user) => {
 
 module.exports = psql => ({
 
-  // memeData = { title, cloudinary_url }
-  // user = { user_id, username }
+  // memeData = { title, cloudinaryUrl }
+  // user = { userId, username }
   // returns { isSuccessful, value }
   saveMeme: async (memeData, user) => {
     try {
       const newMeme = await psql('memes')
         .insert({
-          user_id: user.user_id,
+          user_id: user.userId,
           title: memeData.title,
-          cloudinary_url: memeData.cloudinary_url,
-        }).returning(['meme_id', 'user_id', 'title', 'cloudinary_url', 'date_created']);
+          cloudinary_url: memeData.cloudinaryUrl,
+        }).returning([
+          'meme_id ad memeId',
+          'user_id as userId',
+          'title',
+          'cloudinary_url as cloudinaryUrl',
+          'date_created as dateCreated',
+        ]);
 
       return {
         isSuccessful: true,
@@ -88,15 +95,15 @@ module.exports = psql => ({
     }
   },
 
-  // voteData = { meme_id, vote_type }
-  // user = { user_id, username }
+  // voteData = { memeId, voteType }
+  // user = { userId, username }
   // returns { isSuccessful, value }
   addVote: async (voteData, user) => {
     try {
       let newVote;
 
       const meme = await psql('memes')
-        .where({ meme_id: voteData.meme_id });
+        .where({ meme_id: voteData.memeId });
 
       if (meme.length <= 0) {
         return {
@@ -106,27 +113,33 @@ module.exports = psql => ({
       }
 
       const previousVote = await psql('votes')
-        .where('user_id', user.user_id)
-        .andWhere('meme_id', voteData.meme_id)
+        .where('user_id', user.userId)
+        .andWhere('meme_id', voteData.memeId)
         .first();
 
       // if user voted same type on this meme before, do nothing
       if (previousVote) {
-        if (previousVote.type === voteData.vote_type) {
+        if (previousVote.type === voteData.voteType) {
           return {
             isSuccessful: false,
-            value: 'already voted '.concat(voteData.vote_type, ' on this meme.'),
+            value: 'already voted '.concat(voteData.voteType, ' on this meme.'),
           };
         }
         // else change vote
         newVote = await psql('votes')
-          .where('user_id', user.user_id)
-          .andWhere('meme_id', voteData.meme_id)
+          .where('user_id', user.userId)
+          .andWhere('meme_id', voteData.memeId)
           .update({
-            type: voteData.vote_type,
+            type: voteData.voteType,
             date_created: psql.fn.now(),
           })
-          .returning(['vote_id', 'user_id', 'meme_id', 'type', 'date_created']);
+          .returning([
+            'vote_id as voteId',
+            'user_id as userId',
+            'meme_id as memeId',
+            'type',
+            'date_created as dateCreated',
+          ]);
       } else {
         newVote = await psql('votes')
           .insert({
@@ -134,7 +147,13 @@ module.exports = psql => ({
             meme_id: voteData.meme_id,
             type: voteData.vote_type,
           })
-          .returning(['vote_id', 'user_id', 'meme_id', 'type', 'date_created']);
+          .returning([
+            'vote_id as voteId',
+            'user_id as userId',
+            'meme_id as memeId',
+            'type',
+            'date_created as dateCreated',
+          ]);
       }
 
       return {
@@ -150,13 +169,13 @@ module.exports = psql => ({
     }
   },
 
-  // commentData = { meme_id, text }
-  // user = { user_id, username }
+  // commentData = { memeId, text }
+  // user = { userId, username }
   // returns { isSuccessful, value }
   addComment: async (commentData, user) => {
     try {
       const meme = await psql('memes')
-        .where({ meme_id: commentData.meme_id });
+        .where({ meme_id: commentData.memeId });
 
       if (meme.length <= 0) {
         return {
@@ -167,20 +186,26 @@ module.exports = psql => ({
 
       const newComment = await psql('comments')
         .insert({
-          user_id: user.user_id,
-          meme_id: commentData.meme_id,
+          user_id: user.userId,
+          meme_id: commentData.memeId,
           text: commentData.text,
-        }).returning(['comment_id', 'meme_id', 'user_id', 'text', 'date_created']);
+        }).returning([
+          'comment_id as commentId',
+          'meme_id as memeId',
+          'user_id as userId',
+          'text',
+          'date_created as dateCreated',
+        ]);
 
       // need to retrieve the username of the user making the comment
       const username = await psql('users')
-        .where('user_id', '=', newComment[0].user_id)
+        .where('user_id', '=', newComment[0].userId)
         .select('username').first();
       newComment[0].username = username.username;
 
       return {
         isSuccessful: true,
-        value: newComment,
+        value: newComment[0],
       };
     } catch (e) {
       console.log(e);
@@ -197,9 +222,15 @@ module.exports = psql => ({
         .where({ 'memes.meme_id': memeId })
         .first();
 
+      if (meme) {
+        return {
+          isSuccessful: true,
+          value: meme,
+        };
+      }
       return {
-        isSuccessful: true,
-        value: meme,
+        isSuccessful: false,
+        value: 'meme not found',
       };
     } catch (e) {
       console.log(e);
@@ -222,7 +253,12 @@ module.exports = psql => ({
       if (earliestId) {
         comments = await psql('comments')
           .innerJoin('users', 'users.user_id', 'comments.user_id')
-          .select(['comments.comment_id', 'users.username', 'comments.date_created', 'comments.text'])
+          .select([
+            'comments.comment_id as commentId',
+            'users.username',
+            'comments.date_created as dateCreated',
+            'comments.text',
+          ])
           .where({ meme_id: memeId })
           .andWhere('comment_id', '<', earliestId)
           .orderBy('comment_id', 'desc')
@@ -230,7 +266,12 @@ module.exports = psql => ({
       } else {
         comments = await psql('comments')
           .innerJoin('users', 'users.user_id', 'comments.user_id')
-          .select(['comments.comment_id', 'users.username', 'comments.date_created', 'comments.text'])
+          .select([
+            'comments.comment_id as commentId',
+            'users.username',
+            'comments.date_created as dateCreated',
+            'comments.text',
+          ])
           .where({ meme_id: memeId })
           .orderBy('comment_id', 'desc')
           .limit(COMMENT_PAGE_SIZE);

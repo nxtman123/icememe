@@ -1,7 +1,8 @@
 <template>
   <div class="row justify-between">
     <router-link
-      :to="{ name: 'user', params: { username: username } }"
+      v-if="username"
+      :to="{ name: 'user', params: { username } }"
       class="author-link q-mb-sm q-mr-sm"
     >
       <div class="text-subtitle2">
@@ -31,7 +32,9 @@ export default {
   },
   computed: {
     displayDate() {
-      return moment(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
+      return this.dateCreated
+        ? moment(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' })
+        : '';
     },
   },
 };
