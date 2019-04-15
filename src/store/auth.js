@@ -41,13 +41,18 @@ export default {
     socket_updateUserData(/* state */) {
       console.log('socket_updateUserData');
     },
-    socket_login(state, token) {
+    socket_login(state, loginResult) {
       try {
-        LocalStorage.set('token', token.value);
-        state.user = jwt.decode(token.value, { complete: true }).payload;
-        Notify.create('Logged in successfully');
+        if (loginResult.isSuccessful) {
+          LocalStorage.set('token', loginResult.value);
+          state.user = jwt.decode(loginResult.value, { complete: true }).payload;
+          Notify.create('Logged in successfully');
+        } else {
+          Notify.create(loginResult.value);
+          state.user = null;
+        }
       } catch (e) {
-        Notify.create('Failed to login');
+        Notify.create(loginResult.value);
         state.user = null;
       }
     },
