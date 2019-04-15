@@ -41,9 +41,9 @@ const baseMemeQuery = (psql, user) => {
     query = query.leftJoin(
       psql('votes')
         .select(['meme_id', 'type as user_vote'])
-        .where({'user_id': user.user_id })
+        .where({ user_id: user.user_id })
         .as('viewer_vote'),
-      'memes.meme_id', '=', 'viewer_vote.meme_id'
+      'memes.meme_id', '=', 'viewer_vote.meme_id',
     ).clone();
   }
 
