@@ -173,9 +173,8 @@ export default {
   watch: {
     loggedIn(newValue, oldValue) {
       if (oldValue === false && newValue === true) {
+        this.prompt = false;
         this.$q.notify('Logged in successfully');
-      } else if (oldValue === false && newValue === false) {
-        this.$q.notify('Failed to login');
       }
     },
   },
@@ -183,6 +182,13 @@ export default {
     openURL,
     logout() {
       this.$socket.emit('logout');
+    },
+  },
+  sockets: {
+    login(reply) {
+      if (!reply.isSuccessful) {
+        this.$q.notify('Failed to login');
+      }
     },
   },
 };

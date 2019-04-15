@@ -30,7 +30,6 @@
         class="text-primary row justify-around"
       >
         <q-btn
-          v-close-popup
           flat
           label="Log in"
           type="submit"
