@@ -174,8 +174,8 @@ module.exports = psql => ({
 
       // need to retrieve the username of the user making the comment
       const username = await psql('users')
-       .where('user_id', '=', newComment[0].user_id)
-       .select('username').first();
+        .where('user_id', '=', newComment[0].user_id)
+        .select('username').first();
       newComment[0].username = username.username;
 
       return {
