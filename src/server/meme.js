@@ -75,7 +75,7 @@ module.exports = psql => ({
           title: memeData.title,
           cloudinary_url: memeData.cloudinaryUrl,
         }).returning([
-          'meme_id ad memeId',
+          'meme_id as memeId',
           'user_id as userId',
           'title',
           'cloudinary_url as cloudinaryUrl',
