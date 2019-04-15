@@ -20,7 +20,11 @@
 export default {
   name: 'VoteButtons',
   props: {
-    voteTotal: {
+    upVotes: {
+      type: Number,
+      default: 0,
+    },
+    downVotes: {
       type: Number,
       default: 0,
     },
@@ -32,6 +36,11 @@ export default {
   },
   data() {
     return {};
+  },
+  computed: {
+    voteTotal() {
+      return this.upVotes - this.downVotes;
+    },
   },
 };
 </script>

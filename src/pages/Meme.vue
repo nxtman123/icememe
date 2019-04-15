@@ -28,7 +28,7 @@
               size="24px"
             />
             <div class="text-subtitle2">
-              {{ commentCount }}
+              {{ commentCount || 0 }}
             </div>
           </div>
         </div>

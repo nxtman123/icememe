@@ -1,11 +1,11 @@
 <template>
   <div class="row justify-between">
     <router-link
-      :to="{ name: 'user', params: { username: authorUsername } }"
+      :to="{ name: 'user', params: { username: username } }"
       class="author-link q-mb-sm q-mr-sm"
     >
       <div class="text-subtitle2">
-        {{ authorUsername }}
+        {{ username }}
       </div>
     </router-link>
     <div class="text-caption q-mb-sm">
@@ -15,12 +15,12 @@
 </template>
 
 <script>
-// import moment from 'moment';
+import moment from 'moment';
 
 export default {
   name: 'MemeMetadata',
   props: {
-    authorUsername: {
+    username: {
       type: String,
       default: '',
     },
@@ -31,7 +31,7 @@ export default {
   },
   computed: {
     displayDate() {
-      return new Date(this.dateCreated).toLocaleDateString('en-US');
+      return moment(this.dateCreated).calendar(null, { sameElse: 'YYYY-MM-DD' });
     },
   },
 };

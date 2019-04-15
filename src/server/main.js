@@ -159,9 +159,9 @@ io.on('connect', (socket) => {
 
   // gets memes for home or personal page, returns {isSuccessful, value}
   socket.on('getMemes', async (username, earliestId) => {
-    const memes = await meme.getMemes(username, earliestId, socketUser);
+    const memesResult = await meme.getMemes(username, earliestId, socketUser);
 
-    return socket.emit('getMemes', memes);
+    return socket.emit('getMemes', memesResult);
   });
 
   // returns { isSuccessful, value }

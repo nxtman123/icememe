@@ -1,6 +1,7 @@
 <template>
   <q-infinite-scroll
     :offset="250"
+    :disable="disableLoad"
     @load="(_, done) => $emit('load', done)"
   >
     <masonry
@@ -39,6 +40,10 @@ export default {
     memes: {
       type: Array,
       default: () => [],
+    },
+    disableLoad: {
+      type: Boolean,
+      default: false,
     },
   },
 };
