@@ -4,15 +4,15 @@ const MEME_PAGE_SIZE = 15;
 const baseMemeQuery = (psql, user) => {
   let query = psql('memes')
     .select([
-      'memes.meme_id',
-      'memes.user_id',
-      'memes.title',
-      'memes.cloudinary_url',
-      'memes.date_created',
-      'author.username',
-      'counted_comments.comment_count',
-      'counted_up_votes.up_votes',
-      'counted_down_votes.down_votes',
+      'memes.meme_id as meme_id',
+      'memes.user_id as user_id',
+      'memes.title as title',
+      'memes.cloudinary_url as cloudinary_url',
+      'memes.date_created as date_created',
+      'author.username as username',
+      'counted_comments.comment_count as comment_count',
+      'counted_up_votes.up_votes as up_votes',
+      'counted_down_votes.down_votes as down_votes',
     ])
     .leftJoin(
       psql('users')
@@ -188,7 +188,7 @@ module.exports = psql => ({
   getMeme: async (memeId, user) => {
     try {
       const meme = await baseMemeQuery(psql, user)
-        .where({ 'memes.meme_id': memeId })
+        .where({ 'meme_id': memeId })
         .first();
 
       return {
@@ -250,12 +250,12 @@ module.exports = psql => ({
       if (!username) {
         if (earliestId) {
           memes = await baseMemeQuery(psql, user)
-            .andWhere('memes.meme_id', '<', earliestId)
-            .orderBy('memes.meme_id', 'desc')
+            .andWhere('meme_id', '<', earliestId)
+            .orderBy('meme_id', 'desc')
             .limit(MEME_PAGE_SIZE);
         } else {
           memes = await baseMemeQuery(psql, user)
-            .orderBy('memes.meme_id', 'desc')
+            .orderBy('meme_id', 'desc')
             .limit(MEME_PAGE_SIZE);
         }
         return {
@@ -266,14 +266,14 @@ module.exports = psql => ({
       // else get memes belonging to the provided user
       if (earliestId) {
         memes = await baseMemeQuery(psql, user)
-          .andWhere('author.username', username)
-          .andWhere('memes.meme_id', '<', earliestId)
-          .orderBy('memes.meme_id', 'desc')
+          .andWhere('username', username)
+          .andWhere('meme_id', '<', earliestId)
+          .orderBy('meme_id', 'desc')
           .limit(MEME_PAGE_SIZE);
       } else {
         memes = await baseMemeQuery(psql, user)
-          .andWhere('author.username', username)
-          .orderBy('memes.meme_id', 'desc')
+          .andWhere('username', username)
+          .orderBy('meme_id', 'desc')
           .limit(MEME_PAGE_SIZE);
       }
       return {
