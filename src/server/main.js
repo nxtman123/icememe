@@ -124,18 +124,17 @@ io.on('connect', (socket) => {
   });
 
   // voteData = { memeId, voteType }
-  // voteType is expected to be a string with a value of 'up' or 'down'
+  // voteType one of 'up', 'down', or null
   // returns { isSuccessful, value }
-  socket.on('addVote', async (voteData) => {
+  socket.on('addVote', async (voteData, ack) => {
     if (socketUser === false) {
-      return socket.emit('addVote', {
+      ack({
         isSuccessful: false,
         value: 'cannot verify user',
       });
     }
     const voteResult = await meme.addVote(voteData, socketUser);
-
-    return socket.emit('addVote', voteResult);
+    ack(voteResult);
   });
 
   // commentData = { memeId, text }

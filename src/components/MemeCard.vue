@@ -23,6 +23,7 @@
         <div class="row justify-between">
           <vote-buttons
             class="q-mb-sm q-mr-sm"
+            :meme-id="memeId"
             :up-votes="upVotes"
             :down-votes="downVotes"
             :user-vote="userVote"

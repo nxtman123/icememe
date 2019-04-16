@@ -100,8 +100,6 @@ module.exports = psql => ({
   // returns { isSuccessful, value }
   addVote: async (voteData, user) => {
     try {
-      let newVote;
-
       const meme = await psql('memes')
         .where({ meme_id: voteData.memeId });
 
@@ -117,48 +115,42 @@ module.exports = psql => ({
         .andWhere('meme_id', voteData.memeId)
         .first();
 
-      // if user voted same type on this meme before, do nothing
       if (previousVote) {
+        // if user voted same type on this meme before, do nothing
         if (previousVote.type === voteData.voteType) {
           return {
-            isSuccessful: false,
-            value: 'already voted '.concat(voteData.voteType, ' on this meme.'),
+            isSuccessful: true,
+            value: 'idempotent vote',
           };
         }
-        // else change vote
-        newVote = await psql('votes')
+        // else remove old vote
+        await psql('votes')
           .where('user_id', user.userId)
           .andWhere('meme_id', voteData.memeId)
-          .update({
-            type: voteData.voteType,
-            date_created: psql.fn.now(),
-          })
-          .returning([
-            'vote_id as voteId',
-            'user_id as userId',
-            'meme_id as memeId',
-            'type',
-            'date_created as dateCreated',
-          ]);
-      } else {
-        newVote = await psql('votes')
-          .insert({
-            user_id: user.user_id,
-            meme_id: voteData.meme_id,
-            type: voteData.vote_type,
-          })
-          .returning([
-            'vote_id as voteId',
-            'user_id as userId',
-            'meme_id as memeId',
-            'type',
-            'date_created as dateCreated',
-          ]);
+          .del();
       }
-
+      if (voteData.voteType !== null) {
+        const newVote = await psql('votes')
+          .insert({
+            user_id: user.userId,
+            meme_id: voteData.memeId,
+            type: voteData.voteType,
+          })
+          .returning([
+            'vote_id as voteId',
+            'user_id as userId',
+            'meme_id as memeId',
+            'type',
+            'date_created as dateCreated',
+          ]);
+        return {
+          isSuccessful: true,
+          value: newVote[0],
+        };
+      }
       return {
         isSuccessful: true,
-        value: newVote,
+        value: 'removed vote',
       };
     } catch (e) {
       console.log(e);

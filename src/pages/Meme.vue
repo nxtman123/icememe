@@ -18,6 +18,7 @@
         <div class="row justify-between">
           <vote-buttons
             class="q-mb-sm q-mr-sm"
+            :meme-id="memeId"
             :up-votes="meme.upVotes"
             :down-votes="meme.downVotes"
             :user-vote="meme.userVote"
@@ -99,6 +100,12 @@ export default {
     'meme-metadata': MemeMetadata,
     'comment-card': CommentCard,
   },
+  props: {
+    memeId: {
+      type: Number,
+      default: -1,
+    },
+  },
   data() {
     return {
       meme: {
@@ -130,9 +137,6 @@ export default {
       return this.comments.length
         ? this.comments.reduce((eId, c) => Math.min(eId, c.commentId), Infinity)
         : 0;
-    },
-    memeId() {
-      return this.$route.params.memeId;
     },
   },
   mounted() {

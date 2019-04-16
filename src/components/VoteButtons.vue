@@ -2,24 +2,32 @@
   <div class="row rounded-borders vote-buttons items-center">
     <q-btn
       icon="arrow_upward"
-      :color="userVote === 'up' ? 'primary' : undefined"
+      :color="displayUserVote === 'up' ? 'primary' : undefined"
       flat
+      @click="voteUp"
     />
     <div class="text-subtitle2 q-px-sm">
       {{ voteTotal }}
     </div>
     <q-btn
       icon="arrow_downward"
-      :color="userVote === 'down' ? 'primary' : undefined"
+      :color="displayUserVote === 'down' ? 'primary' : undefined"
       flat
+      @click="voteDown"
     />
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'VoteButtons',
   props: {
+    memeId: {
+      type: Number,
+      default: -1,
+    },
     upVotes: {
       type: Number,
       default: 0,
@@ -35,11 +43,82 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      localVote: this.userVote,
+    };
   },
   computed: {
+    ...mapGetters([
+      'loggedIn',
+    ]),
+    localAdjustment() {
+      return this.userVote !== this.localVote;
+    },
     voteTotal() {
-      return this.upVotes - this.downVotes;
+      let adjust = 0;
+      if (this.localAdjustment) {
+        if (this.localVote === 'up') {
+          if (this.userVote === 'down') {
+            adjust = 2;
+          } else {
+            adjust = 1;
+          }
+        } else if (this.localVote === 'down') {
+          if (this.userVote === 'up') {
+            adjust = -2;
+          } else {
+            adjust = -1;
+          }
+        } else if (this.localVote === null) {
+          if (this.userVote === 'up') {
+            adjust = -1;
+          } else {
+            adjust = 1;
+          }
+        }
+      }
+      return this.upVotes - this.downVotes + adjust;
+    },
+    displayUserVote() {
+      if (this.localAdjustment) {
+        return this.localVote;
+      }
+      return this.userVote;
+    },
+  },
+  watch: {
+    userVote() {
+      this.localVote = this.userVote;
+    },
+  },
+  methods: {
+    voteUp() {
+      if (this.displayUserVote !== 'up') {
+        this.vote('up');
+      } else {
+        this.vote(null);
+      }
+    },
+    voteDown() {
+      if (this.displayUserVote !== 'down') {
+        this.vote('down');
+      } else {
+        this.vote(null);
+      }
+    },
+    vote(voteType) {
+      if (this.loggedIn) {
+        this.$socket.emit('addVote', {
+          memeId: this.memeId,
+          voteType,
+        }, (voteResult) => {
+          if (voteResult.isSuccessful) {
+            this.localVote = voteType;
+          } else {
+            this.$q.notify(voteResult.value);
+          }
+        });
+      }
     },
   },
 };
