@@ -11,7 +11,7 @@ const routes = [
         name: 'meme',
         path: '/m/:memeId/:slug?',
         component: () => import('pages/Meme.vue'),
-        props: true,
+        props: route => ({ memeId: parseInt(route.params.memeId, 10) }),
       },
       {
         name: 'user',
