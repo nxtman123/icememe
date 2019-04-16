@@ -232,9 +232,13 @@ io.on('connect', (socket) => {
   });
 });
 
+console.log(__dirname);
+console.log(process.env.PWD);
+console.log(process.cwd());
+
 // start server
 app.use(history());
-app.use(serveStatic(__dirname + '../../dist/spa'));
+app.use(serveStatic(process.env.PWD + '/dist/spa/'));
 server.listen(port, () => {
   console.log(`listening on port ${port}`);
 });

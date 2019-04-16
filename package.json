@@ -12,7 +12,7 @@
     "dev-client": "quasar dev",
     "dev-server": "nodemon src/server/main.js",
     "dev": "concurrently \"yarn dev-client\" \"yarn dev-server\"",
-    "build": "quasar build",
+    "build": "yarn run quasar build",
     "start": "node src/server/main.js",
     "heroku-postbuild": "yarn && yarn build && yarn run knex migrate:latest"
   },
@@ -50,9 +50,9 @@
     "strip-ansi": "=3.0.1"
   },
   "engines": {
-    "node": ">= 8.9.0",
-    "npm": ">= 5.6.0",
-    "yarn": ">= 1.6.0"
+    "node": "11.13.0",
+    "npm": "6.9.0",
+    "yarn": "1.15.2"
   },
   "browserslist": [
     "last 1 version, not dead, ie >= 11"
