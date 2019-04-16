@@ -14,7 +14,7 @@
     "dev": "concurrently \"yarn dev-client\" \"yarn dev-server\"",
     "build": "yarn run quasar build",
     "start": "node src/server/main.js",
-    "heroku-postbuild": "yarn && yarn build && yarn run knex migrate:latest"
+    "heroku-postbuild": "yarn run knex migrate:latest"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
