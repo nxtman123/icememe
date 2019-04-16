@@ -4,6 +4,7 @@
       icon="arrow_upward"
       :color="displayUserVote === 'up' ? 'primary' : undefined"
       flat
+      :ripple="loggedIn"
       @click="voteUp"
     />
     <div class="text-subtitle2 q-px-sm">
@@ -13,6 +14,7 @@
       icon="arrow_downward"
       :color="displayUserVote === 'down' ? 'primary' : undefined"
       flat
+      :ripple="loggedIn"
       @click="voteDown"
     />
   </div>
@@ -80,6 +82,9 @@ export default {
       return this.upVotes - this.downVotes + adjust;
     },
     displayUserVote() {
+      if (!this.loggedIn) {
+        return null;
+      }
       if (this.localAdjustment) {
         return this.localVote;
       }

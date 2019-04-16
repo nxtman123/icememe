@@ -139,6 +139,12 @@ export default {
         : 0;
     },
   },
+  watch: {
+    loggedIn() {
+      this.$forceUpdate();
+      this.$socket.emit('getMeme', this.memeId);
+    },
+  },
   mounted() {
     this.$socket.emit('getMeme', this.memeId);
   },

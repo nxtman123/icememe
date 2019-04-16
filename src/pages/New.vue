@@ -74,6 +74,13 @@ export default {
       'loggedIn',
     ]),
   },
+  watch: {
+    loggedIn(value) {
+      if (!value) {
+        this.$router.push({ name: 'main' });
+      }
+    },
+  },
   methods: {
     fileChosen(e) {
       const input = e.target;

@@ -254,6 +254,13 @@ export default {
         && this.password === this.confirmPassword;
     },
   },
+  watch: {
+    loggedIn(value) {
+      if (!value) {
+        this.$router.push({ name: 'main' });
+      }
+    },
+  },
   methods: {
     clearUsernameForm() {
       this.username = '';

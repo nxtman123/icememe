@@ -202,17 +202,14 @@ export default {
     ]),
   },
   watch: {
-    loggedIn(newValue, oldValue) {
-      if (oldValue === false && newValue === true) {
-        this.prompt = false;
-      }
+    loggedIn() {
+      this.prompt = false;
     },
   },
   methods: {
     openURL,
     logout() {
       this.$socket.emit('logout');
-      this.$router.push({ name: 'main' });
     },
   },
 };

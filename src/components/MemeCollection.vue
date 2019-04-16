@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import MemeCard from '../components/MemeCard';
 
 export default {
@@ -49,6 +51,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'loggedIn',
+    ]),
     sortedMemes() {
       return this.memes.slice().sort((a, b) => (a.memeId < b.memeId));
     },
@@ -56,6 +61,12 @@ export default {
       return this.memes.length
         ? this.memes.reduce((eId, m) => Math.min(eId, m.memeId), Infinity)
         : 0;
+    },
+  },
+  watch: {
+    loggedIn() {
+      this.memes = [];
+      this.moreToGo = true;
     },
   },
   methods: {
