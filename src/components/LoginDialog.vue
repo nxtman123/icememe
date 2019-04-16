@@ -8,8 +8,8 @@
     <form @submit.prevent="onSubmit">
       <q-card-section>
         <q-input
-          autofocus
           v-model="username"
+          autofocus
           dense
           filled
           placeholder="Username"
