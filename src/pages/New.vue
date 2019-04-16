@@ -113,7 +113,7 @@ export default {
       xhr.onreadystatechange = function sendingDone() {
         if (xhr.readyState === 4 && xhr.status === 200) {
           const response = JSON.parse(xhr.responseText);
-          socket.emit('addMeme', { title: memeTitle, cloudinary_url: response.secure_url });
+          socket.emit('addMeme', { title: memeTitle, cloudinaryUrl: response.secure_url });
         }
       };
 
