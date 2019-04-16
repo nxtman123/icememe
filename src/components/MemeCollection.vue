@@ -61,7 +61,6 @@ export default {
   methods: {
     loadMoreMemes(_, done) {
       this.$socket.emit('getMemes', this.username, this.earliestMeme, (memesResult) => {
-        console.log(memesResult);
         if (memesResult.isSuccessful) {
           if (memesResult.value.length) {
             this.memes = this.memes.concat(memesResult.value);
