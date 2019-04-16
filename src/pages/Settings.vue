@@ -160,11 +160,18 @@
             Change Password
           </div>
         </q-card-section>
-        <form @submit.prevent="emailSubmit">
+        <form @submit.prevent="passwordSubmit">
           <q-card-section>
             <q-input
-              v-model="password"
+              v-model="oldPassword"
               autofocus
+              label="Old Password"
+              type="password"
+              lazy-rules
+              :rules="[ val => val.length || 'Password cannot be blank']"
+            />
+            <q-input
+              v-model="password"
               label="New Password"
               type="password"
               lazy-rules
@@ -220,6 +227,7 @@ export default {
       confirmEmail: '',
 
       passwordDialog: false,
+      oldPassword: '',
       password: '',
       confirmPassword: '',
     };
@@ -230,18 +238,20 @@ export default {
     ]),
 
     usernameReady() {
-      return this.username.length && this.username === this.confirmUsername;
+      return this.loggedIn && this.username.length && this.username === this.confirmUsername;
     },
 
     emailIsEmail() {
       return validator.isEmail(this.email);
     },
     emailReady() {
-      return this.email.length && this.emailIsEmail && this.email === this.confirmEmail;
+      return this.loggedIn && this.email.length && this.emailIsEmail
+        && this.email === this.confirmEmail;
     },
 
     passwordReady() {
-      return this.password.length && this.password === this.confirmPassword;
+      return this.loggedIn && this.oldPassword.length && this.password.length
+        && this.password === this.confirmPassword;
     },
   },
   methods: {
@@ -251,14 +261,7 @@ export default {
     },
     usernameSubmit() {
       if (this.usernameReady) {
-        const newUsername = {
-          username: this.username,
-          confirmUsername: this.confirmUsername,
-        };
-        this.$socket.emit('updateUserData', newUsername);
-
-        this.username = '';
-        this.confirmUsername = '';
+        this.$socket.emit('updateUsername', this.username);
         this.usernameDialog = false;
       }
     },
@@ -269,34 +272,34 @@ export default {
     },
     emailSubmit() {
       if (this.emailReady) {
-        const newEmail = {
-          email: this.email,
-          confirmEmail: this.confirmEmail,
-        };
-        this.$socket.emit('updateUserData', newEmail);
-
-        this.email = '';
-        this.confirmEmail = '';
+        this.$socket.emit('updateEmail', this.email);
         this.emailDialog = false;
       }
     },
 
     clearPasswordForm() {
+      this.oldPassword = '';
       this.password = '';
       this.confirmPassword = '';
     },
     passwordSubmit() {
       if (this.passwordReady) {
-        const newPassword = {
-          username: this.password,
-          confirmPassword: this.confirmPassword,
-        };
-        this.$socket.emit('updateUserData', newPassword);
-        // TODO: replace user token and store object
-
-        this.password = '';
-        this.confirmPassword = '';
-        this.passwordDialog = false;
+        this.$socket.emit('updatePassword', this.oldPassword, this.password, (updateResult) => {
+          if (updateResult.isSuccessful) {
+            this.$q.notify({
+              icon: 'done',
+              color: 'positive',
+              message: updateResult.value,
+            });
+            this.passwordDialog = false;
+          } else {
+            this.$q.notify({
+              icon: 'error',
+              color: 'negative',
+              message: updateResult.value,
+            });
+          }
+        });
       }
     },
   },

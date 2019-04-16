@@ -1,7 +1,5 @@
 import { LocalStorage, Notify } from 'quasar';
 
-const jwt = require('jsonwebtoken');
-
 export default {
   state: {
     user: null,
@@ -32,50 +30,61 @@ export default {
         state.user = verifyResult.value;
       } else {
         LocalStorage.remove('token');
-      }
-    },
-    socket_register(state, registrationResult) {
-      try {
-        if (registrationResult.isSuccessful) {
-          LocalStorage.set('token', registrationResult.value);
-          state.user = jwt.decode(registrationResult.value, { complete: true }).payload;
-          Notify.create('Registration is successful');
-        } else {
-          Notify.create(registrationResult.value);
-          state.user = null;
-        }
-      } catch (e) {
-        Notify.create(registrationResult.value);
         state.user = null;
       }
     },
-    socket_updateUserData(state, updateResult) {
-      if (updateResult.isSuccessful) {
-        state.user.username = updateResult.username;
-        Notify.create(updateResult.value);
-      } else {
-        Notify.create(updateResult.value);
-      }
-    },
     socket_login(state, loginResult) {
-      try {
-        if (loginResult.isSuccessful) {
-          LocalStorage.set('token', loginResult.value);
-          state.user = jwt.decode(loginResult.value, { complete: true }).payload;
-          Notify.create('Logged in successfully');
-        } else {
-          Notify.create(loginResult.value);
-          state.user = null;
-        }
-      } catch (e) {
+      if (loginResult.isSuccessful) {
+        LocalStorage.set('token', loginResult.value);
+        Notify.create('Logged in successfully');
+      } else {
         Notify.create(loginResult.value);
         state.user = null;
       }
     },
+    socket_register(state, registrationResult) {
+      Notify.create(registrationResult.value);
+      if (!registrationResult.isSuccessful) {
+        LocalStorage.remove('token');
+        state.user = null;
+      }
+    },
     socket_logout(state) {
+      Notify.create('Logged out');
       console.log('socket_logout');
       state.user = null;
       LocalStorage.remove('token');
+    },
+    socket_updateUsername(state, updateResult) {
+      if (updateResult.isSuccessful) {
+        state.user.username = updateResult.value;
+        Notify.create({
+          icon: 'done',
+          color: 'positive',
+          message: `Changed username to ${updateResult.value}`,
+        });
+      } else {
+        Notify.create({
+          icon: 'error',
+          color: 'negative',
+          message: updateResult.value,
+        });
+      }
+    },
+    socket_updateEmail(state, updateResult) {
+      if (updateResult.isSuccessful) {
+        Notify.create({
+          icon: 'done',
+          color: 'positive',
+          message: `Changed email to ${updateResult.value}`,
+        });
+      } else {
+        Notify.create({
+          icon: 'error',
+          color: 'negative',
+          message: updateResult.value,
+        });
+      }
     },
   },
 };

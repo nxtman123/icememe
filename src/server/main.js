@@ -49,6 +49,20 @@ io.on('connect', (socket) => {
     socket.emit('verify', verifyResult);
   }
 
+  // user = { username, password }
+  // returns { isSuccessful, value }
+  socket.on('login', async (user) => {
+    const loginResult = await authentication.login(user);
+
+    if (loginResult.isSuccessful) {
+      const verifyResult = authentication.verifyToken(loginResult.value);
+      socketUser = verifyResult.value;
+      socket.emit('verify', verifyResult);
+    }
+
+    return socket.emit('login', loginResult);
+  });
+
   // user = { username, email, password }
   // returns { isSuccessful, value }
   socket.on('register', async (user) => {
@@ -58,47 +72,73 @@ io.on('connect', (socket) => {
       const loginResult = await authentication.login(user);
 
       if (loginResult.isSuccessful) {
-        socketUser = authentication.verifyToken(loginResult.value).value;
+        const verifyResult = authentication.verifyToken(loginResult.value);
+        socketUser = verifyResult.value;
+        socket.emit('verify', verifyResult);
+        return socket.emit('login', loginResult);
       }
-
-      return socket.emit('register', loginResult);
     }
     return socket.emit('register', registration);
   });
 
-  /*
-    updateData = {
-      (optional)email, (optional) confirmEmail,
-      (optional)username, (optional) confirmUsername,
-      (optional)password,  (optional) confirmPassword
-    }
-  */
-  socket.on('updateUserData', async (updateData) => {
+  socket.on('updateUsername', async (newUsername) => {
     if (socketUser === false) {
-      return socket.emit('updateUserData', {
+      return socket.emit('updateUsername', {
+        isSuccessful: false,
+        value: 'cannot verify user',
+      });
+    }
+    const updateResult = await authentication.updateUsername(newUsername, socketUser);
+    if (updateResult.isSuccessful) {
+      socketUser.username = updateResult.value;
+    }
+    return socket.emit('updateUsername', updateResult);
+  });
+
+  socket.on('updateEmail', async (newEmail) => {
+    if (socketUser === false) {
+      return socket.emit('updateEmail', {
+        isSuccessful: false,
+        value: 'cannot verify user',
+      });
+    }
+    const updateResult = await authentication.updateEmail(newEmail, socketUser);
+    return socket.emit('updateEmail', updateResult);
+  });
+
+  socket.on('updatePassword', async (oldPassword, newPassword, ack) => {
+    if (socketUser === false) {
+      return ack({
         isSuccessful: false,
         value: 'cannot verify user',
       });
     }
 
-    const updateResult = await authentication.updateUserData(updateData, socketUser);
-    if (updateResult.isSuccessful) {
-      socketUser.username = updateResult.username;
+    const oldLoginResult = await authentication.login({
+      username: socketUser.username,
+      password: oldPassword,
+    });
+
+    if (oldLoginResult.isSuccessful) {
+      const updateResult = await authentication.updatePassword(newPassword, socketUser);
+
+      const newLoginResult = await authentication.login({
+        username: socketUser.username,
+        password: newPassword,
+      });
+
+      if (newLoginResult.isSuccessful) {
+        const verifyResult = authentication.verifyToken(newLoginResult.value);
+        socketUser = verifyResult.value;
+        socket.emit('login', newLoginResult);
+        socket.emit('verify', verifyResult);
+      }
+      return ack(updateResult);
     }
-
-    return socket.emit('updateUserData', updateResult);
-  });
-
-  // user = { username, password }
-  // returns { isSuccessful, value }
-  socket.on('login', async (user) => {
-    const loginResult = await authentication.login(user);
-
-    if (loginResult.isSuccessful) {
-      socketUser = authentication.verifyToken(loginResult.value).value;
-    }
-
-    return socket.emit('login', loginResult);
+    return ack({
+      isSuccessful: false,
+      value: 'Incorrect old password',
+    });
   });
 
   socket.on('logout', async () => {
@@ -119,7 +159,6 @@ io.on('connect', (socket) => {
       });
     }
     const saveResult = await meme.saveMeme(memeData, socketUser);
-
     return socket.emit('addMeme', saveResult);
   });
 

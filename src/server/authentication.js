@@ -1,6 +1,5 @@
 const argon2 = require('argon2');
 const validator = require('validator');
-const _ = require('underscore');
 const jwt = require('jsonwebtoken');
 
 const USERNAME_MAX = 20;
@@ -53,7 +52,7 @@ module.exports = psql => ({
       console.log(e);
       return {
         isSuccessful: false,
-        value: 'unexpected error during registration',
+        value: 'Unexpected error during registration',
       };
     }
   },
@@ -88,127 +87,66 @@ module.exports = psql => ({
       console.log(e);
       return {
         isSuccessful: false,
-        value: 'unexpected error during login attempt',
+        value: 'Unexpected error during login attempt',
       };
     }
   },
 
-  /*
-    updateData = {
-      (optional)email, (optional) confirmEmail,
-      (optional)username, (optional) confirmUsername,
-      (optional)password,  (optional) confirmPassword
+  // user = { userId, username }
+  // returns { isSuccessful, value }
+  updateUsername: async (newUsername, user) => {
+    if (newUsername.length > USERNAME_MAX) {
+      return {
+        isSuccessful: false,
+        value: 'username length exceeds maximum length',
+      };
     }
-  */
-  // user = { decoded token }
-  updateUserData: async (updateData, user) => {
+    const update = await psql('users')
+      .where('user_id', '=', user.userId)
+      .update({ username: newUsername })
+      .returning(['username']);
+    return {
+      isSuccessful: true,
+      value: update[0].username,
+    };
+  },
+
+  // user = { userId, username }
+  // returns { isSuccessful, value }
+  updateEmail: async (newEmail, user) => {
+    if (newEmail.length > EMAIL_MAX) {
+      return {
+        isSuccessful: false,
+        value: 'Email length exceeds maximum length',
+      };
+    }
+    const update = await psql('users')
+      .where('user_id', '=', user.userId)
+      .update({ email: newEmail })
+      .returning(['email']);
+    return {
+      isSuccessful: true,
+      value: update[0].email,
+    };
+  },
+
+  // user = { userId, username }
+  // returns { isSuccessful, value }
+  updatePassword: async (newPassword, user) => {
     try {
-      const toUpdate = {};
-      const userInDatabase = await psql('users')
-        .select(['user_id as userId', 'username', 'email', 'password'])
-        .where('user_id', '=', user.userId).first();
-
-      if (updateData.email) {
-        if (updateData.email.length > EMAIL_MAX) {
-          return {
-            isSuccessful: false,
-            value: 'email length exceeds maximum length',
-          };
-        }
-
-        // check if the email aleady in the database is not the same as the new one
-        // confirm confirmation email is correct
-        if (userInDatabase.email !== updateData.email) {
-          if (updateData.email !== updateData.confirmEmail) {
-            return {
-              isSuccessful: false,
-              value: 'email and confirmation email do not match',
-            };
-          }
-
-          const checkEmail = await psql('users')
-            .where('email', updateData.email);
-
-          if (checkEmail.length > 0) {
-            return {
-              isSuccessful: false,
-              value: 'email already taken',
-            };
-          }
-
-          toUpdate.email = updateData.email;
-        }
-      }
-
-      if (updateData.username) {
-        if (updateData.username.length > USERNAME_MAX) {
-          return {
-            isSuccessful: false,
-            value: 'username length exceeds maximum length',
-          };
-        }
-
-        // check if the username already in the database is not the same as the new one
-        // confirm confirmation username is correct
-        if (userInDatabase.username !== updateData.username) {
-          if (updateData.username !== updateData.confirmUsername) {
-            return {
-              isSuccessful: false,
-              value: 'username and confirmation username do not match',
-            };
-          }
-          const checkUsername = await psql('users')
-            .where('username', updateData.username);
-
-          if (checkUsername.length > 0) {
-            return {
-              isSuccessful: false,
-              value: 'username already taken',
-            };
-          }
-
-          toUpdate.username = updateData.username;
-        }
-      }
-
-      // check if password already in the databse is not the same as the new one
-      if (updateData.password) {
-        const hash = await argon2.hash(updateData.password);
-        if (userInDatabase.password !== hash) {
-          if (updateData.password !== updateData.confirmPassword) {
-            return {
-              isSuccessful: false,
-              value: 'password and confirmation password to not match',
-            };
-          }
-
-          toUpdate.password = hash;
-        }
-      }
-
-      if (!_.isEmpty(toUpdate)) {
-        const update = await psql('users')
-          .where('user_id', '=', user.userId)
-          .update(toUpdate)
-          .returning(['username', 'email']);
-
-        return {
-          isSuccessful: true,
-          value: 'successfully updated user data',
-          username: update[0].username,
-          email: update[0].email,
-        };
-      }
-
+      const hash = await argon2.hash(newPassword);
+      await psql('users')
+        .where('user_id', '=', user.userId)
+        .update({ password: hash });
       return {
         isSuccessful: true,
-        value: 'successfully updated user data',
+        value: 'Changed password successfully',
       };
     } catch (e) {
       console.log(e);
       return {
         isSuccessful: false,
-        value: 'unexpected error when attempting to update user data',
+        value: 'Unexpected error while changing password',
       };
     }
   },
