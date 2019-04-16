@@ -14,6 +14,7 @@
     "dev": "concurrently \"yarn dev-client\" \"yarn dev-server\"",
     "build": "quasar build",
     "start": "node src/server/main.js",
+    "heroku-prebuild": "npm install -g node-gyp",
     "heroku-postbuild": "yarn run knex migrate:latest"
   },
   "dependencies": {
