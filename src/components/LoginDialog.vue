@@ -9,6 +9,7 @@
       <q-card-section>
         <q-input
           v-model="username"
+          autofocus
           dense
           filled
           placeholder="Username"

@@ -17,20 +17,22 @@
       </router-link>
       <q-card-section class="q-pb-sm">
         <meme-metadata
-          :author-username="authorUsername"
+          :username="username"
           :date-created="dateCreated"
         />
         <div class="row justify-between">
           <vote-buttons
             class="q-mb-sm q-mr-sm"
-            :vote-total="voteTotal"
+            :meme-id="memeId"
+            :up-votes="upVotes"
+            :down-votes="downVotes"
             :user-vote="userVote"
           />
           <q-btn
             outline
             class="q-mb-sm"
             icon="comment"
-            :label="commentCount"
+            :label="commentCount || 0"
             :to="{ name: 'meme', params: { memeId, slug: slugTitle }, hash: '#comments' }"
           />
         </div>
@@ -55,7 +57,7 @@ export default {
       type: Number,
       default: -1,
     },
-    authorUsername: {
+    username: {
       type: String,
       default: '',
     },
@@ -71,7 +73,11 @@ export default {
       type: String,
       default: '',
     },
-    voteTotal: {
+    upVotes: {
+      type: Number,
+      default: 0,
+    },
+    downVotes: {
       type: Number,
       default: 0,
     },

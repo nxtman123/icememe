@@ -1,7 +1,8 @@
 <template>
   <q-infinite-scroll
     :offset="250"
-    @load="(_, done) => $emit('load', done)"
+    :disable="!moreToGo"
+    @load="loadMoreMemes"
   >
     <masonry
       class="q-pt-md"
@@ -9,7 +10,7 @@
       :cols="{default: 3, 1024: 2, 600: 1}"
     >
       <meme-card
-        v-for="meme in memes"
+        v-for="meme in sortedMemes"
         :key="meme.id"
         class="q-pb-md"
         v-bind="meme"
@@ -28,6 +29,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import MemeCard from '../components/MemeCard';
 
 export default {
@@ -36,9 +39,52 @@ export default {
     'meme-card': MemeCard,
   },
   props: {
-    memes: {
-      type: Array,
-      default: () => [],
+    username: {
+      type: String,
+      default: '',
+    },
+  },
+  data() {
+    return {
+      memes: [],
+      moreToGo: true,
+    };
+  },
+  computed: {
+    ...mapGetters([
+      'loggedIn',
+    ]),
+    sortedMemes() {
+      return this.memes.slice().sort((a, b) => (a.memeId < b.memeId));
+    },
+    earliestMeme() {
+      return this.memes.length
+        ? this.memes.reduce((eId, m) => Math.min(eId, m.memeId), Infinity)
+        : 0;
+    },
+  },
+  watch: {
+    loggedIn() {
+      this.memes = [];
+      this.loadMoreMemes(null, () => {
+        this.moreToGo = true;
+      });
+    },
+  },
+  methods: {
+    loadMoreMemes(_, done) {
+      this.$socket.emit('getMemes', this.username, this.earliestMeme, (memesResult) => {
+        if (memesResult.isSuccessful) {
+          if (memesResult.value.length) {
+            this.memes = this.memes.concat(memesResult.value);
+          } else {
+            this.moreToGo = false;
+          }
+        } else {
+          this.$q.notify(memesResult.value);
+        }
+        done();
+      });
     },
   },
 };
