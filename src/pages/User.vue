@@ -1,6 +1,9 @@
 <template>
   <q-page class="column page-frame">
-    <meme-collection />
+    <div class="text-h6 q-py-md">
+      {{ username }}
+    </div>
+    <meme-collection :username="username" />
   </q-page>
 </template>
 
@@ -8,9 +11,15 @@
 import MemeCollection from '../components/MemeCollection';
 
 export default {
-  name: 'PageIndex',
+  name: 'PageUser',
   components: {
     'meme-collection': MemeCollection,
+  },
+  props: {
+    username: {
+      type: String,
+      default: '',
+    },
   },
 };
 </script>

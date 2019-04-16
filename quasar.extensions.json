@@ -1,0 +1,7 @@
+{
+  "@quasar/dotenv": {
+    "env_development": ".env.example",
+    "env_production": ".env",
+    "common_root_object": "none"
+  }
+}
