@@ -7,32 +7,32 @@ exports.seed = function(knex, Promise) {
       return knex('users').insert([
         {
           username: 'akerr',
-          password: '$argon2i$v=19$m=4096,t=3,p=1$MvjTqlDPssFNFbbZOLqeGg$r1VWdGURCN06Iedv8GESQ/o+Am07QhqwpVfz4BhrNYQ',
+          password: '$2b$10$ycRJ5q8oUB5ULBSaa2FHQeEnprtb9tvp.0jefpPmUuQmS2nZthqKS',
           email: 'akerr@icememe.com'
         },
         {
           username: 'ahusain',
-          password: '$argon2i$v=19$m=4096,t=3,p=1$StLOuZR6Gnsxxp+emRRBKg$e5nEhe0tRhV+OluybgSeXozLm9eGF1bzahfxN3jUaa8',
+          password: '$2b$10$ycRJ5q8oUB5ULBSaa2FHQeEnprtb9tvp.0jefpPmUuQmS2nZthqKS',
           email: 'ahusain@icememe.com'
         },
         {
           username: 'ajavaid',
-          password: '$argon2i$v=19$m=4096,t=3,p=1$javmqYsZNxEk6ieK0BqKVw$X9z6+bXP/Zjb3/xTWLMQXSLk/Y1AOm3UD8BxMTpsad8',
+          password: '$2b$10$ycRJ5q8oUB5ULBSaa2FHQeEnprtb9tvp.0jefpPmUuQmS2nZthqKS',
           email: 'ajavaid@icememe.com'
         },
         {
           username: 'fnoori',
-          password: '$argon2i$v=19$m=4096,t=3,p=1$sj2HDN4XC2fRL2DNQMUsQA$p/h3JfrkHPSijZzLsCblcWT8SeSlFNE5X+0xVFwkAec',
+          password: '$2b$10$ycRJ5q8oUB5ULBSaa2FHQeEnprtb9tvp.0jefpPmUuQmS2nZthqKS',
           email: 'fnoori@icememe.com'
         },
         {
           username: 'fmoon',
-          password: '$argon2i$v=19$m=4096,t=3,p=1$UTHOuk2kiomTokKtNuBIag$+2vCxOzkqgfDnFk3tf+SBsVnFJRFRIW3biycKtdvjhc',
+          password: '$2b$10$ycRJ5q8oUB5ULBSaa2FHQeEnprtb9tvp.0jefpPmUuQmS2nZthqKS',
           email: 'fmoon@icememe.com'
         },
         {
           username: 'kjantzen',
-          password: '$argon2i$v=19$m=4096,t=3,p=1$br0EM3u2uz7Jp1IaoMnkOA$WNbhYbPzLjUTJmC9z+8o9YjEBK6Yyp5sb3iu4ESVu68',
+          password: '$2b$10$ycRJ5q8oUB5ULBSaa2FHQeEnprtb9tvp.0jefpPmUuQmS2nZthqKS',
           email: 'kjantzen@icememe.com'
         }
       ]);
