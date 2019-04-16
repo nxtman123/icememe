@@ -8,7 +8,12 @@ const routes = [
       { name: 'register', path: '/sign-up', component: () => import('pages/SignUp.vue') },
       { name: 'new', path: '/new', component: () => import('pages/New.vue') },
       { name: 'meme', path: '/m/:memeId/:slug?', component: () => import('pages/Meme.vue') },
-      { name: 'user', path: '/u/:username', component: () => import('pages/User.vue') },
+      {
+        name: 'user',
+        path: '/u/:username',
+        component: () => import('pages/User.vue'),
+        props: true,
+      },
       { name: 'settings', path: '/settings', component: () => import('pages/Settings.vue') },
     ],
   },
