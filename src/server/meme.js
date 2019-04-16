@@ -215,6 +215,9 @@ module.exports = psql => ({
         .first();
 
       if (meme) {
+        if (!meme.userVote) {
+          meme.userVote = null;
+        }
         return {
           isSuccessful: true,
           value: meme,
