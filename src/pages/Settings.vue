@@ -1,9 +1,6 @@
 <template>
   <q-page class="page-frame">
-    <div
-      class="text-h6 q-py-md"
-      style="text-align: center"
-    >
+    <div class="text-h6 q-py-md">
       Settings
     </div>
 

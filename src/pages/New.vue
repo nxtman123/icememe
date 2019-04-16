@@ -1,7 +1,12 @@
 <template>
-  <q-page padding>
-    <h6>Upload Meme</h6>
-    <form @submit.prevent.stop="onSubmit">
+  <q-page class="page-frame">
+    <div class="text-h6 q-py-md">
+      Upload Meme
+    </div>
+    <form
+      v-if="loggedIn"
+      @submit.prevent.stop="onSubmit"
+    >
       <q-input
         ref="memeTitle"
         v-model="memeTitle"
@@ -38,11 +43,15 @@
         class="full-width"
       />
     </form>
+    <div v-else class="text-body1">
+      You must be logged in to adjust settings.
+    </div>
   </q-page>
 </template>
 
 <script>
-// eslint-disable-next-line
+import { mapGetters } from 'vuex';
+
 const CLOUD_NAME = process.env.CLOUDINARY_NAME;
 const CLOUD_PRESET = process.env.CLOUDINARY_PRESET;
 
@@ -56,6 +65,11 @@ export default {
       memeTitle: null,
       accept: false,
     };
+  },
+  computed: {
+    ...mapGetters([
+      'loggedIn',
+    ]),
   },
   methods: {
     fileChosen(e) {
@@ -123,9 +137,6 @@ export default {
       xhr.send(fd);
     },
   },
-  sockets: {
-    // TODO: if needed
-  },
 };
 </script>
 
@@ -138,24 +149,24 @@ export default {
   }
 
   #dropbox {
-      width: 100%;
-      position: relative;
+    width: 100%;
+    position: relative;
   }
 
   #new-meme-input {
-      position: absolute;
-      width: inherit;
+    position: absolute;
+    width: inherit;
   }
 
   #new-meme-input input {
-      position: static;
-      height: inherit;
-      width: 200%;
-      opacity: 0;
-      z-index: 2;
+    position: static;
+    height: inherit;
+    width: 200%;
+    opacity: 0;
+    z-index: 2;
   }
 
   #new-meme-facade {
-      position: relative;
+    position: relative;
   }
 </style>
