@@ -43,7 +43,10 @@
         class="full-width"
       />
     </form>
-    <div v-else class="text-body1">
+    <div
+      v-else
+      class="text-body1"
+    >
       You must be logged in to adjust settings.
     </div>
   </q-page>
