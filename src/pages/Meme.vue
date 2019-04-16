@@ -186,6 +186,7 @@ export default {
     newLiveComment(newComment) {
       if (newComment.memeId === this.meme.memeId) {
         this.comments = [newComment, ...this.comments];
+        this.meme.commentCount += 1;
       }
     },
   },
