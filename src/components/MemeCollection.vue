@@ -66,7 +66,9 @@ export default {
   watch: {
     loggedIn() {
       this.memes = [];
-      this.moreToGo = true;
+      this.loadMoreMemes(null, () => {
+        this.moreToGo = true;
+      });
     },
   },
   methods: {
