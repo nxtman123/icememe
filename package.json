@@ -14,12 +14,11 @@
     "dev": "concurrently \"yarn dev-client\" \"yarn dev-server\"",
     "build": "quasar build",
     "start": "node src/server/main.js",
-    "heroku-prebuild": "npm install -g node-gyp",
     "heroku-postbuild": "yarn run knex migrate:latest"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
-    "argon2": "^0.21.0",
+    "bcrypt": "^3.0.6",
     "concurrently": "^4.1.0",
     "connect-history-api-fallback": "^1.6.0",
     "dotenv": "^7.0.0",

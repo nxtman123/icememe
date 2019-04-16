@@ -1,4 +1,4 @@
-const argon2 = require('argon2');
+const bcrypt = require('bcrypt');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 
@@ -37,7 +37,7 @@ module.exports = psql => ({
         };
       }
 
-      const hash = await argon2.hash(password);
+      const hash = await bcrypt.hash(password, 10);
       await psql('users').insert({
         username,
         email,
@@ -65,7 +65,7 @@ module.exports = psql => ({
         .where('username', username);
 
       if (findUser.length >= 1) {
-        const verification = await argon2.verify(findUser[0].password, password);
+        const verification = await bcrypt.compare(password, findUser[0].password);
         if (verification) {
           const payload = {
             userId: findUser[0].userId,
@@ -134,7 +134,7 @@ module.exports = psql => ({
   // returns { isSuccessful, value }
   updatePassword: async (newPassword, user) => {
     try {
-      const hash = await argon2.hash(newPassword);
+      const hash = await bcrypt.hash(newPassword, 10);
       await psql('users')
         .where('user_id', '=', user.userId)
         .update({ password: hash });
