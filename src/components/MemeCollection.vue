@@ -1,8 +1,8 @@
 <template>
   <q-infinite-scroll
     :offset="250"
-    :disable="disableLoad"
-    @load="(_, done) => $emit('load', done)"
+    :disable="!moreToGo"
+    @load="loadMoreMemes"
   >
     <masonry
       class="q-pt-md"
@@ -10,7 +10,7 @@
       :cols="{default: 3, 1024: 2, 600: 1}"
     >
       <meme-card
-        v-for="meme in memes"
+        v-for="meme in sortedMemes"
         :key="meme.id"
         class="q-pb-md"
         v-bind="meme"
@@ -37,13 +37,42 @@ export default {
     'meme-card': MemeCard,
   },
   props: {
-    memes: {
-      type: Array,
-      default: () => [],
+    username: {
+      type: String,
+      default: '',
     },
-    disableLoad: {
-      type: Boolean,
-      default: false,
+  },
+  data() {
+    return {
+      memes: [],
+      moreToGo: true,
+    };
+  },
+  computed: {
+    sortedMemes() {
+      return this.memes.slice().sort((a, b) => (a.memeId < b.memeId));
+    },
+    earliestMeme() {
+      return this.memes.length
+        ? this.memes.reduce((eId, m) => Math.min(eId, m.memeId), Infinity)
+        : 0;
+    },
+  },
+  methods: {
+    loadMoreMemes(_, done) {
+      this.$socket.emit('getMemes', this.username, this.earliestMeme, (memesResult) => {
+        console.log(memesResult);
+        if (memesResult.isSuccessful) {
+          if (memesResult.value.length) {
+            this.memes = this.memes.concat(memesResult.value);
+          } else {
+            this.moreToGo = false;
+          }
+        } else {
+          this.$q.notify(memesResult.value);
+        }
+        done();
+      });
     },
   },
 };
