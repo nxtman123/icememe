@@ -151,15 +151,15 @@ io.on('connect', (socket) => {
 
   // memeData = { title, cloudinaryUrl }
   // returns { isSuccessful, value }
-  socket.on('addMeme', async (memeData) => {
+  socket.on('addMeme', async (memeData, ack) => {
     if (socketUser === false) {
-      return socket.emit('addMeme', {
+      ack({
         isSuccessful: false,
         value: 'cannot verify user',
       });
     }
     const saveResult = await meme.saveMeme(memeData, socketUser);
-    return socket.emit('addMeme', saveResult);
+    ack(saveResult);
   });
 
   // voteData = { memeId, voteType }

@@ -84,7 +84,7 @@ module.exports = psql => ({
 
       return {
         isSuccessful: true,
-        value: newMeme,
+        value: newMeme[0],
       };
     } catch (e) {
       console.log(e);

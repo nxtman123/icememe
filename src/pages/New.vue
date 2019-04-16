@@ -105,9 +105,9 @@ export default {
         this.fileInput = null;
         document.getElementById('new-meme-preview').src = '';
         this.$q.notify({
-          icon: 'done',
-          color: 'positive',
-          message: 'Submitted',
+          icon: 'cloud_upload',
+          color: 'info',
+          message: 'Uploading',
         });
         window.setTimeout(this.reset, 100);
       }
@@ -125,12 +125,21 @@ export default {
       xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
       const socket = this.$socket;
-      const { memeTitle } = this;
+      const { memeTitle, $q, $router } = this;
 
       xhr.onreadystatechange = function sendingDone() {
         if (xhr.readyState === 4 && xhr.status === 200) {
           const response = JSON.parse(xhr.responseText);
-          socket.emit('addMeme', { title: memeTitle, cloudinaryUrl: response.secure_url });
+          socket.emit('addMeme', { title: memeTitle, cloudinaryUrl: response.secure_url }, (saveResult) => {
+            if (saveResult.isSuccessful) {
+              $q.notify({
+                icon: 'done',
+                color: 'positive',
+                message: 'Meme created',
+              });
+              $router.push({ name: 'meme', params: { memeId: saveResult.value.memeId } });
+            }
+          });
         }
       };
 
