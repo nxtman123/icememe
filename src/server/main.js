@@ -1,6 +1,3 @@
-// set working directory
-process.env.PWD = process.cwd();
-
 // import modules
 const express = require('express');
 const serveStatic = require('serve-static');
@@ -237,8 +234,7 @@ io.on('connect', (socket) => {
 
 // start server
 app.use(history());
-app.use(serveStatic(path.join(process.env.PWD, '../../dist/spa')));
-app.use(serveStatic(path.join(__dirname, '../../dist/spa')));
+app.use(serveStatic(__dirname + '../../dist/spa'));
 server.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
