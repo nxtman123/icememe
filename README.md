@@ -142,8 +142,6 @@ There's two ways to run the app: in development mode or production mode.
 ### Production
 Our app will have its production deploy on Heroku. Kurtis has his GitHub Student Developer Pack connected to Heroku to provide the PostgreSQL add-on.
 
-Visit it at https://icememe.fun
-
 Some things to note:
 
 - Deployments to production come automatically from the `master` branch. This means we need to move changes through our Git Flow branching model to master (via a release) before deploying.
